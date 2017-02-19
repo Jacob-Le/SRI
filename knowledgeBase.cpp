@@ -18,30 +18,6 @@ class KnowledgeBase{
 	
 };
 
-class Node{
-	
-	Fact* fact;
-	Node* prev;
-	Node* next;
-	Node(Fact* fact);
-	~Node();
-	void setptr(Node&);
-	
-};
-
-Node::Node(Fact* trufacts){
-	
-	fact = trufacts;
-	nextptr = NULL;
-	
-}
-
-Node::setptr(Node& iguana){
-	
-	next = iguana;
-	
-}
-
 /* KnowledgeBase::KnowledgeBase(){
 	
 
@@ -50,36 +26,36 @@ Node::setptr(Node& iguana){
 
 void KnowledgeBase::Add(Fact* fact){
 	
-	Node current = new Node;
-	
 	//checking if relationship exists in the KB
 	if(FactMap.find(fact.Relationship) == FactMap.end()){ //If it doesnt exist
 		
-		Node node(fact); //Make a new node
-		FactMap[fact.Relationship] = node*; //Set relationship in map equal to node ptr
+		vector<Fact> v = {fact};
+		FactMap[fact.Relationship] == v;
 		
 	}else if(FactMap.find(fact.Relationship) != FactMap.end()){ //If it does exist
 		
-		current = node;
-		while(node.next != NULL){ //iterating through all the nodes
+		for(int i = 0; i<v.size(); i++){ 
 			
-			//checking if fact already exists in KB
-			if(current.Actor1 = fact.Actor1 && current.Actor2 = fact.Actor2){
-				cout<< "Fact already exists" <<endl;
-				break;
+			if(fact.Actor1 = v[i].Actor1 && fact.Actor2 = v[i].Actor2){//check if fact already exists
+				cout<< "Fact already exists" << endl;
+				return 0; //this is probably wrong
 			}
-			
-			current = node.next;
 		}
-		//reach end of linked list, make new node to add fact
-		Node nodez = new Node;
-		nodez.fact = fact;
+		//after traversing the vector and finding no matches
+		v.push_back(fact); //add the fact to the end of the vector
 		
 	}
 }
 
 Fact KnowledgeBase::Remove(Fact fact*){
 	
-	
+	int temp = 0;
+	for(int i = 0; i<FactMap[fact.Relationship].size(); i++){
+		if(FactMap[fact.Relationship][i].Actor1 = fact.Actor1 && FactMap[fact.Relationship][i].Actor2 = fact.Actor2){
+			return temp;
+		}
+		temp++;
+	}
+	FactMap[fact.Relationship].erase(temp);
 	
 }
