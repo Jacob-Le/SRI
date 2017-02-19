@@ -11,7 +11,7 @@ public:
   //copy and move constructors
 
   std::string Relationship;
-  std::pair getActors();
+  std::pair<std::string, std::string> getActors();
 
   //Operator overloads
-}
+};
