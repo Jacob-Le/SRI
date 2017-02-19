@@ -1,6 +1,7 @@
 //Main building block of the rule system
 
 #include <stdlib.h>
+#include "Fact.h"
 
 //Constructor
 Fact::Fact(std::string a_1, std::string a_2, std::string r){
