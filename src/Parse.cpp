@@ -21,6 +21,7 @@ class Parse{
 	void ParseFunction(string input);
 	int numFunctions(string input);
 	void ParseLine(string input);
+	void ParseFile(string fileName);
 };
 
 //substr's second argument is how far from first character to search to, not from what char to 
@@ -56,7 +57,7 @@ void Parse::ParseFunction(string input){
 	cout<<endl;
 }
 
-//Lets ParseMaster know how many times to run ParseFunction on input
+//Lets ParseLine know how many times to run ParseFunction on input
 int Parse::numFunctions(string input){
 	//cout << "Inside numFunctin(): "<<input << endl;
 	int numOpenParens = count(input.begin(),input.end(), '(');
@@ -111,9 +112,24 @@ void Parse::ParseLine(string input){
 	}
 }
 
+void Parse::ParseFile(string fileName){
+	string input;
+	fstream file;
+	file.open("Dummy.SRL",std::fstream::in);
+	Relationship.clear();
+	Entry.clear();
+	cout<<"From File:\n";
+	//cout<<input7<<endl;
+	while(!file.eof()){
+	  getline(file,input);
+	  ParseLine(input);
+	}
+	file.close();
+}
+
 main(){
 	Parse Parser = Parse();
-	string input = "GrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y)";
+	/*string input = "GrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y)";
 	string input2 = "Father(Roger,John)";
 	string input3 = "GreatGrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y) AND Father($X,$Z) Parent($Z,$Y)";
 	string input4 = "GrandFather($X,$Y):- OR Father($X,$Z) Parent($Z,$Y)";
@@ -125,5 +141,6 @@ main(){
 	Parser.ParseLine(input5);
 	string input6;
 	getline(cin, input6);
-	Parser.ParseLine(input6);
+	Parser.ParseLine(input6);*/
+	Parser.ParseFile("Dummy.SRL");
 }
