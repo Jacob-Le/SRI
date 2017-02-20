@@ -13,8 +13,8 @@ using namespace std;
 
 class Parse{
 	public:
-	std::vector<string> Rule;
-	std::vector<string> Fact;
+	//std::vector<string> Rule; Probably delete these
+	//std::vector<string> Fact;
 	std::vector<string> Relationship; //Always will be a 1:2 ratio for indices b/w these two
 	std::vector<string> Entry;
 	int searchLength(int start, int end);
@@ -22,6 +22,9 @@ class Parse{
 	int numFunctions(string input);
 	void ParseLine(string input);
 	void ParseFile(string fileName);
+	void ParseTerminalInput();
+	void AddRule();
+	void AddFact(int numFcns);
 };
 
 //substr's second argument is how far from first character to search to, not from what char to 
@@ -64,7 +67,7 @@ int Parse::numFunctions(string input){
 	return numOpenParens;	
 }
 
-//Oversees all parsing 
+//Oversees all parsing on a single line of input
 void Parse::ParseLine(string input){
 	int numRuns = numFunctions(input);
 	//cout << numRuns;
@@ -74,7 +77,6 @@ void Parse::ParseLine(string input){
 	ParseFunction(input.substr(searchStart, nextLen));
 	if (numRuns-1 == 0){
 		cout<<"chicky nugs\n";
-		//Fact newFact = Fact(Entry[0],Entry[1],Relationship[0]);
 		return;
 	}
 	
@@ -110,8 +112,11 @@ void Parse::ParseLine(string input){
 	  nextLen = searchLength(searchStart+1,searchEnd);
 	  ParseFunction(input.substr(searchStart+1, nextLen));
 	}
+	
+	
 }
 
+//Parses a file
 void Parse::ParseFile(string fileName){
 	string input;
 	fstream file;
@@ -125,6 +130,30 @@ void Parse::ParseFile(string fileName){
 	  ParseLine(input);
 	}
 	file.close();
+}
+
+//Parses single line of input from terminal
+void Parse::ParseTerminalInput(){
+	string input;
+	getline(cin, input);
+	Parser.ParseLine(input6);
+}
+
+//Puts the last two entries and last relationship into a rule that goes onto the RB
+void Parse::AddRule(){
+	string actor1 = Entry.end();
+	Entry.pop_back();
+	string actor2 = Entry.end();
+	Entry.pop_back;
+	string relationship = Relationship.end();
+	Relationship.pop_back();
+	Fact newFact = new Fact(Entry[0],Entry[1],Relationship[0]);
+	//Add Fact to KB once function is built
+}
+
+//Creates rule from Entries and Relationship and puts it into the RB
+void Parse::AddFact(int numFcns){
+	
 }
 
 main(){
