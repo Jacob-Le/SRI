@@ -1,31 +1,18 @@
 //Parse.cpp
 #include<stdio.h>
-#include<string>
-#include<vector>
+//#include<string>
 #include<iostream>
 #include<algorithm>
 #include<fstream>
-#include "Fact.cpp"
+#include "Parse.h"
+#include "Rule.cpp"
+#include "RB.cpp"
 using namespace std;
 
-//std::vector<string> Rule; Delete these?
-//std::vector<string> Fact;
-
-class Parse{
-	public:
-	//std::vector<string> Rule; Probably delete these
-	//std::vector<string> Fact;
-	std::vector<string> Relationship; //Always will be a 1:2 ratio for indices b/w these two
-	std::vector<string> Entry;
-	int searchLength(int start, int end);
-	void ParseFunction(string input);
-	int numFunctions(string input);
-	void ParseLine(string input);
-	void ParseFile(string fileName);
-	void ParseTerminalInput();
-	void AddRule();
-	void AddFact(int numFcns);
-};
+Parse::Parse(RB* ruleBase, KB* knowledgeBase){
+	RuleBase = ruleBase;
+	KnowledgeBase = knowledgeBase;
+}
 
 //substr's second argument is how far from first character to search to, not from what char to 
 //what char so this function calculates that
@@ -76,7 +63,8 @@ void Parse::ParseLine(string input){
 	int nextLen = searchLength(searchEnd,searchStart);
 	ParseFunction(input.substr(searchStart, nextLen));
 	if (numRuns-1 == 0){
-		cout<<"chicky nugs\n";
+		//cout<<"chicky nugs\n";
+		AddFact();
 		return;
 	}
 	
@@ -90,21 +78,25 @@ void Parse::ParseLine(string input){
 		  //First Logical Operator
 		  if(input[searchStart] == ':'){
 			  if(input[searchStart+3] == 'A'){ //Need to have store as boolean in Rule Component
-				cout<<"AND\n";
+				//cout<<"AND\n";
+				Logic.push_back(1);
 				searchStart += 6;
 			  } 
 			  else if(input[searchStart+3] == 'O'){
-				cout<<"OR\n";
+				//cout<<"OR\n";
+				Logic.push_back(0);
 				searchStart += 5;
 			  }
 		  //If additional Logical Operator
 		  }else if(input[searchStart+1] == 'A' || input[searchStart+1] == 'O'){
 			  if(input[searchStart+1] == 'A'){
-				cout<<"AND\n";
+				//cout<<"AND\n";
+				Logic.push_back(1);
 				searchStart += 4;
 			  } 
 			  else if(input[searchStart+1] == 'O'){
-				cout<<"OR\n";
+				//cout<<"OR\n";
+				Logic.push_back(0);
 				searchStart += 3;
 			  }
 		  }
@@ -139,21 +131,54 @@ void Parse::ParseTerminalInput(){
 	Parser.ParseLine(input6);
 }
 
-//Puts the last two entries and last relationship into a rule that goes onto the RB
-void Parse::AddRule(){
+//Puts the last two entries and last relationship into a fact object
+Fact* Parse::MakeFact(){
 	string actor1 = Entry.end();
 	Entry.pop_back();
 	string actor2 = Entry.end();
-	Entry.pop_back;
+	Entry.pop_back();
 	string relationship = Relationship.end();
 	Relationship.pop_back();
-	Fact newFact = new Fact(Entry[0],Entry[1],Relationship[0]);
-	//Add Fact to KB once function is built
+	Fact* newFact = new Fact(Entry[0],Entry[1],Relationship[0]);
+	return Fact*;
 }
 
-//Creates rule from Entries and Relationship and puts it into the RB
-void Parse::AddFact(int numFcns){
-	
+//Add Fact to KB once function is built
+void Parse::AddFact(){
+	//KnowledgeBase->add()
+}
+
+//Creates rule from FactVector, Logic, and Relationship and puts it into the RB
+void Parse::AddRule(int numFcns){
+	for(int i=numFcns-1; i>0; i--){
+		Fact* newFact = MakeFact();
+		FactVector.push_back();
+	}
+	string fcnName = "";
+	while(numFcns>0){
+		if(numFcns == 1){
+			fcnName = Relationship.end();
+			Relationship.pop_back();
+			numFcns--;		
+		}
+		Fact* Fact1 = FactVector.end();
+		FactVector.pop_back();
+		Fact* Fact2 = FactVector.end();
+		bool logic = Logic.end();
+		Logic.pop_back();
+		Rule* newRule = new Rule(Fact1,Fact2,fcnName,logic);
+		RuleVector.push_back(newRule);
+		numFcns-=2;
+	}
+	Rule* domRule = RuleVector.end();
+	RuleVector.pop_back();
+	while(RuleVector.size()!=0){
+		Rule* subRule = RuleVector.end();
+		RuleVector.pop_back();
+		domRule->add_components(1,subRule);
+	}
+	RuleBase->add(domRule);
+	}
 }
 
 main(){

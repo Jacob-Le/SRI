@@ -4,10 +4,11 @@
 #include <cstdarg.h>
 #include "Fact.h"
 
-Rule::Rule(Fact * f1, Fact * f2, std::string n){
+Rule::Rule(Fact * f1, Fact * f2, std::string n, bool inputLogic){
   Fact * e1 = f1;
   Fact * e2 = f2;
-  std::string name = n;
+  logic = inputLogic; //1 is AND, 0 is OR
+  name = n;
   std::vector<rule_component> components;
 }
 

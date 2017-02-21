@@ -1,5 +1,6 @@
 //Rule database
 #include <stdlib.h>
+#include "Rule.h"
 
 class RB{
 private:
