@@ -1,8 +1,8 @@
 //Rules that the SRI engine uses to make inferences
 
 #include <stdlib.h>
-#include <cstdarg.h>
-#include "Fact.h"
+#include <cstdarg>
+//#include "Fact.h"
 
 Rule::Rule(Fact * f1, Fact * f2, std::string n, bool inputLogic){
   Fact * e1 = f1;

@@ -1,7 +1,7 @@
 //Parse.h
 #include<string>
 #include<vector>
-#include "Fact.h"
+//#include "Fact.h"
 #include "RB.cpp"
 
 class Parse{

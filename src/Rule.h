@@ -19,4 +19,4 @@ public:
   void setFacts(std::pair facts);
   void add_components(int count, ...);
   //Operator overloads
-}
+};

@@ -6,7 +6,7 @@
 #include<fstream>
 #include "Parse.h"
 #include "Rule.cpp"
-#include "RB.cpp"
+//#include "RB.cpp"
 using namespace std;
 
 Parse::Parse(RB* ruleBase, KB* knowledgeBase){

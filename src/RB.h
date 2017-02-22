@@ -14,4 +14,4 @@ public:
   std::string toString();
   void Load(std::string filepath);
   std::string Dump(std::string filepath);
-}
+};
