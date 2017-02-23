@@ -4,18 +4,23 @@
 #include <cstdarg.h>
 #include "Fact.h"
 
-class Rule{
-private:
+template<typename T>
+typedef struct Rule{
   std::string name;
-  Fact e1;
-  Fact e2;
-  std::vector<rule_component> components;
-public:
-  Rule(Fact e1, Fact e2, std::string name);
-  //copy and move constructors
+  T * e1;
+  T * e2;
 
+//OR
+  std::vector<T*> components;
 
-  void setFacts(std::pair facts);
-  void add_components(int count, ...);
-  //Operator overloads
-}
+  //Function pointer that points to a function that emulates boolean operators
+  Ops * op;
+
+  //Variadic constructor that accepts any number of conditions
+  Rule(std::string name, int count, ...);
+  //copy and move constructors: later!
+
+  //Operator overloads: shortcuts for calculating condition fufullment
+  boolean operator &&(const &Rule);
+  boolean operator ||(const &Rule);
+}Rule;
