@@ -14,7 +14,7 @@ Rule::Rule(std::string n, const &std::vector<O*> Ops, int count, ...){
   va_end(cmp);
 }
 
-boolean Rule::evaluate(){
+bool Rule::evaluate(){
   std::vector<bool> truths;
 	for(const auto & r : components) truths.push_back(r.evaluate());
   int count = 0
@@ -25,9 +25,10 @@ boolean Rule::evaluate(){
   return true;
 }
 
+
 bool Rule::enact(){
   if(evaluate()){
-    //add to KB here
+    KB.add(Fact(this->name, &a, &b));
     return true;
   }
   return false;
