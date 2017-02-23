@@ -24,3 +24,16 @@ typedef struct Rule{
   boolean operator &&(const &Rule);
   boolean operator ||(const &Rule);
 }Rule;
+
+
+x Grandparent z = (x father y && y father z) || y father z
+
+isRuleTrue = rule.evalute() // truthValues looks like [TRUE, TRUE, FALSE]
+
+ruleIsTrue truthValues[0] rule.operator[0] truthValues[1] rule.operator[1]
+
+
+
+----
+
+MYFIRSTRULE: PRED1 && PRED2 || PRED3 --> PRED4
