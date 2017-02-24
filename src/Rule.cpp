@@ -1,19 +1,35 @@
 //Rules that the SRI engine uses to make inferences
 
 #include <stdlib.h>
-#include <cstdarg>
-//#include "Fact.h"
+#include <cstdarg.h>
+#include "Rule.h"
 
-Rule::Rule(Fact * f1, Fact * f2, std::string n, bool inputLogic){
-  Fact * e1 = f1;
-  Fact * e2 = f2;
-  logic = inputLogic; //1 is AND, 0 is OR
-  name = n;
-  std::vector<rule_component> components;
+template <typename T, typename O>
+Rule::Rule(std::string n, const &std::vector<O*> Ops, int count, ...){
+  std::string name = n;
+  va_list cmp;
+  std::vector<T> components;
+  for(int i = 0; i < count, i++) components.pushback(va_arg(cmp, T));
+  std::vector<O*> ops = Ops;
+  va_end(cmp);
 }
 
-void add_components(int count, ...){
-  va_list cmp;
-  for(int i = 0; i < count; i++) components.pushback(va_arg(cmp, rule_component));
-  va_end(cmp);
+bool Rule::evaluate(){
+  std::vector<bool> truths;
+	for(const auto & r : components) truths.push_back(r.evaluate());
+  int count = 0
+  for(const auto& bool a: truths){
+  	if(a != boolList[count]) return false; //This would account for ANDs and ORs CHANGE THIS
+    count++;
+  }
+  return true;
+}
+
+
+bool Rule::enact(){
+  if(evaluate()){
+    KB.add(Fact(this->name, &a, &b));
+    return true;
+  }
+  return false;
 }

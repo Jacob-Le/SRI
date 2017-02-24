@@ -1,9 +1,15 @@
 //Predicate.h
-template<class t_type> class Predicate{ //AKA FACT OR RULE, DEPENDING ON WHAT RULE IT IS CALLED IN
+#include<vector>
+#include<cstdarg>
+#include<string>
+#include<iostream>
+using namespace std;
+
+class Predicate{ //AKA FACT OR RULE, DEPENDING ON WHAT RULE IT IS CALLED IN
   public:
   string Relationship;
-  std::vector<t_type> Actors;
+  std::vector<string> Actors;
  
-  Predicate(string relationship, t_type ... args);
+  Predicate(string relationship, int argCount, ... );
   bool evaluate();
 };  
