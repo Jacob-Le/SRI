@@ -1,3 +1,4 @@
+
 //Rules that the SRI engine uses to make inferences
 
 #include <stdlib.h>
@@ -14,17 +15,24 @@ Rule::Rule(std::string n, const &std::vector<O*> Ops, int count, ...){
   va_end(cmp);
 }
 
-bool Rule::evaluate(...){
-  va_list comp;
-  std::vector<bool> truths;
-	for(const auto & r : components) truths.push_back(r.evaluate());
-  int count = 0
-  for(const auto& bool a: truths){
-  	if(a != boolList[count]) return false; //This would account for ANDs and ORs CHANGE THIS BECAUSE
-    count++;
+bool Rule::evaluate(std::vector<std::string> actors){
+  Predicate first = components[0]; // LHS component to be evaluated
+  Predicate next = components[1]; // RHS component to be evaluated
+
+  //range of actors to take from actors vector
+  std::vector<std::string> range = std::vector<std::string>(components.begin(), components.begin() + first.components.size());
+
+  bool truth = first.evaluate(range); //evaluate using the range of actors that pertain to the particular component
+  int count = 0;
+  while(next != null && count + 1 <= actors.size()){
+    //Take range of actors for the next vector
+    std::vector<std::string> next_range = std::vector<std::string>(range.end(), range.end() + next.components.size());
+    bool temp = (*ops[count])(first, next.evaluate(next_range)); //Perform boolean operation using function pointer
+    first = temp;
+    count += 1;
+    next = comp[count]; //advance to next one
   }
-  va_end();
-  return true;
+  return first;
 }
 
 bool Rule::enact(){
