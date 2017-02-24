@@ -31,6 +31,7 @@ struct throw_exception : public exception {
 //};
 
 //CONSTRUCTORS-------------------------------------------------------------------------------------------------------------
+//Default. Nothing here since rules is declared as empty already.
 RB::RB(){
 
 }
@@ -48,7 +49,7 @@ void RB::Add(Rule::predicate * r){
       if(rule == r) throw throw_exception();
     }
     rules.pushback(r);
-  }catch(duplicate_rule &e){
+  }catch(throw_exception &e){
       std::cout << e.msg("Error: Rule already exists.") <<std::endl;
     }
 }
@@ -82,7 +83,7 @@ void RB::Load(std::string filepath){
 	try {
 		if (myfile == nullptr) throw throw_exception();//loading isn't implemented
 	}
-	catch (empty_rules &e) {
+	catch (throw_exception &e) {
 		std::cout << e.msg("Error: File not found.") << std::endl;
 	}
 }
@@ -99,12 +100,13 @@ std::string RB::Dump(std::string filepath){
 			myfile << toString(vector[i]) << std::endl;
 		}
 	}
-	catch (empty_rules &e) {
+	catch (throw_exception &e) {
 		std::cout << e.msg("Error: There are no rules to dump.") << std::endl;
 	}*/
 }
 
 //DECONSTRUCTOR-----------------------------------------------------------------------------------
+//rules destructs itself automatically at the end.
 RB::~RB() {
 
 }
