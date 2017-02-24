@@ -19,17 +19,24 @@ bool Rule::evaluate(){
 	for(const auto & r : components) truths.push_back(r.evaluate());
   int count = 0
   for(const auto& bool a: truths){
-  	if(a != boolList[count]) return false; //This would account for ANDs and ORs CHANGE THIS
+  	if(a != boolList[count]) return false; //This would account for ANDs and ORs CHANGE THIS BECAUSE
     count++;
   }
   return true;
 }
 
-
 bool Rule::enact(){
   if(evaluate()){
-    KB.add(Fact(this->name, &a, &b));
+    //KB.add(Fact(this->name, &a, &b));
     return true;
   }
   return false;
+}
+
+bool Rule::operator && (const &Rule r){
+  return this->evaluate() && r.evaluate();
+}
+
+bool Rule::operator || (const &Rule r){
+  return this->evaluate() || r.evaluate();
 }
