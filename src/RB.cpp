@@ -80,7 +80,7 @@ void RB::Load(std::string filepath){
 	ofstream myfile;
 	myfile.open(filepath);
 	try {
-		if (myfile == nullptr) throw throw_exception();
+		if (myfile == nullptr) throw throw_exception();//loading isn't implemented
 	}
 	catch (empty_rules &e) {
 		std::cout << e.msg("Error: File not found.") << std::endl;
@@ -89,7 +89,8 @@ void RB::Load(std::string filepath){
 
 //Save to file
 std::string RB::Dump(std::string filepath){
-	ofstream myfile;
+
+	/*ofstream myfile;
 	myfile.open(filepath);
 	try {
 		if (rule::size == 0) throw throw_exception();
@@ -100,7 +101,7 @@ std::string RB::Dump(std::string filepath){
 	}
 	catch (empty_rules &e) {
 		std::cout << e.msg("Error: There are no rules to dump.") << std::endl;
-	}
+	}*/
 }
 
 //DECONSTRUCTOR-----------------------------------------------------------------------------------
