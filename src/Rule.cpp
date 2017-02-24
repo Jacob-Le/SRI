@@ -8,13 +8,14 @@ template <typename T, typename O>
 Rule::Rule(std::string n, const &std::vector<O*> Ops, int count, ...){
   std::string name = n;
   va_list cmp;
-  std::vector<T> components;
+  std::vector<T*> components;
   for(int i = 0; i < count, i++) components.pushback(va_arg(cmp, T));
   std::vector<O*> ops = Ops;
   va_end(cmp);
 }
 
-bool Rule::evaluate(){
+bool Rule::evaluate(...){
+  va_list comp;
   std::vector<bool> truths;
 	for(const auto & r : components) truths.push_back(r.evaluate());
   int count = 0
@@ -22,6 +23,7 @@ bool Rule::evaluate(){
   	if(a != boolList[count]) return false; //This would account for ANDs and ORs CHANGE THIS BECAUSE
     count++;
   }
+  va_end();
   return true;
 }
 
