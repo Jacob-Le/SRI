@@ -7,7 +7,6 @@
 template<typename T, typename O>
 typedef struct Rule{
   std::string name;
-
   //Vector of predicate components (Rules or facts) that make up this rule
   std::vector<T*> components;
 

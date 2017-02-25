@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <cstdarg.h>
-#include "Fact.h"
+//#include "Fact.h"
 
 template <typename T, typename O>
 Rule::Rule(std::string n, const &std::vector<O*> Ops, int count, ...){

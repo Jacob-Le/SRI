@@ -1,27 +1,18 @@
 //Parse.cpp
 #include<stdio.h>
-#include<string>
-#include<vector>
+//#include<string>
 #include<iostream>
 #include<algorithm>
 #include<fstream>
-#include "Fact.cpp"
+#include "Parse.h"
+#include "Rule.cpp"
+//#include "RB.cpp"
 using namespace std;
 
-//std::vector<string> Rule; Delete these?
-//std::vector<string> Fact;
-
-class Parse{
-	public:
-	std::vector<string> Rule;
-	std::vector<string> Fact;
-	std::vector<string> Relationship; //Always will be a 1:2 ratio for indices b/w these two
-	std::vector<string> Entry;
-	int searchLength(int start, int end);
-	void ParseFunction(string input);
-	int numFunctions(string input);
-	void ParseLine(string input);
-};
+Parse::Parse(RB* ruleBase, KB* knowledgeBase){
+	RuleBase = ruleBase;
+	KnowledgeBase = knowledgeBase;
+}
 
 //substr's second argument is how far from first character to search to, not from what char to 
 //what char so this function calculates that
@@ -56,14 +47,14 @@ void Parse::ParseFunction(string input){
 	cout<<endl;
 }
 
-//Lets ParseMaster know how many times to run ParseFunction on input
+//Lets ParseLine know how many times to run ParseFunction on input
 int Parse::numFunctions(string input){
 	//cout << "Inside numFunctin(): "<<input << endl;
 	int numOpenParens = count(input.begin(),input.end(), '(');
 	return numOpenParens;	
 }
 
-//Oversees all parsing 
+//Oversees all parsing on a single line of input
 void Parse::ParseLine(string input){
 	int numRuns = numFunctions(input);
 	//cout << numRuns;
@@ -72,8 +63,8 @@ void Parse::ParseLine(string input){
 	int nextLen = searchLength(searchEnd,searchStart);
 	ParseFunction(input.substr(searchStart, nextLen));
 	if (numRuns-1 == 0){
-		cout<<"chicky nugs\n";
-		//Fact newFact = Fact(Entry[0],Entry[1],Relationship[0]);
+		//cout<<"chicky nugs\n";
+		AddFact();
 		return;
 	}
 	
@@ -87,21 +78,25 @@ void Parse::ParseLine(string input){
 		  //First Logical Operator
 		  if(input[searchStart] == ':'){
 			  if(input[searchStart+3] == 'A'){ //Need to have store as boolean in Rule Component
-				cout<<"AND\n";
+				//cout<<"AND\n";
+				Logic.push_back(1);
 				searchStart += 6;
 			  } 
 			  else if(input[searchStart+3] == 'O'){
-				cout<<"OR\n";
+				//cout<<"OR\n";
+				Logic.push_back(0);
 				searchStart += 5;
 			  }
 		  //If additional Logical Operator
 		  }else if(input[searchStart+1] == 'A' || input[searchStart+1] == 'O'){
 			  if(input[searchStart+1] == 'A'){
-				cout<<"AND\n";
+				//cout<<"AND\n";
+				Logic.push_back(1);
 				searchStart += 4;
 			  } 
 			  else if(input[searchStart+1] == 'O'){
-				cout<<"OR\n";
+				//cout<<"OR\n";
+				Logic.push_back(0);
 				searchStart += 3;
 			  }
 		  }
@@ -109,11 +104,86 @@ void Parse::ParseLine(string input){
 	  nextLen = searchLength(searchStart+1,searchEnd);
 	  ParseFunction(input.substr(searchStart+1, nextLen));
 	}
+	
+	
+}
+
+//Parses a file
+void Parse::ParseFile(string fileName){
+	string input;
+	fstream file;
+	file.open("Dummy.SRL",std::fstream::in);
+	Relationship.clear();
+	Entry.clear();
+	cout<<"From File:\n";
+	//cout<<input7<<endl;
+	while(!file.eof()){
+	  getline(file,input);
+	  ParseLine(input);
+	}
+	file.close();
+}
+
+//Parses single line of input from terminal
+void Parse::ParseTerminalInput(){
+	string input;
+	getline(cin, input);
+	Parser.ParseLine(input6);
+}
+
+//Puts the last two entries and last relationship into a fact object
+Fact* Parse::MakeFact(){
+	string actor1 = Entry.end();
+	Entry.pop_back();
+	string actor2 = Entry.end();
+	Entry.pop_back();
+	string relationship = Relationship.end();
+	Relationship.pop_back();
+	Fact* newFact = new Fact(Entry[0],Entry[1],Relationship[0]);
+	return Fact*;
+}
+
+//Add Fact to KB once function is built
+void Parse::AddFact(){
+	//KnowledgeBase->add()
+}
+
+//Creates rule from FactVector, Logic, and Relationship and puts it into the RB
+void Parse::AddRule(int numFcns){
+	for(int i=numFcns-1; i>0; i--){
+		Fact* newFact = MakeFact();
+		FactVector.push_back();
+	}
+	string fcnName = "";
+	while(numFcns>0){
+		if(numFcns == 1){
+			fcnName = Relationship.end();
+			Relationship.pop_back();
+			numFcns--;		
+		}
+		Fact* Fact1 = FactVector.end();
+		FactVector.pop_back();
+		Fact* Fact2 = FactVector.end();
+		bool logic = Logic.end();
+		Logic.pop_back();
+		Rule* newRule = new Rule(Fact1,Fact2,fcnName,logic);
+		RuleVector.push_back(newRule);
+		numFcns-=2;
+	}
+	Rule* domRule = RuleVector.end();
+	RuleVector.pop_back();
+	while(RuleVector.size()!=0){
+		Rule* subRule = RuleVector.end();
+		RuleVector.pop_back();
+		domRule->add_components(1,subRule);
+	}
+	RuleBase->add(domRule);
+	}
 }
 
 main(){
 	Parse Parser = Parse();
-	string input = "GrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y)";
+	/*string input = "GrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y)";
 	string input2 = "Father(Roger,John)";
 	string input3 = "GreatGrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y) AND Father($X,$Z) Parent($Z,$Y)";
 	string input4 = "GrandFather($X,$Y):- OR Father($X,$Z) Parent($Z,$Y)";
@@ -125,5 +195,6 @@ main(){
 	Parser.ParseLine(input5);
 	string input6;
 	getline(cin, input6);
-	Parser.ParseLine(input6);
+	Parser.ParseLine(input6);*/
+	Parser.ParseFile("Dummy.SRL");
 }
