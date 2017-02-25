@@ -2,16 +2,12 @@
 
 #include <stdlib.h>
 
-class Fact{
-private:
-  std::string actor1;
-  std::string actor2;
-public:
-  Fact(std::string a_1, std::string a_2, std::string r);
-  //copy and move constructors
+typedef struct Fact : Predicate {
 
   std::string Relationship;
-  std::pair<std::string, std::string> getActors();
+  std::vector<std::string> actors;
 
-  //Operator overloads
-};
+  Fact(std::vector<std::string>, std::vector<std::string> name);
+  bool evaluate(std::vector<std::string>);
+
+}Fact;

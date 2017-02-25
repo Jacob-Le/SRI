@@ -4,14 +4,12 @@
 #include "Fact.h"
 
 //Constructor
-Fact::Fact(std::string a_1, std::string a_2, std::string r){
-  std::string Actor1 = a_1;
-  std::string Actor2 = a_2;
-  std::string Relationship = r;
+Fact::Fact(std::vector<std::string> a, std::string name){
+  std::vector<std::string> actors = a;
+  std::string Relationship = name;
 }
 
-//Returns a tuple pair that contains the names of the actors involved in the fact
-std::pair Fact::getActors(){
-  std::pair <std::string, std::string> actors (Actor1, Actor2)
-  return actors;
+bool Fact::evaluate(std::vector<std::string> actors){
+  //if(this == KB.fetch(actors))
+  return true;
 }
