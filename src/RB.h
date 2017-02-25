@@ -1,5 +1,6 @@
 //Rule database
 #include <stdlib.h>
+#include "Predicate.h"
 using namespace std;
 
 class RB{
