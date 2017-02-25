@@ -2,31 +2,33 @@
 //Rules that the SRI engine uses to make inferences
 
 #include <stdlib.h>
-#include <cstdarg>
+#include <cstdarg.h>
 //#include "Fact.h"
 
+using namespace std;
+
 template <typename T, typename O>
-Rule::Rule(std::string n, const &std::vector<O*> Ops, int count, ...){
-  std::string name = n;
+Rule::Rule(string n, const &vector<O*> Ops, pair int count, ...){
+  string name = n;
   va_list cmp;
-  std::vector<T*> components;
+  vector<T*> components;
   for(int i = 0; i < count, i++) components.pushback(va_arg(cmp, T));
-  std::vector<O*> ops = Ops;
+  vector<O*> ops = Ops;
   va_end(cmp);
 }
 
-bool Rule::evaluate(std::vector<std::string> actors){
+bool Rule::evaluate(vector<string> actors){
   Predicate first = components[0]; // LHS component to be evaluated
   Predicate next = components[1]; // RHS component to be evaluated
 
   //range of actors to take from actors vector
-  std::vector<std::string> range = std::vector<std::string>(components.begin(), components.begin() + first.components.size());
+  vector<string> range = vector<string>(components.begin(), components.begin() + first.components.size());
 
   bool truth = first.evaluate(range); //evaluate using the range of actors that pertain to the particular component
   int count = 0;
   while(next != null && count + 1 <= actors.size()){
     //Take range of actors for the next vector
-    std::vector<std::string> next_range = std::vector<std::string>(range.end(), range.end() + next.components.size());
+    vector<string> next_range = vector<string>(range.end(), range.end() + next.components.size());
     bool temp = (*ops[count])(first, next.evaluate(next_range)); //Perform boolean operation using function pointer
     first = temp;
     count += 1;
@@ -35,9 +37,9 @@ bool Rule::evaluate(std::vector<std::string> actors){
   return first;
 }
 
-bool Rule::enact(){
-  if(evaluate()){
-    //KB.add(Fact(this->name, &a, &b));
+bool Rule::enact(vector<string> actors){
+  if(evaluate(actors)){
+    KB.add(new Fact());
     return true;
   }
   return false;
