@@ -1,11 +1,13 @@
 //Rules that the SRI engine uses to make inferences
 
 #include <stdlib.h>
-#include <cstdarg.h>
-#include "Fact.h"
+#include <cstdarg>
+#include <vector>
+#include "Predicate.h"
+using namespace std;
 
 template<typename T, typename O>
-typedef struct Rule{
+class dummy_rule : Predicate{
   std::string name;
   //Vector of predicate components (Rules or facts) that make up this rule
   std::vector<T*> components;
@@ -21,6 +23,9 @@ typedef struct Rule{
   bool enact();
 
   //Operator overloads: shortcuts for calculating condition fufullment
-  bool operator &&(const &Rule);
-  bool operator ||(const &Rule);
-}Rule;
+  bool operator &&(const &Rule r);
+  bool operator ||(const &Rule r);
+};
+
+template<typename T, typename O>
+using Rule = typename Rule<T, O>::dummy_rule;

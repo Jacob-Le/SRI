@@ -1,6 +1,6 @@
 //Rule database
 #include <stdlib.h>
-#include "Rule.h"
+using namespace std;
 
 class RB{
 private:
@@ -10,7 +10,7 @@ public:
   RB(const RB &otherRB);
   ~RB();
 
-  void Add(Rule::predicate * r);
+  void Add(Rule * r);
   Rule* Remove(std::string name);
   std::string toString();
   void Load(std::string filepath);

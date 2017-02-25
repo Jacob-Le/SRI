@@ -1,7 +1,9 @@
 //Main building block of the rule system
 
 #include <stdlib.h>
+#include <vector>
 #include "Fact.h"
+using namespace std;
 
 //Constructor
 Fact::Fact(std::vector<std::string> a, std::string name){
