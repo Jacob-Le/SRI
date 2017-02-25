@@ -43,7 +43,7 @@ RB::RB(const RB &otherRB) {
 
 //SOURCE CODE---------------------------------------------------------------------------------------------------------------
 //Add rules
-void RB::Add(Rule::predicate * r){
+void RB::Add(Rule * r){
   try{
     for(auto const &rule : rules){
       if(rule == r) throw throw_exception();
