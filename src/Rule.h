@@ -1,22 +1,26 @@
 //Rules that the SRI engine uses to make inferences
 
 #include <stdlib.h>
-#include <cstdarg>
+#include <cstdarg.h>
 #include "Fact.h"
 
-class Rule{
-private:
+template<typename T, typename O>
+typedef struct Rule{
   std::string name;
-  Fact e1;
-  Fact e2;
-  bool logic;
-  std::vector<rule_component> components;
-public:
-  Rule(Fact e1, Fact e2, std::string name);
-  //copy and move constructors
+  //Vector of predicate components (Rules or facts) that make up this rule
+  std::vector<T*> components;
 
+  //Function pointer that points to a function that emulates boolean operators
+  std::vector<O*> ops;
 
-  void setFacts(std::pair facts);
-  void add_components(int count, ...);
-  //Operator overloads
-};
+  //Variadic constructor that accepts any number of conditions
+  Rule(std::string name, const &std::vector<O*> ops, int count, ...);
+  //copy and move constructors: later!
+
+  bool evaluate();
+  bool enact();
+
+  //Operator overloads: shortcuts for calculating condition fufullment
+  bool operator &&(const &Rule);
+  bool operator ||(const &Rule);
+}Rule;

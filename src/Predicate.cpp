@@ -9,6 +9,8 @@ Predicate::Predicate(string relationship, int argCount, ... ){
   va_end(args);
 }
 
+Predicate::Predicate(){}
+
 bool Predicate::evaluate(){
   return true;
 }

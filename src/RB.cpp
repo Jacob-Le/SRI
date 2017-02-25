@@ -2,33 +2,46 @@
 
 #include <stdlib.h>
 #include "RB.h"
+#include <fstream>
 
-struct duplicate_rule : public exception{
-  const char * msg() const throw(){
-    return "duplicate rule exception";
-  }
-}
+//EXCEPTION HANDLING------------------------------------------------------------------------------------------------------
+//duplicate rules
+struct throw_exception : public exception {
+	const char * msg() const throw(std::string error) {
+		return error;
+	}
+};
 
+//CONSTRUCTORS-------------------------------------------------------------------------------------------------------------
+//Default. Nothing here since rules is declared as empty already.
 RB::RB(){
-  std::vector<Rule> rules = null;
+
 }
 
-void RB::Add(Rule * r){
+//copy constructor
+RB::RB(const RB &otherRB) {
+	rules = *otherRB.rules;
+}
+
+//SOURCE CODE---------------------------------------------------------------------------------------------------------------
+//Add rules
+void RB::Add(Rule::predicate * r){
   try{
     for(auto const &rule : rules){
-      if(rule == r) throw duplicate_rule();
+      if(rule == r) throw throw_exception();
     }
     rules.pushback(r);
-  }catch(duplicate_rule &e){
-      std::cout << e.msg() <<std::endl;
+  }catch(throw_exception &e){
+      std::cout << e.msg("Error: Rule already exists.") <<std::endl;
     }
 }
 
-Rule* Rule::Remove(std::string name){
+//Remove rules
+Rule* RB::Remove(std::string name){
   Rule * temp = nullptr;
   for(int i = 0; i < rules.size(); i++){
     if(rules[i]->name == name){
-      temp = rules[i]; //MAKE SURE TO IMPLEMENT COPY CONSTRUCTOR
+      temp(rules[i]); //MAKE SURE TO IMPLEMENT COPY CONSTRUCTOR
       rules[i].~rule();
       rules.erase(i);
     }
@@ -36,7 +49,7 @@ Rule* Rule::Remove(std::string name){
   return temp;
 }
 
-
+//Print as string
 std::string RB::toString(){
   std::string s = "";
     for(auto & rule : rules){
@@ -45,10 +58,37 @@ std::string RB::toString(){
     return s;
 }
 
+//Load from file
 void RB::Load(std::string filepath){
-
+	ofstream myfile;
+	myfile.open(filepath);
+	try {
+		if (myfile == nullptr) throw throw_exception();//loading isn't implemented
+	}
+	catch (throw_exception &e) {
+		std::cout << e.msg("Error: File not found.") << std::endl;
+	}
 }
 
-std::string Dump(std::string filepath){
+//Save to file
+std::string RB::Dump(std::string filepath){
+
+	/*ofstream myfile;
+	myfile.open(filepath);
+	try {
+		if (rule::size == 0) throw throw_exception();
+
+		for (int i = 0; i < rules::size; i++) {
+			myfile << toString(vector[i]) << std::endl;
+		}
+	}
+	catch (throw_exception &e) {
+		std::cout << e.msg("Error: There are no rules to dump.") << std::endl;
+	}*/
+}
+
+//DECONSTRUCTOR-----------------------------------------------------------------------------------
+//rules destructs itself automatically at the end.
+RB::~RB() {
 
 }

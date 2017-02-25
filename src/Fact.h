@@ -1,19 +1,13 @@
 //Main building block of rule system
-
+#include "Predicate.cpp"
 #include <stdlib.h>
-#include<string>
-using namespace std;
 
-class Fact{
-private:
-  string actor1;
-  string actor2;
-public:
-  Fact(string a_1, string a_2, string r);
-  //copy and move constructors
+class Fact : Predicate {
+  public:
+  std::string Relationship;
+  std::vector<std::string> actors;
 
-  string Relationship;
-  std::pair<string, string> getActors();
-
-  //Operator overloads
+  Fact(std::vector<std::string>, std::string name);
+  bool evaluate(std::vector<std::string>);
+  void toString();
 };
