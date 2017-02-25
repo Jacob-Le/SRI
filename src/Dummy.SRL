@@ -1,0 +1,5 @@
+GrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y)
+Father(Roger,John)
+GreatGrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y) AND Father($X,$Z) Parent($Z,$Y)
+GrandFather($X,$Y):- OR Father($X,$Z) Parent($Z,$Y)
+GreatGrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y) OR Father($X,$Z) Parent($Z,$Y)

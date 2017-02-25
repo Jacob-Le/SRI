@@ -2,8 +2,8 @@
 //Rules that the SRI engine uses to make inferences
 
 #include <stdlib.h>
-#include <cstdarg.h>
-#include "Fact.h"
+#include <cstdarg>
+//#include "Fact.h"
 
 template <typename T, typename O>
 Rule::Rule(std::string n, const &std::vector<O*> Ops, int count, ...){

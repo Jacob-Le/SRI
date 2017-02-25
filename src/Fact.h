@@ -1,17 +1,19 @@
 //Main building block of rule system
 
 #include <stdlib.h>
+#include<string>
+using namespace std;
 
 class Fact{
 private:
-  std::string actor1;
-  std::string actor2;
+  string actor1;
+  string actor2;
 public:
-  Fact(std::string a_1, std::string a_2, std::string r);
+  Fact(string a_1, string a_2, string r);
   //copy and move constructors
 
-  std::string Relationship;
-  std::pair<std::string, std::string> getActors();
+  string Relationship;
+  std::pair<string, string> getActors();
 
   //Operator overloads
 };
