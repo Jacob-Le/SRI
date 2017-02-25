@@ -10,6 +10,12 @@ Fact::Fact(std::vector<std::string> a, std::string name){
 }
 
 bool Fact::evaluate(std::vector<std::string> actors){
-  //if(this == KB.fetch(actors))
-  return true;
+  try{
+    if(this == KB.fetch(Relationship, actors)) return true;
+  }
+  catch(std::invalid_argument){
+    std::cout << "ERROR: Fact does not exist" + "\n" << endl;
+    return false;
+  }
+  return false;
 }
