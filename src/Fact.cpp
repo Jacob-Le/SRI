@@ -5,6 +5,7 @@
 using namespace std;
 
 //Constructor
+<<<<<<< HEAD
 Fact::Fact(vector<string> a, string name){
   actors = a;
   Relationship = name;
@@ -33,3 +34,4 @@ string Fact::toString(){
 	output += ")\n";
 	return output;
 }
+

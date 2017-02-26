@@ -1,7 +1,7 @@
 //Rules that the SRI engine uses to make inferences
 
-#include <cstdlib>
-#include <cstdarg>
+#include <stdlib.h>
+#include <cstdarg.h>
 #include "Fact.h"
 
 template<typename T, typename O>

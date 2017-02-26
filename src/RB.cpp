@@ -12,6 +12,24 @@ struct throw_exception : public exception {
 	}
 };
 
+//struct duplicate_rule : public exception {
+//	const char * msg() const throw() {
+//		return "duplicate rule exception";
+//	}
+//};
+//
+//struct empty_rules : public exception {
+//	const char * msg() const throw() {
+//		return "rules is empty";
+//	}
+//};
+//
+//struct file_not_found : public exception {
+//	const char * msg() const throw() {
+//		return ""
+//	}
+//};
+
 //CONSTRUCTORS-------------------------------------------------------------------------------------------------------------
 //Default. Nothing here since rules is declared as empty already.
 RB::RB(){

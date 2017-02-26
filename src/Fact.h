@@ -1,6 +1,7 @@
 //Main building block of rule system
 #include "Predicate.cpp"
 #include <stdlib.h>
+<<<<<<< HEAD
 using namespace std;
 
 class Fact : Predicate {
@@ -12,3 +13,4 @@ class Fact : Predicate {
   bool evaluate(vector<string>);
   string toString();
 };
+
