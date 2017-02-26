@@ -5,7 +5,7 @@
 #include<algorithm>
 #include<fstream>
 #include "Parse.h"
-//#include "Rule.cpp"
+
 using namespace std;
 
 Parse::Parse(KB* knowledgeBase){ //RB* ruleBase,
@@ -13,7 +13,7 @@ Parse::Parse(KB* knowledgeBase){ //RB* ruleBase,
 	KnowledgeBase = knowledgeBase;
 }
 
-//substr's second argument is how far from first character to search to, not from what char to 
+//substr's second argument is how far from first character to search to, not from what char to
 //what char so this function calculates that
 int Parse::searchLength(int start, int end){
 	return end - start;
@@ -64,20 +64,20 @@ void Parse::ParseFunction(string input){
 	int delimiter1 = input.find("(");
 	string CurrentRuleName = input.substr(0, delimiter1);
 	Relationship.push_back(CurrentRuleName);
-	
+
 	//get actors
 	int delimiter2 = input.find(",",delimiter1);
 	int nextLen = searchLength(delimiter1,delimiter2) -1;
 	string firstEntry = input.substr(delimiter1+1,nextLen);
 	Entry.push_back(firstEntry);
-	
+
 	int delimiter3 = input.find(")",delimiter2) -1;
 	nextLen = searchLength(delimiter2,delimiter3);
 	string secondEntry = input.substr(delimiter2+1,nextLen);
 	Entry.push_back(secondEntry);
-	
+
 	cout<<input<<endl;
-	
+
 	for(int i=0; i<Relationship.size(); i++) cout<<" ["<<i<<"]: "<<Relationship[i];
 	cout<<endl;
 	for(int i=0; i<Entry.size(); i++) cout<<" ["<<i<<"]: "<<Entry[i];
@@ -88,7 +88,7 @@ void Parse::ParseFunction(string input){
 int Parse::numPreds(string input){
 	//cout << "Inside numFunctin(): "<<input << endl;
 	int numOpenParens = count(input.begin(),input.end(), '(');
-	return numOpenParens;	
+	return numOpenParens;
 }
 
 //Oversees all parsing on a single line of input
@@ -110,12 +110,12 @@ void Parse::ParseLine(string input){
 		AddFact();
 		return;
 	}
-	
+
 	//For Rules
-	for(int i=0; i<numRuns-1; i++){  
+	for(int i=0; i<numRuns-1; i++){
 	  searchStart = searchEnd+1;
 	  searchEnd = input.find(")",searchEnd+1);
-	  
+
 	  //Gets Logic Operator and updates searchStart past it
 	  if(i%2 == 0){
 		  //First Logical Operator
@@ -124,7 +124,7 @@ void Parse::ParseLine(string input){
 				//cout<<"AND\n";
 				Logic.push_back(1);
 				searchStart += 6;
-			  } 
+			  }
 			  else if(input[searchStart+3] == 'O'){
 				//cout<<"OR\n";
 				Logic.push_back(0);
@@ -136,7 +136,7 @@ void Parse::ParseLine(string input){
 				//cout<<"AND\n";
 				Logic.push_back(1);
 				searchStart += 4;
-			  } 
+			  }
 			  else if(input[searchStart+1] == 'O'){
 				//cout<<"OR\n";
 				Logic.push_back(0);
@@ -147,9 +147,6 @@ void Parse::ParseLine(string input){
 	  nextLen = searchLength(searchStart+1,searchEnd);
 	  ParseFunction(input.substr(searchStart+1, nextLen));
 	}*/
-	
-	
-}
 
 //Parses a file
 void Parse::ParseFile(string fileName){
@@ -190,7 +187,7 @@ void Parse::AddFact(Fact* f){
 		if(numFcns == 1){
 			fcnName = Relationship.end();
 			Relationship.pop_back();
-			numFcns--;		
+			numFcns--;
 		}
 		Fact* Fact1 = FactVector.end();
 		FactVector.pop_back();

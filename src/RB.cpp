@@ -4,6 +4,8 @@
 #include "RB.h"
 #include <fstream>
 
+using namespace std;
+
 //EXCEPTION HANDLING------------------------------------------------------------------------------------------------------
 //duplicate rules
 struct throw_exception : public exception {
@@ -43,7 +45,7 @@ RB::RB(const RB &otherRB) {
 
 //SOURCE CODE---------------------------------------------------------------------------------------------------------------
 //Add rules
-void RB::Add(Rule::predicate * r){
+void RB::Add(Rule * r){
   try{
     for(auto const &rule : rules){
       if(rule == r) throw throw_exception();
