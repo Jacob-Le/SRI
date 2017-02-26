@@ -6,14 +6,6 @@
 #include "Query.cpp"
 using namespace std;
 
-/*bool OR(auto A, auto B){
-	return A || B;
-}
-
-bool AND(auto A, auto B){
-	return A && B;
-}*/
-
 main(){
   /*bool (*entry)(auto A, auto B);
   *entry = OR;
@@ -21,6 +13,7 @@ main(){
   Ops.push_back(OR);
   string Parent = "Parent";
   Rule<,typedef(OR)> Rule(Parent,Ops,0);*/	
+  cout << "Start?";
   KB* Knowledge = new KB();
   vector<string> Actors;
   Actors.push_back("J");
@@ -32,11 +25,11 @@ main(){
   Fact* John = new Fact(Actors2,"Jameson");
   Knowledge->Add(John);
   vector<Fact*>* JJJ2 = Knowledge->Find(JJJ->Relationship);
-  cout<<"Right here?\n";
   string output = JJJ2->at(0)->toString();
   cout << output;
-  Query* QQ = new Query();
-  JJJ2 = QQ->listFact(Knowledge, JJJ->Relationship);
+  //Query* QQ = new Query();
+  //JJJ2 = QQ->listFact(Knowledge, JJJ->Relationship);
   output = Knowledge->toString();
   cout << output;
+  //Knowledge->Find("Jaguar");
 }

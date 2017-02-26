@@ -21,6 +21,7 @@ class Parse{
 	int numPreds(string input);
 	void ParseLine(string input);
 	void ParseFile(string fileName);
+	void DumpToFile(string fileName,string input);
 	void ParseTerminalInput();
 	void AddFact(Fact* factptr);
 	void AddRule(int numFcns);

@@ -24,7 +24,7 @@ Fact::Fact(vector<string> a, string name){
 
 //Converts entire fact into a string
 string Fact::toString(){
-	string output = "";
+	string output = "FACT ";
 	output = output + Relationship +"(";
 	for(int i=0; i < actors.size(); i++){
 		output += actors[i]; 

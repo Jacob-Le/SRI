@@ -41,13 +41,13 @@ void Parse::ParseFact(string input){
 			delimiter3;
 			nextLen = searchLength(delimiter1,delimiter3);
 			Entry = input.substr(delimiter1,nextLen);
-			cout << Entry << endl;
+			//cout << Entry << endl;
 			Entries.push_back(Entry);
 			break;
 		}
 		nextLen = searchLength(delimiter1,delimiter2) -1; //determine search length
 		Entry = input.substr(delimiter1+1,nextLen); //parse out actor
-		cout << Entry << endl;
+		//cout << Entry << endl;
 		Entries.push_back(Entry); //add to vector of actors
 		delimiter1 = delimiter2;
 		delimiter2 = input.find(",",delimiter2+1);
@@ -92,13 +92,48 @@ int Parse::numPreds(string input){
 
 //Oversees all parsing on a single line of input
 void Parse::ParseLine(string input){
+	
+	bool LOAD = false;
+	bool DUMP = false;
+	bool FACT = false;
+	bool RULE = false;
+	bool INFE = false; //short for INFERENCE
+	bool DROP = false;
+	
 	int numRuns = numPreds(input);
 	//cout << numRuns;
+	//cout<< "input: " << input <<endl;
 	int searchStart = 0;
 	int searchEnd = input.find(")");
 	int nextLen = searchLength(searchEnd,searchStart);
-	int ruleCheck = input.find(":-",searchStart);
-	if(ruleCheck == -1){ //If dog's bollocks not found
+	
+	//Determine Command
+	string command = input.substr(searchStart, 4);
+	//cout << "command: " << command << endl;
+	if(command == "LOAD"){
+		LOAD = true;
+		searchEnd = input.size()-1;
+	}else if(command == "DUMP"){
+		DUMP = true;
+		searchEnd = input.size()-1;
+	}else if(command == "FACT") FACT = true;
+	else if(command == "RULE") RULE = true;
+	else if(command == "INFE"){
+		INFE = true;
+		searchStart+=5;
+	}else if(command == "DROP") DROP = true;
+	searchStart += 5;
+	nextLen = searchLength(searchEnd,searchStart);
+	
+	//Enact Command
+	if(LOAD){
+		ParseFile(input.substr(searchStart, nextLen));
+		return;
+	}else if(DUMP){
+		string fileDump = KnowledgeBase->toString();
+		DumpToFile(input.substr(searchStart, nextLen),fileDump);
+		return;
+	}else if(FACT){//ruleCheck == -1){ //If dog's bollocks not found
 		ParseFact(input.substr(searchStart, nextLen)); //then it is a fact
 		return;
 	}
@@ -154,11 +189,10 @@ void Parse::ParseLine(string input){
 void Parse::ParseFile(string fileName){
 	string input;
 	fstream file;
-	file.open("Dummy.SRL",std::fstream::in);
+	file.open(fileName.c_str(),std::fstream::in);
 	Relationship.clear();
 	Entry.clear();
 	cout<<"From File:\n";
-	//cout<<input7<<endl;
 	while(!file.eof()){
 	  getline(file,input);
 	  ParseLine(input);
@@ -166,11 +200,24 @@ void Parse::ParseFile(string fileName){
 	file.close();
 }
 
+void Parse::DumpToFile(string fileName,string input){
+	fstream file;
+	file.open(fileName.c_str(),std::fstream::out);
+	file.write(input.c_str(),input.size());
+	file.close();
+}
+
 //Parses single line of input from terminal
 void Parse::ParseTerminalInput(){
-	string input;
-	getline(cin, input);
-	ParseLine(input);
+	cout << "Enter 'q' to quit\n";
+	string quit = "q";
+	while(true){
+		string input;
+		getline(cin, input);
+		//cout << input << endl;
+		if(input.compare(quit) == 0) break;
+		ParseLine(input);
+	}
 }
 
 //Add Fact to KB once function is built
@@ -214,27 +261,17 @@ void Parse::AddFact(Fact* f){
 main(){
 	KB* kb = new KB();
 	Parse Parser = Parse(kb);
-	/*string input = "GrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y)";
-	string input2 = "Father(Roger,John)";
-	string input3 = "GreatGrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y) AND Father($X,$Z) Parent($Z,$Y)";
-	string input4 = "GrandFather($X,$Y):- OR Father($X,$Z) Parent($Z,$Y)";
-	string input5 = "GreatGrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y) OR Father($X,$Z) Parent($Z,$Y)";
-	Parser.ParseLine(input);
-	Parser.ParseLine(input2);
-	Parser.ParseLine(input3);
-	Parser.ParseLine(input4);
-	Parser.ParseLine(input5);
-	string input6;
-	getline(cin, input6);
-	Parser.ParseLine(input6);*/
 	Parser.ParseFile("Dummy.SRL");
-	string input = "Alive(Roger)";
-	string input2 = "Father(Roger,John)";
-	string input3 = "Triplets(Roger,John,Jake)";
-	string input4 = "Quadruplets(Roger,John,Jake,Peter)";
+	string input = "FACT Alive(Roger)";
+	string input2 = "FACT Father(Roger,John)";
+	string input3 = "FACT Triplets(Roger,John,Jake)";
+	string input4 = "FACT Quadruplets(Roger,John,Jake,Peter)";
 	Parser.ParseLine(input);
 	Parser.ParseLine(input2);
 	Parser.ParseLine(input3);
 	Parser.ParseLine(input4);
+	Parser.ParseTerminalInput();
 	cout << kb->toString();
+	//for(int i=0; i<argc; i++) cout << "["<< i << "]: " << argv[i] << " ";
+	cout << endl;
 }
