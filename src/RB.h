@@ -1,11 +1,14 @@
 //Rule database
 #include <stdlib.h>
+#ifndef Predicate_h
 #include "Predicate.h"
+#endif
+
 using namespace std;
 
 class RB{
 private:
-  std::vector<Rule> rules;
+  std::vector<*Rule> rules;
 public:
   RB();
   RB(const RB &otherRB);

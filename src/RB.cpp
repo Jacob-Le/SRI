@@ -4,6 +4,8 @@
 #include "RB.h"
 #include <fstream>
 
+using namespace std;
+
 //EXCEPTION HANDLING------------------------------------------------------------------------------------------------------
 //duplicate rules
 struct throw_exception : public exception {
