@@ -11,11 +11,7 @@ Query::Query() {
 //FACT--------------------------------------------------------------------------
 vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
 	vector<Fact*>* result = Knowledge->Find(factKey); 
-	for (int i = 0; i < result->size(); i++) {
-		result->at(i)->toString();
-		//printf(result[i]);
-		//printf("\n");
-	}
+	for (int i = 0; i < result->size(); i++) result->at(i)->toString();
 	return result;
 }
 
@@ -36,15 +32,17 @@ vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
 //}
 
 //helper function to get rid of duplicates
-/*vector<string> Query::concatenate(vector<string> resultA, vector<string> resultB) {
-	vector<string> result;
-	bool found;
+vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB) {
+	vector<Fact*> result;
+	bool found = false;
+	result = preventDupes(resultA, result);
+	result = preventDupes(resultB, result);
 	//prepare yourself for a brute force search algorithm wooooooo
 	//checks if A in B. If not, pushback onto result vector.
-	for (int i = 0; i < resultA.size(); i++) {
+	/*for (int i = 0; i < resultA.size(); i++) {
 		found = false;
 		for (int j = 0; j < resultB.size(); j++) {
-			if (resultA.at(i) == resultB[j]) {
+			if (resultA.at(i) == resultB.at(j)) {
 				found = true;
 				break;
 			}
@@ -67,7 +65,39 @@ vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
 		if (!found) {
 			result.push_back(resultB[i]);
 		}
-	}
-
+	}*/
 	return result;
-}*/
+}
+
+//used in concatenate to look for dupes
+vector<Fact*> Query::preventDupes(vector<Fact*>* A, vector<Fact*> B){
+
+	vector<bool> diffChecker;
+	for(int i=0; i<A->size(); i++){
+		if(B.size()!= 0){
+			for(int j=0; j<B.size(); j++){
+				if(B.at(j)->actors.size() == A->at(i)->actors.size()){
+					diffChecker.assign(A->at(i)->actors.size(),false);
+					for(int k = 0; k<B.at(j)->actors.size();k++){
+						if(B.at(j)->actors.at(k) != A->at(i)->actors.at(k)){
+							diffChecker.at(k) = true;
+							break;
+						}
+					}
+					for(int k =0; k<diffChecker.size(); k++){
+						if(diffChecker.at(k)==true){
+							B.push_back(A->at(i));
+							break;
+						}
+					}
+				}
+			}
+			if(diffChecker.size()==0) B.push_back(A->at(i));
+			diffChecker.clear();
+		}else{
+			B.push_back(A->at(i));
+		}
+	}
+	
+	return B;		
+}

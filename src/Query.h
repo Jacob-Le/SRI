@@ -16,5 +16,6 @@ class Query {
 
 	//SIMPLE RULE-------------------------------------------------------------------
 	void listSimpleRule(/*something*/);
-	vector<string> concatenate(vector<string> resultA, vector<string> resultB);
+	vector<Fact*> concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB);
+	vector<Fact*> preventDupes(vector<Fact*>* A, vector<Fact*> B);
 };
