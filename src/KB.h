@@ -1,14 +1,21 @@
+#include <string>
+#include <vector>
+#include <map>
+#include <iostream>
+#include "Fact.cpp"
+using namespace std;
+
 class KB{
-private:
-	//map, stored facts categorized by relationship
-	std::map <std::string, std::vector<*Fact>> FactMap;
 public:
+	//map, stored facts categorized by relationship
+	std::map <string, vector<Fact*> > FactMap;
 	KB();
 	~KB();
 	void Add(Fact * fact);
-	Fact Remove(std::string cat, int index);
-	Fact Fetch(std::string r, std::vector<std::string> actors);
-	//toString();
+	Fact* Remove(Fact * fact);
+	Fact* Fetch(string r, vector<string> actors);
+	vector<Fact*>* Find(string findKey);
+	string toString();
 	//void Dump();
 	//void Load();
 };
