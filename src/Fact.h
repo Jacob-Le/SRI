@@ -1,13 +1,14 @@
 //Main building block of rule system
 #include "Predicate.cpp"
 #include <stdlib.h>
+using namespace std;
 
 class Fact : Predicate {
   public:
-  std::string Relationship;
-  std::vector<std::string> actors;
+  string Relationship;
+  vector<string> actors;
 
-  Fact(std::vector<std::string>, std::string name);
-  bool evaluate(std::vector<std::string>);
-  void toString();
+  Fact(vector<string>, string name);
+  bool evaluate(vector<string>);
+  string toString();
 };

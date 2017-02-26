@@ -2,9 +2,10 @@
 #include <iostream>
 #include <stdlib.h>
 #include "Fact.h"
+using namespace std;
 
 //Constructor
-Fact::Fact(std::vector<std::string> a, std::string name){
+Fact::Fact(vector<string> a, string name){
   actors = a;
   Relationship = name;
 }
@@ -21,8 +22,14 @@ Fact::Fact(std::vector<std::string> a, std::string name){
   return false;
 }*/
 
-void Fact::toString(){
-	std::cout<< Relationship <<"(";
-	for(int i=0; i < actors.size(); i++) std::cout << actors[i] <<", ";
-	std::cout<<")\n";
+//Converts entire fact into a string
+string Fact::toString(){
+	string output = "";
+	output = output + Relationship +"(";
+	for(int i=0; i < actors.size(); i++){
+		output += actors[i]; 
+		if(i+1 != actors.size()) output += ", ";
+	}
+	output += ")\n";
+	return output;
 }

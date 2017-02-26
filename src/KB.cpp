@@ -1,5 +1,6 @@
 //knowledge base//
 //#include<map>
+#include<algorithm>
 #include "KB.h"
 
 using namespace std;
@@ -51,4 +52,13 @@ Fact* KB::Fetch(string r, vector<string> a) {
 vector<Fact*>* KB::Find(string findKey){
 	vector<Fact*>* ptr = &FactMap[findKey];
 	return ptr;
+}
+
+string KB::toString(){
+	string output = "";
+	map<string, vector<Fact*> > ::iterator it = FactMap.begin();
+	for(; it!= FactMap.end(); it++){
+		for(int i=0; i< it->second.size();i++) output += it->second.at(i)->toString();
+	}
+	return output;
 }
