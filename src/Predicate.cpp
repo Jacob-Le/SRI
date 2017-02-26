@@ -48,7 +48,7 @@ Rule::Rule(string n, vector<void (*op)(Rule, Rule)> Ops, int count, ...){
   va_list cmp;
   vector<Predicate*> components;
   for(int i = 0; i < count; i++) components.pushback(va_arg(cmp, Predicate));
-  vector<void (*op)(Rule, Rule)> ops = Ops;
+  vector<void (*op)(Rule, Rule)> ops = Ops; //Operators that compare each component of the rule
   va_end(cmp);
 }
 
