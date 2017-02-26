@@ -53,6 +53,7 @@ void Parse::ParseFact(string input){
 		delimiter2 = input.find(",",delimiter2+1);
 	}
 	Fact* newFact = new Fact(Entries, relationship);
+	//KnowledgeBase->Add(newFact);
 	AddFact(newFact);
 }
 /*
