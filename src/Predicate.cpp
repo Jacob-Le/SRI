@@ -1,5 +1,6 @@
 //Predicate.cpp
 #include "Predicate.h"
+#include <iostream>
 
 using namespace std;
 
@@ -35,6 +36,17 @@ bool Fact::evaluate(vector<string> actors){
     return false;
   }
   return false;
+}
+
+string Fact::toString(){
+    string output = "FACT ";
+    output = output + Relationship +"(";
+    for(int i=0; i < actors.size(); i++){
+        output += actors[i];
+        if(i+1 != actors.size()) output += ", ";
+    }
+    output += ")\n";
+    return output;
 }
 
 class Ops{

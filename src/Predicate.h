@@ -26,6 +26,7 @@ typedef struct Fact : Predicate {
 
   Fact(vector<string> r, string name);
   bool evaluate(vector<string> actors);
+  string toString();
 
 }Fact;
 

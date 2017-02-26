@@ -12,9 +12,9 @@ public:
 	std::map <string, vector<Fact*> > FactMap;
 	KB();
 	~KB();
-  
+
 	void Add(Fact * fact);
-	Fact* Remove(std::string cat, int index);
+	Fact* Remove(Fact * fact);
 	Fact* Fetch(string r, vector<string> actors);
 	vector<Fact*>* Find(string findKey);
 	string toString();
