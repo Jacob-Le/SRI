@@ -1,18 +1,20 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "KB.h"
+//#include "KB.cpp"
+using namespace std;
 
 //Categorized according to Evie's plan
 class Query {
+	public:
 	//something var currentQuery <--THE THING THAT QUERY PASSES AROUND IDK WHAT IT IS THO
 
 	Query();
 
 	//FACT--------------------------------------------------------------------------
-	std::vector<std::string> listFact(std::string factKey);
+	vector<Fact*>* listFact(KB* Knowledge, string factKey); //used to return vector<string>
 
 	//SIMPLE RULE-------------------------------------------------------------------
 	void listSimpleRule(/*something*/);
-	std::vector<std::string> concatenate(std::vector<std::string> resultA, std::vector<std::string> resultB);
-}
+	vector<string> concatenate(vector<string> resultA, vector<string> resultB);
+};

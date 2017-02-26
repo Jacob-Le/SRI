@@ -1,6 +1,7 @@
 //CompileTest.cpp
 //#include "Rule.cpp"
 #include "KB.cpp"
+#include "Query.cpp"
 
 /*bool OR(auto A, auto B){
 	return A || B;
@@ -25,4 +26,6 @@ main(){
   Knowledge->Add(JJJ);
   vector<Fact*>* JJJ2 = Knowledge->Find(JJJ->Relationship);
   JJJ2->at(0)->toString();
+  Query* QQ = new Query();
+  JJJ2 = QQ->listFact(Knowledge, JJJ->Relationship);
 }
