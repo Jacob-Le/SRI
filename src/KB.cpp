@@ -3,24 +3,6 @@
 #include "KB.h"
 
 using namespace std;
-/*
-class KB{
-public:
-	//map, stored facts categorized by relationship
-	map <string,vector<*Fact>> FactMap;
-private:
-	KB();
-	~KB();
-
-	void Add(Fact * fact);
-	Fact * Remove(Fact * fact); //pops fact
-	Fact * Fetch(string r, vector<string> actors);
-	vector<Fact>* Find(string findKey);
-	//toString();
-	//void Dump();
-	//void Load();
-};
-*/
 
 //Constructor, initializes as empty
 KB::KB(){
@@ -28,11 +10,9 @@ KB::KB(){
 }
 
 //Destructor
-/*KB::~KB(){
-	for(const auto &r : FactMap){
-		delete[] FactMap;
-	}
-}*/
+KB::~KB(){
+	FactMap.clear();
+}
 
 //Takes in a fact pointer (fact must be created outside of add) and adds it to
 //the KB if it doesn't already exist
@@ -54,17 +34,17 @@ void KB::Add(Fact * fact){
 	}
 }
 
-/* *Fact KB::Fetch(string r, vector<string> a) throw(invalid_argument){
-	for(const auto &f : FactMap[r]){
+Fact* KB::Fetch(string r, vector<string> a) {
+	for(Fact* f : FactMap[r]){
 		if(f->actors == a) return f;
 	}
-	else return nullptr;
-}*/
+	return NULL; //was nullptr (probably should still be)
+} 
 
-/* *Fact KB::Remove(Fact * fact){
+/*Fact* KB::Remove(Fact * fact){
 	ptrdiff_t pos = find(FactMap[fact->Relationship].begin(), FactMap[fact->Relationship].begin(), fact) - FactMap[fact->Relationship].begin();
 	Fact * temp = fact;
-	erase(pos);
+	FactMap[fact->Relationship].erase(pos)
 	return temp;
 }*/
 

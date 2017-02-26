@@ -12,8 +12,8 @@ public:
 	KB();
 	~KB();
 	void Add(Fact * fact);
-	//Fact * Remove(string cat, int index);
-	//Fact * Fetch(string r, vector<string> actors);
+	Fact* Remove(Fact * fact);
+	Fact* Fetch(string r, vector<string> actors);
 	vector<Fact*>* Find(string findKey);
 	//toString();
 	//void Dump();
