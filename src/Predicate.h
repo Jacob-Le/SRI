@@ -1,47 +1,50 @@
 //Predicate.h
 #include<vector>
+#ifndef stdlib_h
+#include <stdlib.h>
+#endif
 #include<cstdarg>
 #include<string>
 using namespace std;
 
-typedef struct Predicate{ //AKA FACT OR RULE, DEPENDING ON WHAT RULE IT IS CALLED IN
+//AKA FACT OR RULE, DEPENDING ON WHAT RULE IT IS CALLED IN
+typedef struct Predicate{
   string Relationship;
-  std::vector<string> Actors;
+  vector<string> components;
 
+  Predicate();
   Predicate(string relationship, int argCount, ... );
-  bool evaluate();
+  bool evaluate(vector<string> actors);
+  bool (*AND)(Predicate one, Predicate two);
+  bool (*OR)(Predicate one, Predicate two);
 }Predicate;
 
 typedef struct Fact : Predicate {
 
-  std::string Relationship;
-  std::vector<std::string> actors;
+  string Relationship;
+  vector<string> actors;
 
-  Fact(std::vector<std::string> r, std::vector<std::string> name);
-  bool evaluate(std::vector<std::string> actors);
+  Fact(vector<string> r, string name);
+  bool evaluate(vector<string> actors);
 
-};
+}Fact;
 
-template<typename T, typename O>
-class dummy_rule : Predicate{
-  std::string name;
+typedef struct Rule : Predicate{
+  string name;
   //Vector of predicate components (Rules or facts) that make up this rule
-  std::vector<T*> components;
+  vector<Predicate*> components;
 
-  //Function pointer that points to a function that emulates boolean operators
-  std::vector<O*> ops;
+  //Function pointers that point to functions that emulate boolean operators
+  vector<void (*op)(Rule, Rule)> ops;
 
   //Variadic constructor that accepts any number of conditions
-  Rule(std::string name, const &std::vector<O*> ops, int count, ...);
+  Rule(string name, &vector<void (*op)(Rule, Rule)> ops, int count, ...);
   //copy and move constructors: later!
 
-  bool evaluate();
-  bool enact();
+  bool evaluate(vector<string> actors);
+  bool enact(vector<string> actors);
 
   //Operator overloads: shortcuts for calculating condition fufullment
-  bool operator &&(const &dummy_rule r);
-  bool operator ||(const &dummy_rule r);
-};
-
-template<typename T, typename O>
-using Rule = typename Rule<T, O>::dummy_rule;
+  //bool operator &&(const &Rule r);
+  //bool operator ||(const &Rule r);
+}Rule;
