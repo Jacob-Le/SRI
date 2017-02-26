@@ -1,15 +1,15 @@
 //Parse.cpp
-#include<stdio.h>
-//#include<string>
+#include<cstdio>
+#include<string>
 #include<iostream>
 #include<algorithm>
 #include<fstream>
 #include "Parse.h"
-//#include "RB.cpp"
+
 using namespace std;
 
-Parse::Parse(RB* ruleBase, KB* knowledgeBase){
-	RuleBase = ruleBase;
+Parse::Parse(KB* knowledgeBase){ //RB* ruleBase,
+	//RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
 }
 
@@ -19,6 +19,44 @@ int Parse::searchLength(int start, int end){
 	return end - start;
 }
 
+void Parse::ParseFact(string input){
+	//start parsing input
+	vector<string> Entries;
+	string Entry;
+	int nextLen;
+	bool oneArg;
+	int delimiter1 = input.find("(");
+	string relationship = input.substr(0, delimiter1);
+	
+	int delimiter2 = input.find(",",delimiter1); //.find() sets to -1 if not found I hope
+	if(delimiter2 == -1) oneArg = true;
+	int delimiter3 = input.find(")",delimiter2);
+
+	while(delimiter2 < delimiter3){
+		if(delimiter2 == -1){
+			if(oneArg){
+				delimiter2 = delimiter1;
+			}
+			delimiter1+=1;
+			delimiter3;
+			nextLen = searchLength(delimiter1,delimiter3);
+			Entry = input.substr(delimiter1,nextLen);
+			cout << Entry << endl;
+			Entries.push_back(Entry);
+			break;
+		}
+		nextLen = searchLength(delimiter1,delimiter2) -1; //determine search length
+		Entry = input.substr(delimiter1+1,nextLen); //parse out actor
+		cout << Entry << endl;
+		Entries.push_back(Entry); //add to vector of actors
+		delimiter1 = delimiter2;
+		delimiter2 = input.find(",",delimiter2+1);
+	}
+	Fact* newFact = new Fact(Entries, relationship);
+	//KnowledgeBase->Add(newFact);
+	AddFact(newFact);
+}
+/*
 //Parses up to the end of "function(param,param)"
 void Parse::ParseFunction(string input){
 
@@ -45,9 +83,9 @@ void Parse::ParseFunction(string input){
 	for(int i=0; i<Entry.size(); i++) cout<<" ["<<i<<"]: "<<Entry[i];
 	cout<<endl;
 }
-
+*/
 //Lets ParseLine know how many times to run ParseFunction on input
-int Parse::numFunctions(string input){
+int Parse::numPreds(string input){
 	//cout << "Inside numFunctin(): "<<input << endl;
 	int numOpenParens = count(input.begin(),input.end(), '(');
 	return numOpenParens;
@@ -55,11 +93,17 @@ int Parse::numFunctions(string input){
 
 //Oversees all parsing on a single line of input
 void Parse::ParseLine(string input){
-	int numRuns = numFunctions(input);
+	int numRuns = numPreds(input);
 	//cout << numRuns;
 	int searchStart = 0;
 	int searchEnd = input.find(")");
 	int nextLen = searchLength(searchEnd,searchStart);
+	int ruleCheck = input.find(":-",searchStart);
+	if(ruleCheck == -1){ //If dog's bollocks not found
+		ParseFact(input.substr(searchStart, nextLen)); //then it is a fact
+		return;
+	}
+	/*
 	ParseFunction(input.substr(searchStart, nextLen));
 	if (numRuns-1 == 0){
 		//cout<<"chicky nugs\n";
@@ -102,10 +146,7 @@ void Parse::ParseLine(string input){
 	  }
 	  nextLen = searchLength(searchStart+1,searchEnd);
 	  ParseFunction(input.substr(searchStart+1, nextLen));
-	}
-
-
-}
+	}*/
 
 //Parses a file
 void Parse::ParseFile(string fileName){
@@ -127,28 +168,16 @@ void Parse::ParseFile(string fileName){
 void Parse::ParseTerminalInput(){
 	string input;
 	getline(cin, input);
-	Parser.ParseLine(input6);
-}
-
-//Puts the last two entries and last relationship into a fact object
-Fact* Parse::MakeFact(){
-	string actor1 = Entry.end();
-	Entry.pop_back();
-	string actor2 = Entry.end();
-	Entry.pop_back();
-	string relationship = Relationship.end();
-	Relationship.pop_back();
-	Fact* newFact = new Fact(Entry[0],Entry[1],Relationship[0]);
-	return Fact*;
+	ParseLine(input);
 }
 
 //Add Fact to KB once function is built
-void Parse::AddFact(){
-	//KnowledgeBase->add()
+void Parse::AddFact(Fact* f){
+	KnowledgeBase->Add(f);
 }
 
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
-void Parse::AddRule(int numFcns){
+/*void Parse::AddRule(int numFcns){
 	for(int i=numFcns-1; i>0; i--){
 		Fact* newFact = MakeFact();
 		FactVector.push_back();
@@ -178,10 +207,11 @@ void Parse::AddRule(int numFcns){
 	}
 	RuleBase->add(domRule);
 	}
-}
+}*/
 
 main(){
-	Parse Parser = Parse();
+	KB* kb = new KB();
+	Parse Parser = Parse(kb);
 	/*string input = "GrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y)";
 	string input2 = "Father(Roger,John)";
 	string input3 = "GreatGrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y) AND Father($X,$Z) Parent($Z,$Y)";
@@ -196,4 +226,13 @@ main(){
 	getline(cin, input6);
 	Parser.ParseLine(input6);*/
 	Parser.ParseFile("Dummy.SRL");
+	string input = "Alive(Roger)";
+	string input2 = "Father(Roger,John)";
+	string input3 = "Triplets(Roger,John,Jake)";
+	string input4 = "Quadruplets(Roger,John,Jake,Peter)";
+	Parser.ParseLine(input);
+	Parser.ParseLine(input2);
+	Parser.ParseLine(input3);
+	Parser.ParseLine(input4);
+	cout << kb->toString();
 }
