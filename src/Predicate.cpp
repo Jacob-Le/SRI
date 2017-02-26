@@ -3,6 +3,15 @@
 
 using namespace std;
 
+virtual bool Ops::AND(const bool a, const bool b) {
+	return a && b;
+}
+
+virtual bool Ops::OR(const bool a, const bool b) {
+	return a || b;
+}
+
+
 Predicate::Predicate(){
 
 }
@@ -37,18 +46,12 @@ bool Fact::evaluate(vector<string> actors){
   return false;
 }
 
-class Ops{
-public:
-  virtual bool AND(const bool a, const bool b);
-  virtual bool OR(const bool a, const bool b);
-}
-
-Rule::Rule(string n, vector<void (*op)(Rule, Rule)> Ops, int count, ...){
+Rule::Rule(string n, int count, ...){
   string name = n;
   va_list cmp;
   vector<Predicate*> components;
   for(int i = 0; i < count; i++) components.pushback(va_arg(cmp, Predicate));
-  vector<void (*op)(Rule, Rule)> ops = Ops;
+  ops = new Ops();
   va_end(cmp);
 }
 
@@ -89,3 +92,4 @@ bool Rule::operator || (const &Rule r){
   return this->evaluate() || r.evaluate();
 }
 */
+
