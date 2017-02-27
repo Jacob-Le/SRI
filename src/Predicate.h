@@ -1,6 +1,6 @@
 //Predicate.h
 #include<vector>
-#ifndef stdlib_h
+#ifndef STDLIB_H
 #include <stdlib.h>
 #endif
 #include<cstdarg>
@@ -40,7 +40,9 @@ typedef struct Rule : Predicate{
 
   //Variadic constructor that accepts any number of conditions
   Rule(string name, &vector<void (*op)(Rule, Rule)> ops, int count, ...);
-  //copy and move constructors: later!
+  //copy and move constructors
+  Rule(&&Rule r);
+
 
   bool evaluate(vector<string> actors);
   bool enact(vector<string> actors);

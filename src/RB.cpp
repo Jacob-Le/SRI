@@ -1,6 +1,6 @@
 //Rule database
 
-#include <stdlib>
+#include <stdlib.h>
 #include <fstream>
 #include <iostream>
 
@@ -46,7 +46,7 @@ RB::RB(){
 
 //copy constructor
 RB::RB(const RB &otherRB) {
-	rules = *otherRB.rules;
+	rules = otherRB.rules;
 }
 
 //SOURCE CODE---------------------------------------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ void RB::Load(std::string filepath){
 		if (myfile == 0) throw throw_exception();//loading isn't implemented
 	}
 	catch (throw_exception &e) {
-		std::cout << e.msg("Error: File not found.") << std::endl;
+		std::cout << "Error: File not found." << "\n" << std::endl;
 	}
 }
 

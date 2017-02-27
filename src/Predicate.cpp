@@ -55,13 +55,19 @@ public:
   virtual bool OR(const bool a, const bool b);
 }
 
-Rule::Rule(string n, vector<void (*op)(Rule, Rule)> Ops, int count, ...){
+Rule::Rule(string n, vector<void (*op)(Predicate, Predicate)> Ops, int count, ...){
   string name = n;
   va_list cmp;
   vector<Predicate*> components;
   for(int i = 0; i < count; i++) components.pushback(va_arg(cmp, Predicate));
-  vector<void (*op)(Rule, Rule)> ops = Ops; //Operators that compare each component of the rule
+  vector<void (*op)(Predicate, Predicate)> ops = Ops; //Operators that compare each component of the rule
   va_end(cmp);
+}
+
+Rule::Rule(&&Rule r){
+  std::swap(name, r.name);
+  std::swap(components, r.components);
+  std::swap(Ops, r.Ops);
 }
 
 bool Rule::evaluate(vector<string> actors){
@@ -92,6 +98,18 @@ bool Rule::enact(vector<string> actors){
   }
   return false;
 }
+
+string Rule::toString(){
+    string output = "RULE ";
+    output = output + name +"(";
+    for(int i=0; i < components.size(); i++){
+        output += components[i].name;
+        if(i+1 != components.size()) output += ", ";
+    }
+    output += ")\n";
+    return output;
+}
+
 /*
 bool Rule::operator && (const &Rule r){
   return this->evaluate() && r.evaluate();

@@ -15,7 +15,7 @@ public:
   ~RB();
 
   void Add(Rule * r);
-  Rule* Remove(Rule * r);
+  Rule* Remove(std::string name);
   std::string toString();
   void Load(std::string filepath);
   std::string Dump(std::string filepath);
