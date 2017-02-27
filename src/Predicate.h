@@ -9,23 +9,32 @@ using namespace std;
 
 //AKA FACT OR RULE, DEPENDING ON WHAT RULE IT IS CALLED IN
 typedef struct Predicate{
-  string Relationship;
+  string name;
   vector<string> components;
 
+  //Constructors
   Predicate();
-  Predicate(string relationship, int argCount, ... );
-  bool evaluate(vector<string> actors);
-  bool (*AND)(Predicate one, Predicate two);
-  bool (*OR)(Predicate one, Predicate two);
+  Predicate(string name, int argCount, ... );
+  Predicate(const Predicate& p);
+  Predicate(Predicate && p);
+
+  bool evaluate(vector<string> components);
+
+  // bool (*AND)(bool one, bool two);
+  // bool (*OR)(bool one, bool two);
 }Predicate;
 
 typedef struct Fact : Predicate {
 
-  string Relationship;
-  vector<string> actors;
+  string name;
+  vector<string> components;
 
-  Fact(vector<string> r, string name);
-  bool evaluate(vector<string> actors);
+  //Constructors
+  Fact(string name, vector<string> r);
+  Fact(const Fact & r);
+  Fact(Fact && r);
+
+  bool evaluate(vector<string> components);
   string toString();
 
 }Fact;
@@ -36,16 +45,18 @@ typedef struct Rule : Predicate{
   vector<Predicate*> components;
 
   //Function pointers that point to functions that emulate boolean operators
-  vector<void (*op)(Rule, Rule)> ops;
+  vector<bool (*)(bool, bool)> ops;
 
   //Variadic constructor that accepts any number of conditions
-  Rule(string name, &vector<void (*op)(Rule, Rule)> ops, int count, ...);
+  Rule(string name, vector<bool (*)(bool, bool)> ops, int count, ...);
   //copy and move constructors
-  Rule(&&Rule r);
+  Rule(const Rule & r);
+  Rule(Rule && r);
 
 
-  bool evaluate(vector<string> actors);
-  bool enact(vector<string> actors);
+  bool evaluate(vector<string> components);
+  bool enact(vector<string> components);
+  string toString();
 
   //Operator overloads: shortcuts for calculating condition fufullment
   //bool operator &&(const &Rule r);
