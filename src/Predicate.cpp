@@ -15,14 +15,19 @@ Predicate::Predicate(string relationship, int argCount, ... ){
   va_end(args);
 }
 
+Predicate::Predicate(string relationship, vector<string> Components){
+  Relationship = relationship;
+  components = Components;
+}
+
 bool Predicate::evaluate(vector<string> actors){
   return true;
 }
 
 //Constructor
 Fact::Fact(vector<string> a, string name){
-  vector<string> actors = a;
-  string Relationship = name;
+  actors = a;
+  Relationship = name;
 }
 
 bool Fact::evaluate(vector<string> actors){
@@ -37,12 +42,25 @@ bool Fact::evaluate(vector<string> actors){
   return false;
 }
 
+//Converts entire fact into a string
+string Fact::toString(){
+	string output = "FACT ";
+	output = output + Relationship +"(";
+	for(int i=0; i < actors.size(); i++){
+		output += actors[i]; 
+		if(i+1 != actors.size()) output += ", ";
+	}
+	output += ")\n";
+	return output;
+}
+
 class Ops{
 public:
   virtual bool AND(const bool a, const bool b);
   virtual bool OR(const bool a, const bool b);
-}
+};
 
+/*
 Rule::Rule(string n, vector<void (*op)(Rule, Rule)> Ops, int count, ...){
   string name = n;
   va_list cmp;

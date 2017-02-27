@@ -1,5 +1,3 @@
-//Predicate.h
-#include<vector>
 #ifndef stdlib_h
 #include <stdlib.h>
 #endif
@@ -14,6 +12,7 @@ typedef struct Predicate{
 
   Predicate();
   Predicate(string relationship, int argCount, ... );
+  Predicate(string relationship, vector<string> Components );
   bool evaluate(vector<string> actors);
   bool (*AND)(Predicate one, Predicate two);
   bool (*OR)(Predicate one, Predicate two);
@@ -24,12 +23,13 @@ typedef struct Fact : Predicate {
   string Relationship;
   vector<string> actors;
 
-  Fact(vector<string> r, string name);
+  Fact(vector<string> a, string name);
   bool evaluate(vector<string> actors);
+  string toString();
 
 }Fact;
 
-typedef struct Rule : Predicate{
+/*typedef struct Rule : Predicate{
   string name;
   //Vector of predicate components (Rules or facts) that make up this rule
   vector<Predicate*> components;
@@ -47,4 +47,4 @@ typedef struct Rule : Predicate{
   //Operator overloads: shortcuts for calculating condition fufullment
   //bool operator &&(const &Rule r);
   //bool operator ||(const &Rule r);
-}Rule;
+}Rule;*/
