@@ -1,8 +1,14 @@
 //Rule database
 
-#include <stdlib.h>
-#include "RB.h"
+#include <stdlib>
 #include <fstream>
+#include <iostream>
+
+#include "RB.h"
+#ifndef PREDICATE_H
+#define PREDICATE_H
+#endif
+
 
 using namespace std;
 
@@ -35,7 +41,7 @@ struct throw_exception : public exception {
 //CONSTRUCTORS-------------------------------------------------------------------------------------------------------------
 //Default. Nothing here since rules is declared as empty already.
 RB::RB(){
-
+	std::vector<*Rule> rules;
 }
 
 //copy constructor
@@ -47,33 +53,29 @@ RB::RB(const RB &otherRB) {
 //Add rules
 void RB::Add(Rule * r){
   try{
-    for(auto const &rule : rules){
+    for(Rule * rule : rules){
       if(rule == r) throw throw_exception();
     }
-    rules.pushback(r);
+    rules.push_back(r);
   }catch(throw_exception &e){
-      std::cout << e.msg("Error: Rule already exists.") <<std::endl;
+      std::cout << "Error: Rule already exists." << "\n" <<std::endl;
     }
 }
 
 //Remove rules
-Rule* RB::Remove(std::string name){
-  Rule * temp = nullptr;
-  for(int i = 0; i < rules.size(); i++){
-    if(rules[i]->name == name){
-      temp(rules[i]); //MAKE SURE TO IMPLEMENT COPY CONSTRUCTOR
-      rules[i].~rule();
-      rules.erase(i);
-    }
-  }
+Rule* RB::Remove(Rule * r){
+  Rule * temp = r;
+	vector<Rule*>::iterator pos = find(rules.begin(), rules.end(), r);
+  rules.at(pos).~rule();
+  rules.erase(pos);
   return temp;
 }
 
 //Print as string
 std::string RB::toString(){
   std::string s = "";
-    for(auto & rule : rules){
-      rule.toString();
+    for(Rule * rule : rules){
+      rule->toString();
     }
     return s;
 }
@@ -83,7 +85,7 @@ void RB::Load(std::string filepath){
 	ofstream myfile;
 	myfile.open(filepath);
 	try {
-		if (myfile == nullptr) throw throw_exception();//loading isn't implemented
+		if (myfile == 0) throw throw_exception();//loading isn't implemented
 	}
 	catch (throw_exception &e) {
 		std::cout << e.msg("Error: File not found.") << std::endl;
