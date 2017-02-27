@@ -54,6 +54,7 @@ public:
   virtual bool AND(const bool a, const bool b);
   virtual bool OR(const bool a, const bool b);
 };
+
 /*
 Rule::Rule(string n, vector<void (*op)(Rule, Rule)> Ops, int count, ...){
   string name = n;
