@@ -1,8 +1,9 @@
-#include <string>
+
+#include <stdlib.h>
 #include <vector>
-#include <map>
-#include <iostream>
-#include "Fact.cpp"
+#include<map>
+#include "Predicate.h"
+
 using namespace std;
 
 class KB{
@@ -11,8 +12,9 @@ public:
 	std::map <string, vector<Fact*> > FactMap;
 	KB();
 	~KB();
+  
 	void Add(Fact * fact);
-	Fact* Remove(Fact * fact);
+	Fact* Remove(std::string cat, int index);
 	Fact* Fetch(string r, vector<string> actors);
 	vector<Fact*>* Find(string findKey);
 	string toString();

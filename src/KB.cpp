@@ -45,7 +45,8 @@ Fact* KB::Fetch(string r, vector<string> a) {
 /*Fact* KB::Remove(Fact * fact){
 	ptrdiff_t pos = find(FactMap[fact->Relationship].begin(), FactMap[fact->Relationship].begin(), fact) - FactMap[fact->Relationship].begin();
 	Fact * temp = fact;
-	FactMap[fact->Relationship].erase(pos)
+	FactMap[fact->Relationship].erase(pos);
+
 	return temp;
 }*/
 
