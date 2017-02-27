@@ -1,6 +1,7 @@
 //Parse.h
 #include<string>
 #include<vector>
+#include<map>
 //#include "Fact.h"
 //#include "RB.cpp"
 #include "KB.cpp"
@@ -12,12 +13,13 @@ class Parse{
 	Parse(KB* knowledgeBase); //(RB* ruleBase, KB* knowledgeBase)
 	std::vector<string> RuleVector; 
 	std::vector<string> FactVector;
-	std::vector<string> Relationship; //Always will be a 1:2 ratio for indices b/w these two
-	std::vector<string> Entry;
+	//std::map<string,vector<int> > Relationship; //Maps the number of args it had
+	//std::vector<string> Entry;
+	std::vector<Predicate*> Preds;
 	std::vector<bool> Logic;
 	int searchLength(int start, int end);
-	void ParseFact(string input);
-	void ParseFunction(string input);
+	void ParsePred(string input, bool FactMode);
+	void ParseRule(string input);
 	int numPreds(string input);
 	void ParseLine(string input);
 	void ParseFile(string fileName);

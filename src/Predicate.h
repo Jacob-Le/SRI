@@ -12,6 +12,7 @@ typedef struct Predicate{
 
   Predicate();
   Predicate(string relationship, int argCount, ... );
+  Predicate(string relationship, vector<string> Components );
   bool evaluate(vector<string> actors);
   bool (*AND)(Predicate one, Predicate two);
   bool (*OR)(Predicate one, Predicate two);

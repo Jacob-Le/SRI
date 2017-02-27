@@ -15,6 +15,11 @@ Predicate::Predicate(string relationship, int argCount, ... ){
   va_end(args);
 }
 
+Predicate::Predicate(string relationship, vector<string> Components){
+  Relationship = relationship;
+  components = Components;
+}
+
 bool Predicate::evaluate(vector<string> actors){
   return true;
 }
