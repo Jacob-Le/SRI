@@ -21,8 +21,8 @@ bool Predicate::evaluate(vector<string> actors){
 
 //Constructor
 Fact::Fact(vector<string> a, string name){
-  vector<string> actors = a;
-  string Relationship = name;
+  actors = a;
+  Relationship = name;
 }
 
 bool Fact::evaluate(vector<string> actors){
@@ -54,7 +54,7 @@ public:
   virtual bool AND(const bool a, const bool b);
   virtual bool OR(const bool a, const bool b);
 };
-
+/*
 Rule::Rule(string n, vector<void (*op)(Rule, Rule)> Ops, int count, ...){
   string name = n;
   va_list cmp;

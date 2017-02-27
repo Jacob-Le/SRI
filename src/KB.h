@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <vector>
 #include<map>
-#include "Predicate.h"
+#include "Predicate.cpp"
 
 using namespace std;
 

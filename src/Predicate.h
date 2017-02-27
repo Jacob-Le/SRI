@@ -22,12 +22,13 @@ typedef struct Fact : Predicate {
   string Relationship;
   vector<string> actors;
 
-  Fact(vector<string> r, string name);
+  Fact(vector<string> a, string name);
   bool evaluate(vector<string> actors);
+  string toString();
 
 }Fact;
 
-typedef struct Rule : Predicate{
+/*typedef struct Rule : Predicate{
   string name;
   //Vector of predicate components (Rules or facts) that make up this rule
   vector<Predicate*> components;
@@ -45,4 +46,4 @@ typedef struct Rule : Predicate{
   //Operator overloads: shortcuts for calculating condition fufullment
   //bool operator &&(const &Rule r);
   //bool operator ||(const &Rule r);
-}Rule;
+}Rule;*/

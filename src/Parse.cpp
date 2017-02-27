@@ -41,13 +41,11 @@ void Parse::ParseFact(string input){
 			delimiter3;
 			nextLen = searchLength(delimiter1,delimiter3);
 			Entry = input.substr(delimiter1,nextLen);
-			//cout << Entry << endl;
 			Entries.push_back(Entry);
 			break;
 		}
 		nextLen = searchLength(delimiter1,delimiter2) -1; //determine search length
 		Entry = input.substr(delimiter1+1,nextLen); //parse out actor
-		//cout << Entry << endl;
 		Entries.push_back(Entry); //add to vector of actors
 		delimiter1 = delimiter2;
 		delimiter2 = input.find(",",delimiter2+1);
@@ -89,6 +87,7 @@ int Parse::numPreds(string input){
 	int numOpenParens = count(input.begin(),input.end(), '(');
 	return numOpenParens;	
 }
+
 
 //Oversees all parsing on a single line of input
 void Parse::ParseLine(string input){
@@ -200,6 +199,7 @@ void Parse::ParseFile(string fileName){
 	file.close();
 }
 
+//Called by DUMP command
 void Parse::DumpToFile(string fileName,string input){
 	fstream file;
 	file.open(fileName.c_str(),std::fstream::out);

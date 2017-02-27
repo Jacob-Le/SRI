@@ -19,20 +19,46 @@ KB::~KB(){
 //the KB if it doesn't already exist
 void KB::Add(Fact * fact){
 	//checking if relationship exists in the KB
-	if(FactMap.find(fact->Relationship) == FactMap.end()){ //If it doesn't exist
+	//cout << fact->Relationship;
+	//if(FactMap.find(fact->Relationship) == FactMap.end()){
+	if(FactMap.count(fact->Relationship) == 0){ //If it doesn't exist
 		vector<Fact*> v;
 		v.push_back(fact);
 		FactMap[fact->Relationship] = v; //May or may not be null cuz temporary variable
 	}else{ //If it does exist
-		for(Fact* f : FactMap[fact->Relationship]){
-			if(f->actors == fact->actors){//check if fact already exists
-				cout<< "Fact already exists" << endl;
-				return;
-			}
+		vector<bool> diffChecker;			
+		//if(f->actors == fact->actors){//check if fact already exists
+		//	
+			//return;
+		//} 		
+		int temp = FactMap[fact->Relationship].size();
+		if(FactMap[fact->Relationship].size()!= 0){
+				for(int j=0; j<FactMap[fact->Relationship].size(); j++){ //Iterating through Vector
+					if(FactMap[fact->Relationship].at(j)->actors.size() == fact->actors.size()){ //if they have the same amount of actors
+						diffChecker.assign(fact->actors.size(),false); //Mark no difference
+						for(int k = 0; k<FactMap[fact->Relationship].at(j)->actors.size();k++){ //Iterate through actors
+							if(FactMap[fact->Relationship].at(j)->actors.at(k) != fact->actors.at(k)){ //If actor pair is different
+								diffChecker.at(k) = true; //mark difference
+								break;
+							}
+						}
+						for(int k =0; k<diffChecker.size(); k++){ //Iterate through diffChecker
+							if(diffChecker.at(k)==true){ //If there is a difference
+								FactMap[fact->Relationship].push_back(fact); //Add fact
+								break;
+							}
+						}
+					}
+				}
+				if(diffChecker.size()==0) FactMap[fact->Relationship].push_back(fact);
+				diffChecker.clear();
+		}else{
+			FactMap[fact->Relationship].push_back(fact);
 		}
-		//after traversing the vector and finding no matches
-		FactMap[fact->Relationship].push_back(fact); //add the fact to the end of the vector
-	}
+		if(temp == FactMap[fact->Relationship].size()){
+			cout<<"Fact already exists"<<endl;
+		}
+	}	
 }
 
 Fact* KB::Fetch(string r, vector<string> a) {
