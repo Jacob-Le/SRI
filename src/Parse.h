@@ -5,6 +5,7 @@
 //#include "Fact.h"
 //#include "RB.cpp"
 #include "KB.cpp"
+#include "Predicate.h"
 
 class Parse{
 	public:
@@ -27,4 +28,9 @@ class Parse{
 	void ParseTerminalInput();
 	void AddFact(Fact* factptr);
 	void AddRule(int numFcns);
+};
+
+class Ops{
+	virtual bool AND(bool, bool);
+	virtual bool OR(bool, bool);
 };

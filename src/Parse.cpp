@@ -8,6 +8,14 @@
 //#include "Rule.cpp"
 using namespace std;
 
+bool Ops::AND(bool ruleA, bool ruleB){
+	return ruleA && ruleB;
+}
+
+bool Ops::OR(bool ruleA, bool ruleB){
+	return ruleA || ruleB;
+}
+
 Parse::Parse(KB* knowledgeBase){ //RB* ruleBase,
 	//RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
@@ -82,6 +90,7 @@ void Parse::ParsePred(string input,bool factMode){
 void Parse::ParseRule(string input){
 	cout << "input: " << input << endl;
 	//ParsePred(input,false);
+	vector<(*)(bool, bool)> ops;
 	int numRuns = numPreds(input);
 	int searchStart;
 	int searchEnd = input.find(")",0);
@@ -101,23 +110,27 @@ void Parse::ParseRule(string input){
 		  if(input[searchStart] == ':'){
 			  if(input[searchStart+3] == 'A'){ //Need to have store as boolean in Rule Component
 				//cout<<"AND"<<endl;
+				  ops.push_back(Ops::AND);
 				Logic.push_back(1);
 				searchStart += 6;
 			  } 
 			  else if(input[searchStart+3] == 'O'){
 				//cout<<"OR" << endl;
+				  ops.push_back(Ops::OR);
 				Logic.push_back(0);
 				searchStart += 5;
 			  }
 		  //If additional Logical Operator
 		  }else if(input[searchStart+1] == 'A' || input[searchStart+1] == 'O'){
 			  if(input[searchStart+1] == 'A'){
-				//cout<<"AND"<<endl;
+				//cout<<"AND"<<endl
+				  ops.push_back(Ops::AND);
 				Logic.push_back(1);
 				searchStart += 4;
 			  } 
 			  else if(input[searchStart+1] == 'O'){
 				//cout<<"OR" << endl;
+				  ops.push_back(Ops::OR);
 				Logic.push_back(0);
 				searchStart += 3;
 			  }
