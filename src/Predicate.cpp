@@ -22,12 +22,27 @@ Predicate::Predicate(const Predicate & p){
 }
 
 Predicate::Predicate(Predicate && p) : name(0), components(0){
-  std::swap(name, p.name);
-  std::swap(components, p.components);
+  std::swap(*this, p);
 }
 
 bool Predicate::evaluate(vector<string> components){
   return true;
+}
+
+void Predicate::swap(Predicate & one, Predicate & two){
+  using std::swap;
+  swap(one.name, two.name);
+  swap(one.components, two.components);
+}
+
+Predicate& Predicate::operator = (Predicate p){
+  swap(*this, p);
+  return *this;
+}
+
+Predicate& Predicate::operator = (Predicate && p){
+  swap(*this, p);
+  return *this;
 }
 
 //Constructor
@@ -69,11 +84,15 @@ string Fact::toString(){
     return output;
 }
 
-// class Ops{
-// public:
-//   virtual bool AND(const bool a, const bool b);
-//   virtual bool OR(const bool a, const bool b);
-// };
+Fact& Fact::operator = (Fact f){
+  swap(*this, f);
+  return *this;
+}
+
+Fact& Fact::operator = (Fact && f) : name(), components(){
+  swap(*this, f)
+  return *this;
+}
 
 Rule::Rule(string n, vector<bool (*)(bool, bool)> Ops, int count, ...){
   string name = n;
@@ -97,6 +116,10 @@ Rule::Rule(Rule && r) : name(0), ops(0), components(0){
   std::swap(name, r.name);
   std::swap(components, r.components);
   std::swap(ops, r.ops);
+}
+
+Rule::~Rule(){
+
 }
 
 bool Rule::evaluate(vector<string> components){
@@ -137,6 +160,23 @@ string Rule::toString(){
     }
     output += ")\n";
     return output;
+}
+
+void Rule::swap(Rule & one, Rule & two){
+  using std::swap;
+  swap(one.name, two.name);
+  swap(one.components, two.components);
+  swap(one.ops, two.ops);
+}
+
+Rule& Rule::operator = (Rule r){
+  swap(*this, r);
+  return *this;
+}
+
+Rule& Rule::operator = (Rule && r) : name(), components(), ops(){
+  swap(*this, r);
+  return *this;
 }
 
 /*
