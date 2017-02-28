@@ -1,8 +1,7 @@
-
 #include <stdlib.h>
 #include <vector>
 #include<map>
-#include "Predicate.h"
+#include "Predicate.cpp"
 
 using namespace std;
 
@@ -14,7 +13,7 @@ public:
 	~KB();
 
 	void Add(Fact * fact);
-	Fact* Remove(Fact * fact);
+	void Remove(std::string r);
 	Fact* Fetch(string r, vector<string> actors);
 	vector<Fact*>* Find(string findKey);
 	string toString();

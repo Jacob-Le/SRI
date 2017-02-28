@@ -45,7 +45,6 @@ typedef struct Fact : Predicate {
   Fact& operator = (Fact && f);
 }Fact;
 
-
 //Rules are made up of components (which can be either other rules or facts)
 typedef struct Rule : Predicate{
   string name;
@@ -71,4 +70,4 @@ typedef struct Rule : Predicate{
   Rule& operator = (Rule r);
   //bool operator &&(const &Rule r);
   //bool operator ||(const &Rule r);
-}Rule;
+}Rule;*/
