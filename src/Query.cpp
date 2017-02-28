@@ -4,6 +4,9 @@
 using namespace std;
 //I'm making so many assumptions here. Someone is going to have to fill in the blanks
 //Constructor. Maybe won't need copy or move constructors?
+
+vector<Fact*> Results;
+
 Query::Query() {
 
 }
@@ -104,33 +107,9 @@ vector<Fact*> Query::preventDupes(vector<Fact*>* A, vector<Fact*> B){
 			B.push_back(A->at(i));
 		}
 	}
-
-/* 	vector<bool> diffChecker;
-	for(int i=0; i<A->size(); i++){
-		if(B.size()!= 0){
-			for(int j=0; j<B.size(); j++){
-				if(B.at(j)->actors.size() == A->at(i)->actors.size()){
-					diffChecker.assign(A->at(i)->actors.size(),false);
-					for(int k = 0; k<B.at(j)->actors.size();k++){
-						if(B.at(j)->actors.at(k) != A->at(i)->actors.at(k)){
-							diffChecker.at(k) = true;
-							break;
-						}
-					}
-					for(int k =0; k<diffChecker.size(); k++){
-						if(diffChecker.at(k)==true){
-							B.push_back(A->at(i));
-							break;
-						}
-					}
-				}
-			}
-			if(diffChecker.size()==0) B.push_back(A->at(i));
-			diffChecker.clear();
-		}else{
-			B.push_back(A->at(i));
-		}
-	}
 	
-	return B;		 */
+	void Query::printResults(){
+		for(int i=0;i<Results.size();i++) cout << Results.at(i)->toString();
+	}
+
 }
