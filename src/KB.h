@@ -14,7 +14,7 @@ public:
 	~KB();
   
 	void Add(Fact * fact);
-	Fact* Remove(std::string cat, int index);
+	void Remove(std::string r);
 	Fact* Fetch(string r, vector<string> actors);
 	vector<Fact*>* Find(string findKey);
 	string toString();

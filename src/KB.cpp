@@ -76,6 +76,10 @@ Fact* KB::Fetch(string r, vector<string> a) {
 	return temp;
 }*/
 
+void KB::Remove(string r){
+	FactMap.erase(r);
+}
+
 vector<Fact*>* KB::Find(string findKey){
 	vector<Fact*>* ptr = &FactMap[findKey];
 	return ptr;
