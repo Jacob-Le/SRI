@@ -4,6 +4,9 @@
 using namespace std;
 //I'm making so many assumptions here. Someone is going to have to fill in the blanks
 //Constructor. Maybe won't need copy or move constructors?
+
+vector<Fact*> Results;
+
 Query::Query() {
 
 }
@@ -72,32 +75,44 @@ vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB)
 //used in concatenate to look for dupes
 vector<Fact*> Query::preventDupes(vector<Fact*>* A, vector<Fact*> B){
 
-	vector<bool> diffChecker;
+	vector<bool> diffChecker;		
+	bool flag = true;
 	for(int i=0; i<A->size(); i++){
-		if(B.size()!= 0){
-			for(int j=0; j<B.size(); j++){
-				if(B.at(j)->actors.size() == A->at(i)->actors.size()){
-					diffChecker.assign(A->at(i)->actors.size(),false);
-					for(int k = 0; k<B.at(j)->actors.size();k++){
-						if(B.at(j)->actors.at(k) != A->at(i)->actors.at(k)){
-							diffChecker.at(k) = true;
-							break;
+		if(B.size() != 0){
+			//cout<<"Checking for differences"<<endl;
+				for(int j=0; j<B.size(); j++){ //Iterating through Vector
+					if(B.at(j)->actors.size() == A->at(i)->actors.size()){ //if they have the same amount of actors
+						diffChecker.assign(A->at(i)->actors.size(),false); //Initialize all to false
+						for(int k = 0; k<B.at(j)->actors.size();k++){ //Iterate through actors
+							if(B.at(j)->actors.at(k) != A->at(i)->actors.at(k)){ //If actor pair is different
+								diffChecker.at(k) = true; //mark difference
+								break;
+							}
 						}
-					}
-					for(int k =0; k<diffChecker.size(); k++){
-						if(diffChecker.at(k)==true){
-							B.push_back(A->at(i));
+						bool factMatch = false;
+						for(int k =0; k<diffChecker.size(); k++){ //Iterate through diffChecker
+							if(diffChecker.at(k)==true){ //If there is a difference
+								factMatch = false;
+								break;
+							}
+							factMatch=true; //THIS IS FALSE IF THERE IS A DIFFERENCE
+						}
+						if(factMatch == true){ //if it matches
+							flag = false;
 							break;
 						}
 					}
 				}
-			}
-			if(diffChecker.size()==0) B.push_back(A->at(i));
-			diffChecker.clear();
+				if(flag == true) B.push_back(A->at(i));
+				diffChecker.clear();
 		}else{
 			B.push_back(A->at(i));
 		}
 	}
 	
-	return B;		
+	
+	void Query::printResults(){
+		for(int i=0;i<Results.size();i++) cout << Results.at(i)->toString();
+	}
+
 }
