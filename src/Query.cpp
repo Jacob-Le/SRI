@@ -4,6 +4,8 @@
 using namespace std;
 //I'm making so many assumptions here. Someone is going to have to fill in the blanks
 //Constructor. Maybe won't need copy or move constructors?
+
+
 Query::Query() {
 
 }
