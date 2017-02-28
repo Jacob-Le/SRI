@@ -201,6 +201,18 @@ void Parse::ParseLine(string input){
 		//cout << "Before Rule:" << input << endl;
 		ParseRule(input.substr(searchStart, nextLen));
 		return;
+	}else if(INFE){
+	}else{ //DROP
+		string searchingFor = input.substr(searchStart, nextLen+1);
+		bool CheckFactinKB = KnowledgeBase->FactMap.count(searchingFor) != 0;
+		//bool CheckRuleinRB = RuleBase->rules.count(searchingFor) != 0;
+		if(CheckFactinKB){ //CheckFactinKB && CheckRuleinRB || CheckFactinKB
+			KnowledgeBase->Remove(searchingFor);
+		//}else if(CheckRuleinRB){
+		}else{
+			cout << searchingFor << " not in KB or RB to delete\n";
+		}
+		
 	}
 	/*
 	ParseFunction(input.substr(searchStart, nextLen));
