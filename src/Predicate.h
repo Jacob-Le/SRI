@@ -13,7 +13,6 @@ typedef struct Predicate{
   vector<string> components;
 
   //Constructors
-  Predicate();
   Predicate(string name, int argCount, ... );
   Predicate(const Predicate& p);
   Predicate(Predicate && p);
@@ -25,8 +24,6 @@ typedef struct Predicate{
 
   Predicate& operator = (const Predicate& p);
   Predicate& operator = (Predicate && p);
-  // bool (*AND)(bool one, bool two);
-  // bool (*OR)(bool one, bool two);
 }Predicate;
 
 //Facts describe relationships between Actors
