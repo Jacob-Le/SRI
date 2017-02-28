@@ -13,7 +13,11 @@ main(){
   Ops.push_back(OR);
   string Parent = "Parent";
   Rule<,typedef(OR)> Rule(Parent,Ops,0);*/	
+<<<<<<< HEAD
   cout << "Start?";
+=======
+  cout << "Start?"<<endl;
+>>>>>>> KB_ec
   KB* Knowledge = new KB();
   vector<string> Actors;
   Actors.push_back("J");
@@ -27,9 +31,22 @@ main(){
   vector<Fact*>* JJJ2 = Knowledge->Find(JJJ->Relationship);
   string output = JJJ2->at(0)->toString();
   cout << output;
+<<<<<<< HEAD
   //Query* QQ = new Query();
   //JJJ2 = QQ->listFact(Knowledge, JJJ->Relationship);
   output = Knowledge->toString();
   cout << output;
+=======
+  Query* QQ = new Query();
+  JJJ2 = QQ->listFact(Knowledge, JJJ->Relationship);
+
+  vector<string> Actors3;
+  Actors3.push_back("John");
+  Fact* JJJ3 = new Fact(Actors3,"Jameson");
+  Knowledge->Add(JJJ3);
+ 
+  output = Knowledge->toString();
+  cout << output<<endl;
+>>>>>>> KB_ec
   //Knowledge->Find("Jaguar");
 }

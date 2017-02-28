@@ -221,8 +221,8 @@ void Parse::ParseLine(string input){
 		AddFact();
 		return;
 	}
-	
 */
+
 	
 }
 
