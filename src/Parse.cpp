@@ -88,7 +88,7 @@ void Parse::ParsePred(string input,bool factMode){
 }
 
 void Parse::ParseRule(string input){
-	cout << "input: " << input << endl;
+	//cout << "input: " << input << endl;
 	//ParsePred(input,false);
 	vector<(*)(bool, bool)> ops;
 	int numRuns = numPreds(input);
@@ -214,6 +214,18 @@ void Parse::ParseLine(string input){
 		//cout << "Before Rule:" << input << endl;
 		ParseRule(input.substr(searchStart, nextLen));
 		return;
+	}else if(INFE){
+	}else{ //DROP
+		string searchingFor = input.substr(searchStart, nextLen+1);
+		bool CheckFactinKB = KnowledgeBase->FactMap.count(searchingFor) != 0;
+		//bool CheckRuleinRB = RuleBase->rules.count(searchingFor) != 0;
+		if(CheckFactinKB){ //CheckFactinKB && CheckRuleinRB || CheckFactinKB
+			KnowledgeBase->Remove(searchingFor);
+		//}else if(CheckRuleinRB){
+		}else{
+			cout << searchingFor << " not in KB or RB to delete\n";
+		}
+		
 	}
 	/*
 	ParseFunction(input.substr(searchStart, nextLen));
@@ -222,8 +234,8 @@ void Parse::ParseLine(string input){
 		AddFact();
 		return;
 	}
-	
 */
+
 	
 }
 
@@ -234,7 +246,7 @@ void Parse::ParseFile(string fileName){
 	file.open(fileName.c_str(),std::fstream::in);
 	//Relationship.clear();
 	//Entry.clear();
-	cout<<"From File:\n";
+	cout<<"Inputting From File: "<< fileName << endl;
 	while(!file.eof()){
 	  getline(file,input);
 	  ParseLine(input);
