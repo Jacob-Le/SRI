@@ -80,7 +80,7 @@ void Parse::ParsePred(string input,bool factMode){
 }
 
 void Parse::ParseRule(string input){
-	cout << "input: " << input << endl;
+	//cout << "input: " << input << endl;
 	//ParsePred(input,false);
 	int numRuns = numPreds(input);
 	int searchStart;
@@ -233,7 +233,7 @@ void Parse::ParseFile(string fileName){
 	file.open(fileName.c_str(),std::fstream::in);
 	//Relationship.clear();
 	//Entry.clear();
-	cout<<"From File:\n";
+	cout<<"Inputting From File: "<< fileName << endl;
 	while(!file.eof()){
 	  getline(file,input);
 	  ParseLine(input);
