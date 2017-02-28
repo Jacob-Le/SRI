@@ -4,13 +4,14 @@
 #include<map>
 //#include "Fact.h"
 //#include "RB.cpp"
-#include "KB.cpp"
+#include "KB.h"
 #include "Predicate.h"
 
 class Parse{
 	public:
 	//RB* RuleBase;
 	KB* KnowledgeBase;
+	vector<(*)(const bool, const bool)> ops;
 	Parse(KB* knowledgeBase); //(RB* ruleBase, KB* knowledgeBase)
 	std::vector<string> RuleVector; 
 	std::vector<string> FactVector;
@@ -31,6 +32,6 @@ class Parse{
 };
 
 class Ops{
-	virtual bool AND(bool, bool);
-	virtual bool OR(bool, bool);
+	virtual bool (*AND)(bool, bool);
+	virtual bool (*OR)(bool, bool);
 };

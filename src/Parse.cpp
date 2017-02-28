@@ -1,18 +1,22 @@
 //Parse.cpp
+/*
+I'M RUNNING INTO AN ISSUE WHERE I THINK JACOB WENT HIS OWN WAY IN PREDICATE.CPP THAT DOESN'T WORK WITH 
+THE ADDRULE() FUNCTION. I THINK WE NEED TO MEET UP AND DRAW A PICTURE OR SOMETHING.
+
+*/
 #include<cstdio>
 #include<string>
 #include<iostream>
 #include<algorithm>
 #include<fstream>
 #include "Parse.h"
-//#include "Rule.cpp"
 using namespace std;
 
-bool Ops::AND(bool ruleA, bool ruleB){
+bool Ops::(*AND)(const bool ruleA, const bool ruleB){
 	return ruleA && ruleB;
 }
 
-bool Ops::OR(bool ruleA, bool ruleB){
+bool Ops::(*OR)(const bool ruleA, const bool ruleB){
 	return ruleA || ruleB;
 }
 
@@ -90,7 +94,6 @@ void Parse::ParsePred(string input,bool factMode){
 void Parse::ParseRule(string input){
 	//cout << "input: " << input << endl;
 	//ParsePred(input,false);
-	vector<(*)(bool, bool)> ops;
 	int numRuns = numPreds(input);
 	int searchStart;
 	int searchEnd = input.find(")",0);
@@ -110,13 +113,13 @@ void Parse::ParseRule(string input){
 		  if(input[searchStart] == ':'){
 			  if(input[searchStart+3] == 'A'){ //Need to have store as boolean in Rule Component
 				//cout<<"AND"<<endl;
-				  ops.push_back(Ops::AND);
+				  ops.push_back(Ops::(*AND));
 				Logic.push_back(1);
 				searchStart += 6;
 			  } 
 			  else if(input[searchStart+3] == 'O'){
 				//cout<<"OR" << endl;
-				  ops.push_back(Ops::OR);
+				  ops.push_back(Ops::(*OR));
 				Logic.push_back(0);
 				searchStart += 5;
 			  }
@@ -140,6 +143,9 @@ void Parse::ParseRule(string input){
 	  //cout << "searching: " << input.substr(searchStart+1, nextLen) << endl;
 	  ParsePred(input.substr(searchStart+1, nextLen),false);
 	}
+
+	//AddRule(numfcn); THIS IS WHERE I THINK WE CAN USE ADDRULE, NOT SURE WHERE NUMFCN COMES FROM-----------------------------------------------------------------------
+
 	/*for(int i=0; i<Preds.size();i++){
 		cout << Preds.at(i)->Relationship << endl;
 		for(int j=0; j<Preds.at(i)->components.size(); j++){
@@ -148,7 +154,8 @@ void Parse::ParseRule(string input){
 	}*/
 	Preds.clear();
 	//for(int i=0; i<Logic.size();i++) cout<<Logic.at(i)<<endl;
-	Logic.clear();
+	Logic.clear();//WE CAN PROBABLY GET RID OF LOGIC, BUT I'LL LEAVE IT IN FOR NOW.------------------------------------------------------------
+	ops.clear();
 }
 
 
@@ -281,7 +288,7 @@ void Parse::AddFact(Fact* f){
 }
 
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
-/*void Parse::AddRule(int numFcns){
+/*void Parse::AddRule(int numFcns){ I WANT TO APPROPRIATE THIS FUNCTION, NOT SURE WHAT PARAMETERS GO IN THOUGH------------------------------------------------------
 	for(int i=numFcns-1; i>0; i--){
 		Fact* newFact = MakeFact();
 		FactVector.push_back();
@@ -298,7 +305,7 @@ void Parse::AddFact(Fact* f){
 		Fact* Fact2 = FactVector.end();
 		bool logic = Logic.end();
 		Logic.pop_back();
-		Rule* newRule = new Rule(Fact1,Fact2,fcnName,logic);
+		Rule* newRule = new Rule(Fact1,Fact2,fcnName,ops);
 		RuleVector.push_back(newRule);
 		numFcns-=2;
 	}
