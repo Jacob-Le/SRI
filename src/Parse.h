@@ -2,15 +2,14 @@
 #include<string>
 #include<vector>
 #include<map>
-//#include "Fact.h"
-#include "../sources/Predicate.cpp"
+#include "RB.h"
+#include "KB.h"
 
 class Parse{
 	public:
 	RB* RuleBase;
 	KB* KnowledgeBase;
 	int numRuns;
-	std::vector<(*)(bool, bool)> ops;
 	Parse(KB* knowledgeBase); //(RB* ruleBase, KB* knowledgeBase)
 	std::vector<string> RuleVector; 
 	std::vector<string> FactVector;

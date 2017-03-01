@@ -60,7 +60,7 @@ typedef struct Rule : Predicate{
 
   Rule();
   //Variadic constructor that accepts any number of conditions
-  Rule(string name, const vector<int> Logic, vector<Predicate*> cmps);
+  Rule(string name, const vector<bool> Logic, vector<Predicate*> cmps);
   //copy and move constructors
   Rule(const Rule & r);
   Rule(Rule && r);

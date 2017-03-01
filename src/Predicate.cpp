@@ -149,15 +149,15 @@ Rule::Rule(){
   //Vector of predicate components (Rules or facts) that make up this rule
   vector<Predicate*> components;
   //Function pointers that point to functions that emulate boolean operators
-  vector<int> ops;
+  vector<bool> ops;
 }
 
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
-Rule::Rule(string n, vector<int> Logic, vector<Predicate*> cmps){
+Rule::Rule(string n, vector<bool> Logic, vector<Predicate*> cmps){
   string name = n;
   vector<Predicate*> components = cmps;
-  vector<int> ops = Logic; //Operators that compare each component of the rule
+  vector<bool> ops = Logic; //Operators that compare each component of the rule
 }
 
 //Copy constructor

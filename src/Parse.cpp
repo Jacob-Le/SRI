@@ -279,7 +279,7 @@ void Parse::AddRule(int numFcns) {
 	}
 
 	vector<Predicate> tempPreds;
-	vector<int> tempLogic;
+	vector<bool> tempLogic;
 	int i;
 	for (i = 0; i < Preds.size(); i++) {
 		tempPreds.push_back(Preds[i]);
