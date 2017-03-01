@@ -2,8 +2,8 @@
 #include<string>
 #include<vector>
 #include<map>
-#include "../sources/RB.cpp"
-#include "../sources/KB.cpp"
+#include "RB.cpp"
+#include "KB.cpp"
 
 class Parse{
 	public:
@@ -11,7 +11,7 @@ class Parse{
 	KB* KnowledgeBase;
 	int numRuns;
 	Parse(KB* knowledgeBase); //(RB* ruleBase, KB* knowledgeBase)
-	std::vector<string> RuleVector; 
+	std::vector<string> RuleVector;
 	std::vector<string> FactVector;
 	//std::map<string,vector<int> > Relationship; //Maps the number of args it had
 	//std::vector<string> Entry;

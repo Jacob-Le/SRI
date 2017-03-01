@@ -1,6 +1,6 @@
 //Rule database
 #include <stdlib.h>
-#include "../sources/Predicate.cpp"
+#include "Predicate.cpp"
 
 using namespace std;
 
@@ -9,7 +9,7 @@ public:
   RB();
   RB(const RB &otherRB);
   ~RB();
-  
+
   std::vector<Rule*> rules;
 
   void Add(Rule * r);

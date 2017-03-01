@@ -2,10 +2,6 @@
 //#include<map>
 #include<algorithm>
 
-#ifndef PREDICATE_H
-#define PREDICATE_H
-#endif
-
 #include "KB.h"
 
 using namespace std;
@@ -31,16 +27,16 @@ void KB::Add(Fact * fact){
 		v.push_back(fact);
 		FactMap[fact->Relationship] = v; //May or may not be null cuz temporary variable
 	}else{ //If it does exist
-		vector<bool> diffChecker;		
+		vector<bool> diffChecker;
 		bool flag = true;
 		if(FactMap[fact->Relationship].size()!= 0){
 			//cout<<"Checking for differences"<<endl;
 				for(int j=0; j<FactMap[fact->Relationship].size(); j++){ //Iterating through Vector
 					//cout<< FactMap[fact->Relationship].at(j)->toString()<<endl;
-					if(FactMap[fact->Relationship].at(j)->actors.size() == fact->actors.size()){ //if they have the same amount of actors
-						diffChecker.assign(fact->actors.size(),false); //Mark no difference
-						for(int k = 0; k<FactMap[fact->Relationship].at(j)->actors.size();k++){ //Iterate through actors
-							if(FactMap[fact->Relationship].at(j)->actors.at(k) != fact->actors.at(k)){ //If actor pair is different
+					if(FactMap[fact->Relationship].at(j)->components.size() == fact->components.size()){ //if they have the same amount of components
+						diffChecker.assign(fact->components.size(),false); //Mark no difference
+						for(int k = 0; k<FactMap[fact->Relationship].at(j)->components.size();k++){ //Iterate through components
+							if(FactMap[fact->Relationship].at(j)->components.at(k) != fact->components.at(k)){ //If actor pair is different
 								diffChecker.at(k) = true; //mark difference
 								break;
 							}
@@ -69,12 +65,12 @@ void KB::Add(Fact * fact){
 		if(flag == false){
 			cout<<"Fact already exists"<<endl;
 		}
-	}	
+	}
 }
 
 Fact* KB::Fetch(string r, vector<string> a) {
 	for(Fact* f : FactMap[r]){
-		if(f->actors == a) return f;
+		if(f->components == a) return f;
 	}
 	return NULL; //was nullptr (probably should still be)
 }
@@ -103,4 +99,3 @@ string KB::toString(){
 	}
 	return output;
 }
-
