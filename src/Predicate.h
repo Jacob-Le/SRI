@@ -34,7 +34,7 @@ typedef struct Predicate{
 //Facts describe relationships between Actors
 typedef struct Fact : Predicate {
 
-  string name;
+  string Relationship;
   vector<string> components;
 
   //Constructors
@@ -52,7 +52,7 @@ typedef struct Fact : Predicate {
 
 //Rules are made up of components (which can be either other rules or facts)
 typedef struct Rule : Predicate{
-  string name;
+  string Relationship;
   //Vector of predicate components (Rules or facts) that make up this rule
   vector<Predicate*> components;
   //Function pointers that point to functions that emulate boolean operators

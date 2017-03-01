@@ -81,7 +81,7 @@ Fact::Fact(){
 //Constructor that takes in a string for a name, and a vector of strings for its components (Actors).
 Fact::Fact(string n, vector<string> a){
   vector<string> components = a;
-  string name = n;
+  string Relationship = n;
 }
 
 //Copy constructor
@@ -155,7 +155,7 @@ Rule::Rule(){
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
 Rule::Rule(string n, vector<bool> Logic, vector<Predicate*> cmps){
-  string name = n;
+  string Relationship = n;
   vector<Predicate*> components = cmps;
   vector<bool> ops = Logic; //Operators that compare each component of the rule
 }

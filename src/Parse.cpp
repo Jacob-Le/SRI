@@ -136,7 +136,6 @@ void Parse::ParseRule(string input){
 	Preds.clear();
 	//for(int i=0; i<Logic.size();i++) cout<<Logic.at(i)<<endl;
 	Logic.clear();
-	ops.clear();
 }
 
 
@@ -283,14 +282,14 @@ void Parse::AddRule(int numFcns) {
 	vector<bool> tempLogic;
 	int i;
 	for (i = 0; i < Preds.size(); i++) {
-		tempPreds.push_back(Preds[i]);
+		tempPreds.push_back(*Preds[i]);
 	}
 
 	for (i = 0; i < Logic.size(); i++) {
 		tempLogic.push_back(Logic[i]);
 	}
 
-	Rule * newRule = new Rule(fcnName, tempLogic, numPreds(), tempPreds);
+	Rule * newRule = new Rule(fcnName, tempLogic, numRuns, tempPreds);
 	RuleBase->add(newRule);
 
 }
