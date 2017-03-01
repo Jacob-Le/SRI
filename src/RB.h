@@ -1,16 +1,16 @@
 //Rule database
 #include <stdlib.h>
-#include "Predicate.cpp"
+#include "../sources/Predicate.cpp"
 
 using namespace std;
 
 class RB{
-private:
-  std::vector<Rule*> rules;
 public:
   RB();
   RB(const RB &otherRB);
   ~RB();
+  
+  std::vector<Rule*> rules;
 
   void Add(Rule * r);
   Rule* Remove(Rule * r);

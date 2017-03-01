@@ -2,14 +2,14 @@
 #include<string>
 #include<vector>
 #include<map>
-//#include "Fact.h"
-//#include "RB.cpp"
-#include "KB.cpp"
+#include "../sources/RB.cpp"
+#include "../sources/KB.cpp"
 
 class Parse{
 	public:
-	//RB* RuleBase;
+	RB* RuleBase;
 	KB* KnowledgeBase;
+	int numRuns;
 	Parse(KB* knowledgeBase); //(RB* ruleBase, KB* knowledgeBase)
 	std::vector<string> RuleVector; 
 	std::vector<string> FactVector;
