@@ -7,9 +7,10 @@
 #include "Parse.h"
 using namespace std;
 
-Parse::Parse(KB* knowledgeBase){ //RB* ruleBase,
+Parse::Parse(KB* knowledgeBase, RB* ruleBase, Query* Q2){
 	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
+	Q = Q2;
 }
 
 //substr's second argument is how far from first character to search to, not from what char to 
@@ -56,7 +57,7 @@ void Parse::ParsePred(string input,bool factMode){
 		delimiter2 = input.find(",",delimiter2+1);
 	}
 	if(factMode){
-		Fact* newFact = new Fact(Entries, relationship);
+		Fact* newFact = new Fact(relationship,Entries);
 		AddFact(newFact);
 	}else{
 		/*for(int i=0; i < Entries.size(); i++){
@@ -132,7 +133,7 @@ void Parse::ParseRule(string input){
 		ParsePred(input.substr(searchStart + 1, nextLen), false);
 	}
 
-	AddRule(numRuns);
+	AddRule();
 	Preds.clear();
 	//for(int i=0; i<Logic.size();i++) cout<<Logic.at(i)<<endl;
 	Logic.clear();
@@ -268,20 +269,23 @@ void Parse::AddFact(Fact* f){
 }
 
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
-void Parse::AddRule(int numFcns) {
-	string fcnName = "";
+void Parse::AddRule() {
+	/*string fcnName = "";
 	while (numFcns>0) {
 		if (numFcns == 1) {
 			fcnName = Relationship.end();
 			Relationship.pop_back();
 			numFcns--;
 		}
-	}
+	}*/
 
 	vector<Predicate> tempPreds;
 	vector<bool> tempLogic;
 	int i;
-	for (i = 0; i < Preds.size(); i++) {
+	vector<string> enactVars = Preds.at(0)->components;
+	string fcnName = Preds.at(0)->name;
+	
+	for (i = 1; i < Preds.size(); i++) {
 		tempPreds.push_back(*Preds[i]);
 	}
 
@@ -289,14 +293,16 @@ void Parse::AddRule(int numFcns) {
 		tempLogic.push_back(Logic[i]);
 	}
 
-	Rule * newRule = new Rule(fcnName, tempLogic, numRuns, tempPreds);
-	RuleBase->add(newRule);
+	Rule * newRule = new Rule(fcnName, enactVars, tempLogic, tempPreds);
+	RuleBase->Add(newRule);
 
 }
 
 main(){
 	KB* kb = new KB();
-	Parse Parser = Parse(kb);
+	RB* rb = new RB();
+	Query* Q = new Query(kb,rb);
+	Parse Parser = Parse(kb,rb,Q);
 	Parser.ParseFile("Dummy.SRL");
 	string input = "FACT Alive(Roger)";
 	string input2 = "FACT Father(Roger,John)";

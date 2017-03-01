@@ -26,16 +26,16 @@ Predicate::Predicate(string n, vector<string> actors){
   vector<string> components = actors;
 }
 
-//Copy constructor
+/*//Copy constructor
 Predicate::Predicate(const Predicate & p){
   name = p.name;
   components = p.components;
-}
+}*/
 
-//Move constructor
+/*//Move constructor
 Predicate::Predicate(Predicate && p) : Predicate(){
   p_swap(*this, p);
-}
+}*/
 
 //Destructor
 Predicate::~Predicate(){
@@ -47,16 +47,16 @@ bool Predicate::evaluate(vector<string> components){
   return true;
 }
 
-//Operator overloads for copy and move assignment
+/*//Operator overloads for copy and move assignment
 Predicate& Predicate::operator = (Predicate p){
   p_swap(*this, p);
   return *this;
-}
+}*/
 
-Predicate& Predicate::operator = (Predicate && p){
+/*Predicate& Predicate::operator = (Predicate && p){
   p_swap(*this, p);
   return *this;
-}
+}*/
 
 bool Predicate::AND(bool a, bool b) {
 	return a&&b;
@@ -85,15 +85,15 @@ Fact::Fact(string n, vector<string> a){
 }
 
 //Copy constructor
-Fact::Fact(const Fact & f){
+/*Fact::Fact(const Fact & f){
   name = f.name;
   components = f.components;
-}
+}*/
 
 //Move constructor
-Fact::Fact(Fact && f) : Fact(){
+/*Fact::Fact(Fact && f) : Fact(){
   p_swap(*this, f);
-}
+}*/
 
 //Evaluate function that takes in a vector of strings that represent the Fact's components
 //Will return true if fact exists in the KB, false otherwise
@@ -123,15 +123,15 @@ string Fact::toString(){
 
 
 //Operator overloads for Fact copy and move assignment
-Fact& Fact::operator = (Fact f){
+/*Fact& Fact::operator = (Fact f){
   p_swap(*this, f);
   return *this;
-}
+}*/
 
-Fact& Fact::operator = (Fact && f){
+/*Fact& Fact::operator = (Fact && f){
   p_swap(*this, f);
   return *this;
-}
+}*/
 
 //------------------------------------------Rule-----------------------------------------------------//
 
@@ -146,6 +146,7 @@ void Rule::r_swap(Rule & one, Rule & two){
 //Default constructor
 Rule::Rule(){
   string name = "";
+  vector<string> enactVars;
   //Vector of predicate components (Rules or facts) that make up this rule
   vector<Predicate*> components;
   //Function pointers that point to functions that emulate boolean operators
@@ -154,23 +155,25 @@ Rule::Rule(){
 
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
-Rule::Rule(string n, vector<bool> Logic, vector<Predicate*> cmps){
-  string Relationship = n;
-  vector<Predicate*> components = cmps;
-  vector<bool> ops = Logic; //Operators that compare each component of the rule
+Rule::Rule(string n, vector<string> VarsToEnact, vector<bool> Logic, vector<Predicate> cmps){
+  Relationship = n;
+  enactVars = VarsToEnact;
+  components = cmps;
+  //ops = Logic; //Operators that compare each component of the rule
 }
 
 //Copy constructor
-Rule::Rule(const Rule & r){
+/*Rule::Rule(const Rule & r){
   name = r.name;
+  vector<string> 
   components = r.components;
   ops = r.ops;
-}
+}*/
 
 //Move constructor
-Rule::Rule(Rule && r) : Rule(){
+/*Rule::Rule(Rule && r) : Rule(){
   r_swap(*this, r);
-}
+}*/
 
 //Destructor
 Rule::~Rule(){
@@ -182,14 +185,14 @@ Rule::~Rule(){
 //that represent actors relevant to each component of the rule.
 //MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
 //Returns the a boolean representing the Rule's validity.
-bool Rule::evaluate(vector<string> actors){
-  Predicate * first = components[0]; // LHS component to be evaluated
-  Predicate * next = components[1]; // RHS component to be evaluated
+/*bool Rule::evaluate(vector<string> actors){
+  Predicate  first = components[0]; // LHS component to be evaluated used to be pointers
+  Predicate  next = components[1]; // RHS component to be evaluated
 
   //range of components to take from components vector
-  vector<string> range = vector<string>(actors.begin(), actors.begin() + first->components.size());
+  vector<string> range = vector<string>(actors.begin(), actors.begin() + first.components.size());
 
-  bool truth = first->evaluate(range); //evaluate using the range of components that pertain to the particular component
+  bool truth = first.evaluate(range); //evaluate using the range of components that pertain to the particular component
   int count = 0;
   while(next && count + 1 <= components.size()){
     //Take range of components for the next vector
@@ -203,7 +206,7 @@ bool Rule::evaluate(vector<string> actors){
     next = components[count]; //advance to next one
   }
   return truth;
-}
+}*/
 
 //If the Rule is valid, adds a Fact representative of the Rule's validity to the KB
 //MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
@@ -220,7 +223,7 @@ string Rule::toString(){
     string output = "RULE ";
     output = output + name +"(";
     for(int i=0; i < components.size(); i++){
-        output += components[i]->name;
+        output += components[i].name;
         if(i+1 != components.size()) output += ", ";
     }
     output += ")\n";
@@ -228,15 +231,15 @@ string Rule::toString(){
 }
 
 //Operator overloads for move and copy assignment
-Rule& Rule::operator = (Rule r){
+/*Rule& Rule::operator = (Rule r){
   r_swap(*this, r);
   return *this;
-}
+}*/
 
-Rule& Rule::operator = (Rule && r){
+/*Rule& Rule::operator = (Rule && r){
   r_swap(*this, r);
   return *this;
-}
+}*/
 
 //Comparison operator overloads
 bool Rule::operator == (const Rule& r){

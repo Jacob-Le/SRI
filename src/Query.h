@@ -7,12 +7,23 @@ using namespace std;
 //Categorized according to Evie's plan
 class Query {
 	public:
+	KB* Knowledge;
+	RB* ruleBase;
+	
 	//something var currentQuery <--THE THING THAT QUERY PASSES AROUND IDK WHAT IT IS THO
+	
+	vector<string> varMapping;
+	void CreateVarMapping(Rule* R);
+	
+	map<string, vector<string> > VarBounds;
+	void CreateVarBoundsMaster(Rule* R);
+	void CreateVarBounds(vector<Fact*>* Facts);
+	string VarBoundstoString();
 
-	Query();
+	Query(KB* Knowledge, RB* ruleBase);
 
 	//FACT--------------------------------------------------------------------------
-	vector<Fact*>* listFact(KB* Knowledge, string factKey); //used to return vector<string>
+	vector<Fact*>* listFact(string factKey); //used to return vector<string>
 
 	//SIMPLE RULE-------------------------------------------------------------------
 	void listSimpleRule(/*something*/);
