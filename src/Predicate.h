@@ -13,16 +13,18 @@ typedef struct Predicate{
   vector<string> components;
 
   //Constructors
-  Predicate(string name, int argCount, ... );
+  Predicate();
+  Predicate(string name, vector<string> actors);
   Predicate(const Predicate& p);
   Predicate(Predicate && p);
 
   bool evaluate(vector<string> components);
-  friend void swap(Predicate & one, Predicate & two);
+  void p_swap(Predicate & one, Predicate & two);
+  friend void p_swap(Predicate & one, Predicate & two);
 
-  virtual ~Predicate();
+  ~Predicate();
 
-  Predicate& operator = (const Predicate& p);
+  Predicate& operator = (Predicate p);
   Predicate& operator = (Predicate && p);
 }Predicate;
 
@@ -33,13 +35,13 @@ typedef struct Fact : Predicate {
   vector<string> components;
 
   //Constructors
+  Fact();
   Fact(string name, vector<string> r);
   Fact(const Fact & r);
   Fact(Fact && r);
 
   bool evaluate(vector<string> components); //May need to turn to virtual later
   string toString();
-  friend void swap(Fact & one, Fact & two);
 
   Fact& operator = (Fact f);
   Fact& operator = (Fact && f);
@@ -53,21 +55,23 @@ typedef struct Rule : Predicate{
   //Function pointers that point to functions that emulate boolean operators
   vector<bool (*)(bool, bool)> ops;
 
+  Rule();
   //Variadic constructor that accepts any number of conditions
-  Rule(string name, vector<bool (*)(bool, bool)> ops, int count, ...);
+  Rule(string name, const vector<bool (*)(bool, bool)> ops, vector<Predicate*> cmps);
   //copy and move constructors
-  Rule(Rule r);
+  Rule(const Rule & r);
   Rule(Rule && r);
+  ~Rule();
 
 
   bool evaluate(vector<string> components);
   bool enact(vector<string> components);
   string toString();
-  friend void swap(Rule & one, Rule & two);
+  void r_swap(Rule & one, Rule & two);
 
   //Operator overloads: shortcuts for calculating condition fufullment
-  Rule& operator = (const Rule & r);
   Rule& operator = (Rule r);
+  Rule& operator = (Rule && r);
   //bool operator &&(const &Rule r);
   //bool operator ||(const &Rule r);
-}Rule;*/
+}Rule;
