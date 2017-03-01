@@ -2,46 +2,16 @@
 
 #include <stdlib.h>
 #include <fstream>
-#include <iostream>
+#include <algorithm>
 
 #include "RB.h"
-#ifndef PREDICATE_H
-#define PREDICATE_H
-#endif
-
 
 using namespace std;
-
-//EXCEPTION HANDLING------------------------------------------------------------------------------------------------------
-//duplicate rules
-struct throw_exception : public exception {
-	const char * msg() const throw(std::string error) {
-		return error;
-	}
-};
-
-//struct duplicate_rule : public exception {
-//	const char * msg() const throw() {
-//		return "duplicate rule exception";
-//	}
-//};
-//
-//struct empty_rules : public exception {
-//	const char * msg() const throw() {
-//		return "rules is empty";
-//	}
-//};
-//
-//struct file_not_found : public exception {
-//	const char * msg() const throw() {
-//		return ""
-//	}
-//};
 
 //CONSTRUCTORS-------------------------------------------------------------------------------------------------------------
 //Default. Nothing here since rules is declared as empty already.
 RB::RB(){
-	std::vector<*Rule> rules;
+	std::vector<Rule*> rules;
 }
 
 //copy constructor
@@ -52,21 +22,20 @@ RB::RB(const RB &otherRB) {
 //SOURCE CODE---------------------------------------------------------------------------------------------------------------
 //Add rules
 void RB::Add(Rule * r){
-  try{
-    for(Rule * rule : rules){
-      if(rule == r) throw throw_exception();
-    }
-    rules.push_back(r);
-  }catch(throw_exception &e){
-      std::cout << "Error: Rule already exists." << "\n" <<std::endl;
-    }
+  for(Rule * rule : rules){
+    if(rule == r){
+			std::cout << "Error: Rule already exists." << "\n" <<std::endl;
+			return;
+		}
+  }
+  rules.push_back(r);
 }
 
 //Remove rules
 Rule* RB::Remove(Rule * r){
   Rule * temp = r;
 	vector<Rule*>::iterator pos = find(rules.begin(), rules.end(), r);
-  rules.at(pos).~rule();
+  rules.at(distance(rules.begin(), pos))->~Rule();
   rules.erase(pos);
   return temp;
 }
@@ -84,12 +53,7 @@ std::string RB::toString(){
 void RB::Load(std::string filepath){
 	ofstream myfile;
 	myfile.open(filepath);
-	try {
-		if (myfile == 0) throw throw_exception();//loading isn't implemented
-	}
-	catch (throw_exception &e) {
-		std::cout << "Error: File not found." << "\n" << std::endl;
-	}
+	if (myfile) std::cout << "Error: File not found." << std::endl;//loading isn't implemented
 }
 
 //Save to file
