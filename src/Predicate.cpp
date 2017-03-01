@@ -6,6 +6,18 @@ using namespace std;
 
 //--------------------------------------------Predicate--------------------------------------//
 
+//Swaps the member values between two Predicates
+void Predicate::swap(Predicate & one, Predicate & two){
+  using std::swap;
+  swap(one.name, two.name);
+  swap(one.components, two.components);
+}
+
+//Default Constructor
+Predicate::Predicate(){
+
+}
+
 //Constructor for Predicate, the base class from which both Fact and Rule extend from.
 //Takes in a string as a name, and a variable number of string arguments as Actors
 Predicate::Predicate(string n, int argCount, ... ){
@@ -23,20 +35,13 @@ Predicate::Predicate(const Predicate & p){
 }
 
 //Move constructor
-Predicate::Predicate(Predicate && p) : name(0), components(0){
-  std::swap(*this, p);
+Predicate::Predicate(Predicate && p) : Predicate(){
+  swap(*this, p);
 }
 
 //Evaluate function.  May need to make this virtual in the future
 bool Predicate::evaluate(vector<string> components){
   return true;
-}
-
-//Swaps the member values between two Predicates
-void Predicate::swap(Predicate & one, Predicate & two){
-  using std::swap;
-  swap(one.name, two.name);
-  swap(one.components, two.components);
 }
 
 //Operator overloads for copy and move assignment
@@ -52,6 +57,11 @@ Predicate& Predicate::operator = (Predicate && p){
 
 //--------------------------------------------Fact------------------------------------//
 
+//Default Constructor
+Fact::Fact(){
+
+}
+
 //Constructor that takes in a string for a name, and a vector of strings for its components (Actors).
 Fact::Fact(string n, vector<string> a){
   vector<string> components = a;
@@ -65,9 +75,8 @@ Fact::Fact(const Fact & f){
 }
 
 //Move constructor
-Fact::Fact(Fact && f) : name(), components(){
-  std::swap(name, f.name);
-  std::swap(components, f.components);
+Fact::Fact(Fact && f) : Fact(){
+  swap(*this, f);
 }
 
 //Evaluate function that takes in a vector of strings that represent the Fact's components
@@ -103,12 +112,25 @@ Fact& Fact::operator = (Fact f){
   return *this;
 }
 
-Fact& Fact::operator = (Fact && f) : name(), components(){
-  swap(*this, f)
+Fact& Fact::operator = (Fact && f){
+  swap(*this, f);
   return *this;
 }
 
 //------------------------------------------Rule-----------------------------------------------------//
+
+//Swaps the values between two rules
+void Rule::swap(Rule & one, Rule & two){
+  using std::swap;
+  swap(one.name, two.name);
+  swap(one.components, two.components);
+  swap(one.ops, two.ops);
+}
+
+//Default constructor
+Rule::Rule(){
+
+}
 
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
@@ -132,10 +154,8 @@ Rule::Rule(const Rule & r){
 }
 
 //Move constructor
-Rule::Rule(Rule && r) : name(), ops(), components(){
-  std::swap(name, r.name);
-  std::swap(components, r.components);
-  std::swap(ops, r.ops);
+Rule::Rule(Rule && r) : Rule(){
+  swap(*this, r);
 }
 
 //Evaluates the Rule and verifies if the rule is valid or not depending on the validity
@@ -184,21 +204,13 @@ string Rule::toString(){
     return output;
 }
 
-//Swaps the values between two rules
-void Rule::swap(Rule & one, Rule & two){
-  using std::swap;
-  swap(one.name, two.name);
-  swap(one.components, two.components);
-  swap(one.ops, two.ops);
-}
-
 //Operator overloads for move and copy assignment
 Rule& Rule::operator = (Rule r){
   swap(*this, r);
   return *this;
 }
 
-Rule& Rule::operator = (Rule && r) : name(), components(), ops(){
+Rule& Rule::operator = (Rule && r){
   swap(*this, r);
   return *this;
 }
