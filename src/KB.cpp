@@ -1,6 +1,11 @@
 //knowledge base//
 //#include<map>
 #include<algorithm>
+
+#ifndef PREDICATE_H
+#define PREDICATE_H
+#endif
+
 #include "KB.h"
 
 using namespace std;
@@ -72,14 +77,14 @@ Fact* KB::Fetch(string r, vector<string> a) {
 		if(f->actors == a) return f;
 	}
 	return NULL; //was nullptr (probably should still be)
-} 
+}
 
-/*Fact* KB::Remove(Fact * fact){
-	ptrdiff_t pos = find(FactMap[fact->Relationship].begin(), FactMap[fact->Relationship].begin(), fact) - FactMap[fact->Relationship].begin();
+Fact* KB::Remove(Fact * fact){
+	vector<Fact*>::iterator pos = find(FactMap[fact->Relationship].begin(), FactMap[fact->Relationship].end(), fact);
 	Fact * temp = fact;
 	FactMap[fact->Relationship].erase(pos);
 	return temp;
-}*/
+}
 
 void KB::Remove(string r){
 	FactMap.erase(r);

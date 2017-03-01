@@ -11,7 +11,7 @@ public:
 	std::map <string, vector<Fact*> > FactMap;
 	KB();
 	~KB();
-  
+
 	void Add(Fact * fact);
 	void Remove(std::string r);
 	Fact* Fetch(string r, vector<string> actors);
