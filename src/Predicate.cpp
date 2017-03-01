@@ -6,14 +6,24 @@ using namespace std;
 
 //--------------------------------------------Predicate--------------------------------------//
 
+//Swaps the member values between two Predicates
+void Predicate::p_swap(Predicate & one, Predicate & two){
+  using std::swap;
+  swap(one.name, two.name);
+  swap(one.components, two.components);
+}
+
+//Default Constructor
+Predicate::Predicate(){
+  string name = "";
+  vector<string> components;
+}
+
 //Constructor for Predicate, the base class from which both Fact and Rule extend from.
 //Takes in a string as a name, and a variable number of string arguments as Actors
-Predicate::Predicate(string n, int argCount, ... ){
+Predicate::Predicate(string n, vector<string> actors){
   string name = n;
-  va_list args;
-  va_start(args, argCount);
-  for(int i=0; i<argCount; i++) components.push_back(va_arg(args,string));
-  va_end(args);
+  vector<string> components = actors;
 }
 
 //Copy constructor
@@ -23,8 +33,13 @@ Predicate::Predicate(const Predicate & p){
 }
 
 //Move constructor
-Predicate::Predicate(Predicate && p) : name(0), components(0){
-  std::swap(*this, p);
+Predicate::Predicate(Predicate && p) : Predicate(){
+  p_swap(*this, p);
+}
+
+//Destructor
+Predicate::~Predicate(){
+
 }
 
 //Evaluate function.  May need to make this virtual in the future
@@ -32,25 +47,24 @@ bool Predicate::evaluate(vector<string> components){
   return true;
 }
 
-//Swaps the member values between two Predicates
-void Predicate::swap(Predicate & one, Predicate & two){
-  using std::swap;
-  swap(one.name, two.name);
-  swap(one.components, two.components);
-}
-
 //Operator overloads for copy and move assignment
 Predicate& Predicate::operator = (Predicate p){
-  swap(*this, p);
+  p_swap(*this, p);
   return *this;
 }
 
 Predicate& Predicate::operator = (Predicate && p){
-  swap(*this, p);
+  p_swap(*this, p);
   return *this;
 }
 
 //--------------------------------------------Fact------------------------------------//
+
+//Default Constructor
+Fact::Fact(){
+  string name = "";
+  vector<string> components;
+}
 
 //Constructor that takes in a string for a name, and a vector of strings for its components (Actors).
 Fact::Fact(string n, vector<string> a){
@@ -65,9 +79,8 @@ Fact::Fact(const Fact & f){
 }
 
 //Move constructor
-Fact::Fact(Fact && f) : name(), components(){
-  std::swap(name, f.name);
-  std::swap(components, f.components);
+Fact::Fact(Fact && f) : Fact(){
+  p_swap(*this, f);
 }
 
 //Evaluate function that takes in a vector of strings that represent the Fact's components
@@ -99,29 +112,40 @@ string Fact::toString(){
 
 //Operator overloads for Fact copy and move assignment
 Fact& Fact::operator = (Fact f){
-  swap(*this, f);
+  p_swap(*this, f);
   return *this;
 }
 
-Fact& Fact::operator = (Fact && f) : name(), components(){
-  swap(*this, f)
+Fact& Fact::operator = (Fact && f){
+  p_swap(*this, f);
   return *this;
 }
 
 //------------------------------------------Rule-----------------------------------------------------//
 
+//Swaps the values between two rules
+void Rule::r_swap(Rule & one, Rule & two){
+  using std::swap;
+  swap(one.name, two.name);
+  swap(one.components, two.components);
+  swap(one.ops, two.ops);
+}
+
+//Default constructor
+Rule::Rule(){
+  string name = "";
+  //Vector of predicate components (Rules or facts) that make up this rule
+  vector<Predicate*> components;
+  //Function pointers that point to functions that emulate boolean operators
+  vector<bool (*)(bool, bool)> ops;
+}
+
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
-Rule::Rule(string n, vector<bool (*)(bool, bool)> Ops, int count, ...){
+Rule::Rule(string n, const vector<bool (*)(bool, bool)> Ops, vector<Predicate*> cmps){
   string name = n;
-  va_list cmp;
-  vector<Predicate*> components;
-  for(int i = 0; i < count; i++){
-    Predicate p = va_arg(cmp, Predicate);
-    components.push_back(&p);
-  }
+  vector<Predicate*> components = cmps;
   vector<bool (*)(bool, bool)> ops = Ops; //Operators that compare each component of the rule
-  va_end(cmp);
 }
 
 //Copy constructor
@@ -132,26 +156,30 @@ Rule::Rule(const Rule & r){
 }
 
 //Move constructor
-Rule::Rule(Rule && r) : name(), ops(), components(){
-  std::swap(name, r.name);
-  std::swap(components, r.components);
-  std::swap(ops, r.ops);
+Rule::Rule(Rule && r) : Rule(){
+  r_swap(*this, r);
+}
+
+//Destructor
+Rule::~Rule(){
+
 }
 
 //Evaluates the Rule and verifies if the rule is valid or not depending on the validity
 //of its components (which can be other Rules or Facts).  Takes in a vector of strings
 //that represent actors relevant to each component of the rule.
+//MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
 //Returns the a boolean representing the Rule's validity.
-bool Rule::evaluate(vector<string> components){
+bool Rule::evaluate(vector<string> actors){
   Predicate * first = components[0]; // LHS component to be evaluated
   Predicate * next = components[1]; // RHS component to be evaluated
 
   //range of components to take from components vector
-  vector<string> range = vector<string>(components.begin(), components.begin() + first->components.size());
+  vector<string> range = vector<string>(actors.begin(), actors.begin() + first->components.size());
 
   bool truth = first->evaluate(range); //evaluate using the range of components that pertain to the particular component
   int count = 0;
-  while(next != 0 && count + 1 <= components.size()){
+  while(next && count + 1 <= components.size()){
     //Take range of components for the next vector
     vector<string> next_range = vector<string>(range.end(), range.end() + next->components.size());
     bool temp = (*ops[count])(truth, next->evaluate(next_range)); //Perform boolean operation using function pointer
@@ -164,6 +192,7 @@ bool Rule::evaluate(vector<string> components){
 }
 
 //If the Rule is valid, adds a Fact representative of the Rule's validity to the KB
+//MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
 bool Rule::enact(vector<string> components){
   if(evaluate(components)){
     //KB.add(new Fact());
@@ -184,22 +213,14 @@ string Rule::toString(){
     return output;
 }
 
-//Swaps the values between two rules
-void Rule::swap(Rule & one, Rule & two){
-  using std::swap;
-  swap(one.name, two.name);
-  swap(one.components, two.components);
-  swap(one.ops, two.ops);
-}
-
 //Operator overloads for move and copy assignment
 Rule& Rule::operator = (Rule r){
-  swap(*this, r);
+  r_swap(*this, r);
   return *this;
 }
 
-Rule& Rule::operator = (Rule && r) : name(), components(), ops(){
-  swap(*this, r);
+Rule& Rule::operator = (Rule && r){
+  r_swap(*this, r);
   return *this;
 }
 
