@@ -2,8 +2,8 @@
 #include<string>
 #include<vector>
 #include<map>
-#include "RB.h"
-#include "KB.h"
+#include "../sources/RB.cpp"
+#include "../sources/KB.cpp"
 
 class Parse{
 	public:

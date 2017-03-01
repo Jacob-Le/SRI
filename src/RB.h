@@ -1,6 +1,6 @@
 //Rule database
 #include <stdlib.h>
-#include "Predicate.cpp"
+#include "../sources/Predicate.cpp"
 
 using namespace std;
 

@@ -135,7 +135,7 @@ void Parse::ParseRule(string input){
 	AddRule(numRuns);
 	Preds.clear();
 	//for(int i=0; i<Logic.size();i++) cout<<Logic.at(i)<<endl;
-	Logic.clear();//WE CAN PROBABLY GET RID OF LOGIC, BUT I'LL LEAVE IT IN FOR NOW.------------------------------------------------------------
+	Logic.clear();
 	ops.clear();
 }
 
@@ -270,6 +270,7 @@ void Parse::AddFact(Fact* f){
 
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
 void Parse::AddRule(int numFcns) {
+	string fcnName = "";
 	while (numFcns>0) {
 		if (numFcns == 1) {
 			fcnName = Relationship.end();
@@ -285,12 +286,12 @@ void Parse::AddRule(int numFcns) {
 		tempPreds.push_back(Preds[i]);
 	}
 
-	for (i = 0; i < ops.size(); i++) {
-		tempLogic.push_back(ops[i]);
+	for (i = 0; i < Logic.size(); i++) {
+		tempLogic.push_back(Logic[i]);
 	}
 
-	Rules * newRule = new Rule(fcnName, tempLogic, numPreds(), tempPreds);
-	RuleBase.add(newRule);
+	Rule * newRule = new Rule(fcnName, tempLogic, numPreds(), tempPreds);
+	RuleBase->add(newRule);
 
 }
 
