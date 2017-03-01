@@ -3,8 +3,6 @@
 #include<vector>
 #include<map>
 //#include "Fact.h"
-#include "RB.h"
-#include "KB.h"
 #include "../sources/Predicate.cpp"
 
 class Parse{
