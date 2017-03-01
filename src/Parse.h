@@ -9,7 +9,6 @@
 
 class Parse{
 	public:
-	Ops* operations;
 	RB* RuleBase;
 	KB* KnowledgeBase;
 	int numRuns;
@@ -31,15 +30,4 @@ class Parse{
 	void ParseTerminalInput();
 	void AddFact(Fact* factptr);
 	void AddRule(int numFcns);
-};
-
-class Ops{
-public:
-	bool AND(bool, bool);
-	bool OR(bool, bool);
-	
-	Ops();
-
-	bool(*and )(bool, bool);
-	bool(*or )(bool, bool);
 };

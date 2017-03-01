@@ -22,6 +22,9 @@ typedef struct Predicate{
   void p_swap(Predicate & one, Predicate & two);
   friend void p_swap(Predicate & one, Predicate & two);
 
+  bool AND(bool,bool);
+  bool OR(bool,bool);
+
   ~Predicate();
 
   Predicate& operator = (Predicate p);
@@ -53,11 +56,11 @@ typedef struct Rule : Predicate{
   //Vector of predicate components (Rules or facts) that make up this rule
   vector<Predicate*> components;
   //Function pointers that point to functions that emulate boolean operators
-  vector<bool (*)(bool, bool)> ops;
+  vector<int> ops;
 
   Rule();
   //Variadic constructor that accepts any number of conditions
-  Rule(string name, const vector<bool (*)(bool, bool)> ops, vector<Predicate*> cmps);
+  Rule(string name, const vector<int> Logic, vector<Predicate*> cmps);
   //copy and move constructors
   Rule(const Rule & r);
   Rule(Rule && r);

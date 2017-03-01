@@ -7,23 +7,9 @@
 #include "Parse.h"
 using namespace std;
 
-bool Ops::AND(bool ruleA, bool ruleB){
-	return ruleA && ruleB;
-}
-
-bool Ops::OR(bool ruleA, bool ruleB){
-	return ruleA || ruleB;
-}
-
-Ops::Ops() {
-	bool(*and)(bool, bool) = AND;
-	bool(*or )(bool, bool) = OR;
-}
-
 Parse::Parse(KB* knowledgeBase){ //RB* ruleBase,
 	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
-	operations = new Ops();
 }
 
 //substr's second argument is how far from first character to search to, not from what char to 
@@ -114,13 +100,13 @@ void Parse::ParseRule(string input){
 			if (input[searchStart] == ':') {
 				if (input[searchStart + 3] == 'A') { //Need to have store as boolean in Rule Component
 				  //cout<<"AND"<<endl;
-					ops.push_back(operations->and);
+					//ops.push_back(operations->and);
 					Logic.push_back(1);
 					searchStart += 6;
 				}
 				else if (input[searchStart + 3] == 'O') {
 					//cout<<"OR" << endl;
-					ops.push_back(operations-> or );
+					//ops.push_back(operations-> or );
 					Logic.push_back(0);
 					searchStart += 5;
 				}
@@ -129,13 +115,13 @@ void Parse::ParseRule(string input){
 			else if (input[searchStart + 1] == 'A' || input[searchStart + 1] == 'O') {
 				if (input[searchStart + 1] == 'A') {
 					//cout<<"AND"<<endl
-					ops.push_back(operations->and);
+					//ops.push_back(operations->and);
 					Logic.push_back(1);
 					searchStart += 4;
 				}
 				else if (input[searchStart + 1] == 'O') {
 					//cout<<"OR" << endl;
-					ops.push_back(operations-> or );
+					//ops.push_back(operations-> or );
 					Logic.push_back(0);
 					searchStart += 3;
 				}
@@ -293,17 +279,17 @@ void Parse::AddRule(int numFcns) {
 	}
 
 	vector<Predicate> tempPreds;
-	vector<(*)(bool, bool)> tempOps;
+	vector<int> tempLogic;
 	int i;
 	for (i = 0; i < Preds.size(); i++) {
 		tempPreds.push_back(Preds[i]);
 	}
 
 	for (i = 0; i < ops.size(); i++) {
-		tempOps.push_back(ops[i]);
+		tempLogic.push_back(ops[i]);
 	}
 
-	Rules * newRule = new Rule(fcnName, ops, numPreds(), tempPreds);
+	Rules * newRule = new Rule(fcnName, tempLogic, numPreds(), tempPreds);
 	RuleBase.add(newRule);
 
 }
