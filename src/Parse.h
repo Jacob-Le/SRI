@@ -5,14 +5,15 @@
 //#include "Fact.h"
 #include "RB.h"
 #include "KB.h"
-#include "Predicate.h"
+#include "../sources/Predicate.cpp"
 
 class Parse{
 	public:
+	Ops* operations;
 	RB* RuleBase;
 	KB* KnowledgeBase;
 	int numRuns;
-	vector<(*)(bool, bool)> ops;
+	std::vector<(*)(bool, bool)> ops;
 	Parse(KB* knowledgeBase); //(RB* ruleBase, KB* knowledgeBase)
 	std::vector<string> RuleVector; 
 	std::vector<string> FactVector;
@@ -34,6 +35,11 @@ class Parse{
 
 class Ops{
 public:
-	virtual bool AND(bool, bool);
-	virtual bool OR(bool, bool);
+	bool AND(bool, bool);
+	bool OR(bool, bool);
+	
+	Ops();
+
+	bool(*and )(bool, bool);
+	bool(*or )(bool, bool);
 };

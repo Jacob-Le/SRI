@@ -1,9 +1,4 @@
 //Parse.cpp
-/*
-I'M RUNNING INTO AN ISSUE WHERE I THINK JACOB WENT HIS OWN WAY IN PREDICATE.CPP THAT DOESN'T WORK WITH 
-THE ADDRULE() FUNCTION. I THINK WE NEED TO MEET UP AND DRAW A PICTURE OR SOMETHING.
-
-*/
 #include<cstdio>
 #include<string>
 #include<iostream>
@@ -20,9 +15,15 @@ bool Ops::OR(bool ruleA, bool ruleB){
 	return ruleA || ruleB;
 }
 
+Ops::Ops() {
+	bool(*and)(bool, bool) = AND;
+	bool(*or )(bool, bool) = OR;
+}
+
 Parse::Parse(KB* knowledgeBase){ //RB* ruleBase,
 	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
+	operations = new Ops();
 }
 
 //substr's second argument is how far from first character to search to, not from what char to 
@@ -100,58 +101,51 @@ void Parse::ParseRule(string input){
 	int nextLen;
 	//cout << "input: " << input;
 	
-	for(int i=0; i<numRuns-1; i++){
-	  searchStart = searchEnd+1;
-	  //cout << "searchStart:" << searchStart << endl;
-	  searchEnd = input.find(")",searchEnd+1);
-	  if(searchEnd == -1) searchEnd = input.size(); 
-	  //cout << "searchEnd:" << searchEnd <<endl;
-	  
-	  //Gets Logic Operator and updates searchStart past it
-	  if(i%2 == 0){
-		  //First Logical Operator
-		  if(input[searchStart] == ':'){
-			  if(input[searchStart+3] == 'A'){ //Need to have store as boolean in Rule Component
-				//cout<<"AND"<<endl;
-				  ops.push_back(*(Ops::AND));
-				Logic.push_back(1);
-				searchStart += 6;
-			  } 
-			  else if(input[searchStart+3] == 'O'){
-				//cout<<"OR" << endl;
-				  ops.push_back(*(Ops::OR));
-				Logic.push_back(0);
-				searchStart += 5;
-			  }
-		  //If additional Logical Operator
-		  }else if(input[searchStart+1] == 'A' || input[searchStart+1] == 'O'){
-			  if(input[searchStart+1] == 'A'){
-				//cout<<"AND"<<endl
-				  ops.push_back(*(Ops::AND));
-				Logic.push_back(1);
-				searchStart += 4;
-			  } 
-			  else if(input[searchStart+1] == 'O'){
-				//cout<<"OR" << endl;
-				  ops.push_back(*(Ops::OR));
-				Logic.push_back(0);
-				searchStart += 3;
-			  }
-		  }
-	  }
-	  nextLen = searchLength(searchStart+1,searchEnd);
-	  //cout << "searching: " << input.substr(searchStart+1, nextLen) << endl;
-	  ParsePred(input.substr(searchStart+1, nextLen),false);
+	for (int i = 0; i < numRuns - 1; i++) {
+		searchStart = searchEnd + 1;
+		//cout << "searchStart:" << searchStart << endl;
+		searchEnd = input.find(")", searchEnd + 1);
+		if (searchEnd == -1) searchEnd = input.size();
+		//cout << "searchEnd:" << searchEnd <<endl;
+
+		//Gets Logic Operator and updates searchStart past it
+		if (i % 2 == 0) {
+			//First Logical Operator
+			if (input[searchStart] == ':') {
+				if (input[searchStart + 3] == 'A') { //Need to have store as boolean in Rule Component
+				  //cout<<"AND"<<endl;
+					ops.push_back(operations->and);
+					Logic.push_back(1);
+					searchStart += 6;
+				}
+				else if (input[searchStart + 3] == 'O') {
+					//cout<<"OR" << endl;
+					ops.push_back(operations-> or );
+					Logic.push_back(0);
+					searchStart += 5;
+				}
+				//If additional Logical Operator
+			}
+			else if (input[searchStart + 1] == 'A' || input[searchStart + 1] == 'O') {
+				if (input[searchStart + 1] == 'A') {
+					//cout<<"AND"<<endl
+					ops.push_back(operations->and);
+					Logic.push_back(1);
+					searchStart += 4;
+				}
+				else if (input[searchStart + 1] == 'O') {
+					//cout<<"OR" << endl;
+					ops.push_back(operations-> or );
+					Logic.push_back(0);
+					searchStart += 3;
+				}
+			}
+		}
+		nextLen = searchLength(searchStart + 1, searchEnd);
+		//cout << "searching: " << input.substr(searchStart+1, nextLen) << endl;
+		ParsePred(input.substr(searchStart + 1, nextLen), false);
 	}
 
-	//AddRule(numfcn); THIS IS WHERE I THINK WE CAN USE ADDRULE, NOT SURE WHERE NUMFCN COMES FROM-----------------------------------------------------------------------
-
-	/*for(int i=0; i<Preds.size();i++){
-		cout << Preds.at(i)->Relationship << endl;
-		for(int j=0; j<Preds.at(i)->components.size(); j++){
-			cout << Preds.at(i)->components.at(j) << endl;
-		}
-	}*/
 	AddRule(numRuns);
 	Preds.clear();
 	//for(int i=0; i<Logic.size();i++) cout<<Logic.at(i)<<endl;
@@ -286,10 +280,6 @@ void Parse::ParseTerminalInput(){
 //Add Fact to KB once function is built
 void Parse::AddFact(Fact* f){
 	KnowledgeBase->Add(f);
-}
-
-void Parse::AddRule(int numFcns) {
-
 }
 
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
