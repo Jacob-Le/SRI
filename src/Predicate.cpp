@@ -58,6 +58,18 @@ Predicate& Predicate::operator = (Predicate && p){
   return *this;
 }
 
+bool Predicate::AND(bool a, bool b) {
+	return a&&b;
+}
+
+bool Predicate::OR(bool a, bool b) {
+	return a||b;
+}
+
+
+
+
+
 //--------------------------------------------Fact------------------------------------//
 
 //Default Constructor
@@ -69,7 +81,7 @@ Fact::Fact(){
 //Constructor that takes in a string for a name, and a vector of strings for its components (Actors).
 Fact::Fact(string n, vector<string> a){
   vector<string> components = a;
-  string name = n;
+  string Relationship = n;
 }
 
 //Copy constructor
@@ -137,15 +149,15 @@ Rule::Rule(){
   //Vector of predicate components (Rules or facts) that make up this rule
   vector<Predicate*> components;
   //Function pointers that point to functions that emulate boolean operators
-  vector<bool (*)(bool, bool)> ops;
+  vector<bool> ops;
 }
 
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
-Rule::Rule(string n, const vector<bool (*)(bool, bool)> Ops, vector<Predicate*> cmps){
-  string name = n;
+Rule::Rule(string n, vector<bool> Logic, vector<Predicate*> cmps){
+  string Relationship = n;
   vector<Predicate*> components = cmps;
-  vector<bool (*)(bool, bool)> ops = Ops; //Operators that compare each component of the rule
+  vector<bool> ops = Logic; //Operators that compare each component of the rule
 }
 
 //Copy constructor
@@ -182,7 +194,9 @@ bool Rule::evaluate(vector<string> actors){
   while(next && count + 1 <= components.size()){
     //Take range of components for the next vector
     vector<string> next_range = vector<string>(range.end(), range.end() + next->components.size());
-    bool temp = (*ops[count])(truth, next->evaluate(next_range)); //Perform boolean operation using function pointer
+	bool temp;
+	if (ops[count] == 0) temp = OR(truth, next->evaluate(next_range));
+	else temp = AND(truth, next->evaluate(next_range)); //Perform boolean operation using 0 or 1;
     truth = temp;
     count += 1;
     range = next_range;
@@ -232,3 +246,4 @@ bool Rule::operator == (const Rule& r){
 bool Rule::operator != (const Rule& r){
   return !(*this == r);
 }
+

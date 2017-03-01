@@ -5,11 +5,10 @@
 #include<algorithm>
 #include<fstream>
 #include "Parse.h"
-//#include "Rule.cpp"
 using namespace std;
 
 Parse::Parse(KB* knowledgeBase){ //RB* ruleBase,
-	//RuleBase = ruleBase;
+	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
 }
 
@@ -88,51 +87,52 @@ void Parse::ParseRule(string input){
 	int nextLen;
 	//cout << "input: " << input;
 	
-	for(int i=0; i<numRuns-1; i++){
-	  searchStart = searchEnd+1;
-	  //cout << "searchStart:" << searchStart << endl;
-	  searchEnd = input.find(")",searchEnd+1);
-	  if(searchEnd == -1) searchEnd = input.size(); 
-	  //cout << "searchEnd:" << searchEnd <<endl;
-	  
-	  //Gets Logic Operator and updates searchStart past it
-	  if(i%2 == 0){
-		  //First Logical Operator
-		  if(input[searchStart] == ':'){
-			  if(input[searchStart+3] == 'A'){ //Need to have store as boolean in Rule Component
-				//cout<<"AND"<<endl;
-				Logic.push_back(1);
-				searchStart += 6;
-			  } 
-			  else if(input[searchStart+3] == 'O'){
-				//cout<<"OR" << endl;
-				Logic.push_back(0);
-				searchStart += 5;
-			  }
-		  //If additional Logical Operator
-		  }else if(input[searchStart+1] == 'A' || input[searchStart+1] == 'O'){
-			  if(input[searchStart+1] == 'A'){
-				//cout<<"AND"<<endl;
-				Logic.push_back(1);
-				searchStart += 4;
-			  } 
-			  else if(input[searchStart+1] == 'O'){
-				//cout<<"OR" << endl;
-				Logic.push_back(0);
-				searchStart += 3;
-			  }
-		  }
-	  }
-	  nextLen = searchLength(searchStart+1,searchEnd);
-	  //cout << "searching: " << input.substr(searchStart+1, nextLen) << endl;
-	  ParsePred(input.substr(searchStart+1, nextLen),false);
-	}
-	/*for(int i=0; i<Preds.size();i++){
-		cout << Preds.at(i)->Relationship << endl;
-		for(int j=0; j<Preds.at(i)->components.size(); j++){
-			cout << Preds.at(i)->components.at(j) << endl;
+	for (int i = 0; i < numRuns - 1; i++) {
+		searchStart = searchEnd + 1;
+		//cout << "searchStart:" << searchStart << endl;
+		searchEnd = input.find(")", searchEnd + 1);
+		if (searchEnd == -1) searchEnd = input.size();
+		//cout << "searchEnd:" << searchEnd <<endl;
+
+		//Gets Logic Operator and updates searchStart past it
+		if (i % 2 == 0) {
+			//First Logical Operator
+			if (input[searchStart] == ':') {
+				if (input[searchStart + 3] == 'A') { //Need to have store as boolean in Rule Component
+				  //cout<<"AND"<<endl;
+					//ops.push_back(operations->and);
+					Logic.push_back(1);
+					searchStart += 6;
+				}
+				else if (input[searchStart + 3] == 'O') {
+					//cout<<"OR" << endl;
+					//ops.push_back(operations-> or );
+					Logic.push_back(0);
+					searchStart += 5;
+				}
+				//If additional Logical Operator
+			}
+			else if (input[searchStart + 1] == 'A' || input[searchStart + 1] == 'O') {
+				if (input[searchStart + 1] == 'A') {
+					//cout<<"AND"<<endl
+					//ops.push_back(operations->and);
+					Logic.push_back(1);
+					searchStart += 4;
+				}
+				else if (input[searchStart + 1] == 'O') {
+					//cout<<"OR" << endl;
+					//ops.push_back(operations-> or );
+					Logic.push_back(0);
+					searchStart += 3;
+				}
+			}
 		}
-	}*/
+		nextLen = searchLength(searchStart + 1, searchEnd);
+		//cout << "searching: " << input.substr(searchStart+1, nextLen) << endl;
+		ParsePred(input.substr(searchStart + 1, nextLen), false);
+	}
+
+	AddRule(numRuns);
 	Preds.clear();
 	//for(int i=0; i<Logic.size();i++) cout<<Logic.at(i)<<endl;
 	Logic.clear();
@@ -157,7 +157,7 @@ void Parse::ParseLine(string input){
 	bool INFE = false; //short for INFERENCE
 	bool DROP = false;
 	
-	int numRuns = numPreds(input);
+	numRuns = numPreds(input);
 	//cout << numRuns;
 	//cout<< "input: " << input <<endl;
 	int searchStart = 0;
@@ -268,37 +268,31 @@ void Parse::AddFact(Fact* f){
 }
 
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
-/*void Parse::AddRule(int numFcns){
-	for(int i=numFcns-1; i>0; i--){
-		Fact* newFact = MakeFact();
-		FactVector.push_back();
-	}
+void Parse::AddRule(int numFcns) {
 	string fcnName = "";
-	while(numFcns>0){
-		if(numFcns == 1){
+	while (numFcns>0) {
+		if (numFcns == 1) {
 			fcnName = Relationship.end();
 			Relationship.pop_back();
-			numFcns--;		
+			numFcns--;
 		}
-		Fact* Fact1 = FactVector.end();
-		FactVector.pop_back();
-		Fact* Fact2 = FactVector.end();
-		bool logic = Logic.end();
-		Logic.pop_back();
-		Rule* newRule = new Rule(Fact1,Fact2,fcnName,logic);
-		RuleVector.push_back(newRule);
-		numFcns-=2;
 	}
-	Rule* domRule = RuleVector.end();
-	RuleVector.pop_back();
-	while(RuleVector.size()!=0){
-		Rule* subRule = RuleVector.end();
-		RuleVector.pop_back();
-		domRule->add_components(1,subRule);
+
+	vector<Predicate> tempPreds;
+	vector<bool> tempLogic;
+	int i;
+	for (i = 0; i < Preds.size(); i++) {
+		tempPreds.push_back(*Preds[i]);
 	}
-	RuleBase->add(domRule);
+
+	for (i = 0; i < Logic.size(); i++) {
+		tempLogic.push_back(Logic[i]);
 	}
-}*/
+
+	Rule * newRule = new Rule(fcnName, tempLogic, numRuns, tempPreds);
+	RuleBase->add(newRule);
+
+}
 
 main(){
 	KB* kb = new KB();
