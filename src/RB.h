@@ -1,21 +1,19 @@
 //Rule database
 #include <stdlib.h>
-#ifndef Predicate_h
-#include "Predicate.h"
-#endif
+#include "Predicate.cpp"
 
 using namespace std;
 
 class RB{
 private:
-  std::vector<*Rule> rules;
+  std::vector<Rule*> rules;
 public:
   RB();
   RB(const RB &otherRB);
   ~RB();
 
   void Add(Rule * r);
-  Rule* Remove(std::string name);
+  Rule* Remove(Rule * r);
   std::string toString();
   void Load(std::string filepath);
   std::string Dump(std::string filepath);

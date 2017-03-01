@@ -224,12 +224,11 @@ Rule& Rule::operator = (Rule && r){
   return *this;
 }
 
-/*
-bool Rule::operator && (const &Rule r){
-  return this->evaluate() && r.evaluate();
+//Comparison operator overloads
+bool Rule::operator == (const Rule& r){
+  return (name == r.name && components == r.components && ops == r.ops);
 }
 
-bool Rule::operator || (const &Rule r){
-  return this->evaluate() || r.evaluate();
+bool Rule::operator != (const Rule& r){
+  return !(*this == r);
 }
-*/
