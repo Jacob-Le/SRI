@@ -69,9 +69,9 @@ typedef struct Rule : Predicate{
   string toString();
   void r_swap(Rule & one, Rule & two);
 
-  //Operator overloads: shortcuts for calculating condition fufullment
+  //Operator overloads
   Rule& operator = (Rule r);
   Rule& operator = (Rule && r);
-  //bool operator &&(const &Rule r);
-  //bool operator ||(const &Rule r);
+  bool operator == (const Rule & r);
+  bool operator != (const Rule & r);
 }Rule;
