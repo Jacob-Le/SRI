@@ -12,16 +12,16 @@ THE ADDRULE() FUNCTION. I THINK WE NEED TO MEET UP AND DRAW A PICTURE OR SOMETHI
 #include "Parse.h"
 using namespace std;
 
-bool Ops::(*AND)(const bool ruleA, const bool ruleB){
+bool Ops::AND(bool ruleA, bool ruleB){
 	return ruleA && ruleB;
 }
 
-bool Ops::(*OR)(const bool ruleA, const bool ruleB){
+bool Ops::OR(bool ruleA, bool ruleB){
 	return ruleA || ruleB;
 }
 
 Parse::Parse(KB* knowledgeBase){ //RB* ruleBase,
-	//RuleBase = ruleBase;
+	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
 }
 
@@ -113,13 +113,13 @@ void Parse::ParseRule(string input){
 		  if(input[searchStart] == ':'){
 			  if(input[searchStart+3] == 'A'){ //Need to have store as boolean in Rule Component
 				//cout<<"AND"<<endl;
-				  ops.push_back(Ops::(*AND));
+				  ops.push_back(*(Ops::AND));
 				Logic.push_back(1);
 				searchStart += 6;
 			  } 
 			  else if(input[searchStart+3] == 'O'){
 				//cout<<"OR" << endl;
-				  ops.push_back(Ops::(*OR));
+				  ops.push_back(*(Ops::OR));
 				Logic.push_back(0);
 				searchStart += 5;
 			  }
@@ -127,13 +127,13 @@ void Parse::ParseRule(string input){
 		  }else if(input[searchStart+1] == 'A' || input[searchStart+1] == 'O'){
 			  if(input[searchStart+1] == 'A'){
 				//cout<<"AND"<<endl
-				  ops.push_back(Ops::(*AND));
+				  ops.push_back(*(Ops::AND));
 				Logic.push_back(1);
 				searchStart += 4;
 			  } 
 			  else if(input[searchStart+1] == 'O'){
 				//cout<<"OR" << endl;
-				  ops.push_back(Ops::(*OR));
+				  ops.push_back(*(Ops::OR));
 				Logic.push_back(0);
 				searchStart += 3;
 			  }
@@ -152,6 +152,7 @@ void Parse::ParseRule(string input){
 			cout << Preds.at(i)->components.at(j) << endl;
 		}
 	}*/
+	AddRule(numRuns);
 	Preds.clear();
 	//for(int i=0; i<Logic.size();i++) cout<<Logic.at(i)<<endl;
 	Logic.clear();//WE CAN PROBABLY GET RID OF LOGIC, BUT I'LL LEAVE IT IN FOR NOW.------------------------------------------------------------
@@ -177,7 +178,7 @@ void Parse::ParseLine(string input){
 	bool INFE = false; //short for INFERENCE
 	bool DROP = false;
 	
-	int numRuns = numPreds(input);
+	numRuns = numPreds(input);
 	//cout << numRuns;
 	//cout<< "input: " << input <<endl;
 	int searchStart = 0;
@@ -287,37 +288,34 @@ void Parse::AddFact(Fact* f){
 	KnowledgeBase->Add(f);
 }
 
+void Parse::AddRule(int numFcns) {
+
+}
+
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
-void Parse::AddRule(int numFcns){// I WANT TO APPROPRIATE THIS FUNCTION, NOT SURE WHAT PARAMETERS GO IN THOUGH------------------------------------------------------
-	for(int i=numFcns-1; i>0; i--){
-		Fact* newFact = MakeFact();
-		FactVector.push_back();
-	}
-	string fcnName = "";
-	while(numFcns>0){
-		if(numFcns == 1){
+void Parse::AddRule(int numFcns) {
+	while (numFcns>0) {
+		if (numFcns == 1) {
 			fcnName = Relationship.end();
 			Relationship.pop_back();
-			numFcns--;		
+			numFcns--;
 		}
-		Fact* Fact1 = FactVector.end();
-		FactVector.pop_back();
-		Fact* Fact2 = FactVector.end();
-		bool logic = Logic.end();
-		Logic.pop_back();
-		Rule* newRule = new Rule(fcnName,ops,Fact1,Fact2,);
-		RuleVector.push_back(newRule);
-		numFcns-=2;
 	}
-	Rule* domRule = RuleVector.end();
-	RuleVector.pop_back();
-	while(RuleVector.size()!=0){
-		Rule* subRule = RuleVector.end();
-		RuleVector.pop_back();
-		domRule->add_components(1,subRule);
+
+	vector<Predicate> tempPreds;
+	vector<(*)(bool, bool)> tempOps;
+	int i;
+	for (i = 0; i < Preds.size(); i++) {
+		tempPreds.push_back(Preds[i]);
 	}
-	RuleBase->add(domRule);
+
+	for (i = 0; i < ops.size(); i++) {
+		tempOps.push_back(ops[i]);
 	}
+
+	Rules * newRule = new Rule(fcnName, ops, numPreds(), tempPreds);
+	RuleBase.add(newRule);
+
 }
 
 main(){
