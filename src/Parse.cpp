@@ -127,13 +127,13 @@ void Parse::ParseRule(string input){
 		  }else if(input[searchStart+1] == 'A' || input[searchStart+1] == 'O'){
 			  if(input[searchStart+1] == 'A'){
 				//cout<<"AND"<<endl
-				  ops.push_back(Ops::AND);
+				  ops.push_back(Ops::(*AND));
 				Logic.push_back(1);
 				searchStart += 4;
 			  } 
 			  else if(input[searchStart+1] == 'O'){
 				//cout<<"OR" << endl;
-				  ops.push_back(Ops::OR);
+				  ops.push_back(Ops::(*OR));
 				Logic.push_back(0);
 				searchStart += 3;
 			  }
@@ -288,7 +288,7 @@ void Parse::AddFact(Fact* f){
 }
 
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
-/*void Parse::AddRule(int numFcns){ I WANT TO APPROPRIATE THIS FUNCTION, NOT SURE WHAT PARAMETERS GO IN THOUGH------------------------------------------------------
+void Parse::AddRule(int numFcns){// I WANT TO APPROPRIATE THIS FUNCTION, NOT SURE WHAT PARAMETERS GO IN THOUGH------------------------------------------------------
 	for(int i=numFcns-1; i>0; i--){
 		Fact* newFact = MakeFact();
 		FactVector.push_back();
@@ -305,7 +305,7 @@ void Parse::AddFact(Fact* f){
 		Fact* Fact2 = FactVector.end();
 		bool logic = Logic.end();
 		Logic.pop_back();
-		Rule* newRule = new Rule(Fact1,Fact2,fcnName,ops);
+		Rule* newRule = new Rule(fcnName,ops,Fact1,Fact2,);
 		RuleVector.push_back(newRule);
 		numFcns-=2;
 	}
@@ -318,7 +318,7 @@ void Parse::AddFact(Fact* f){
 	}
 	RuleBase->add(domRule);
 	}
-}*/
+}
 
 main(){
 	KB* kb = new KB();

@@ -56,7 +56,7 @@ typedef struct Rule : Predicate{
   //Variadic constructor that accepts any number of conditions
   Rule(string name, vector<bool (*)(bool, bool)> ops, int count, ...);
   //copy and move constructors
-  Rule(Rule r);
+  Rule(Rule & r);
   Rule(Rule && r);
 
 
@@ -70,4 +70,4 @@ typedef struct Rule : Predicate{
   Rule& operator = (Rule r);
   //bool operator &&(const &Rule r);
   //bool operator ||(const &Rule r);
-}Rule;*/
+}Rule;

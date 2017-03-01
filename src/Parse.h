@@ -11,7 +11,7 @@ class Parse{
 	public:
 	//RB* RuleBase;
 	KB* KnowledgeBase;
-	vector<(*)(const bool, const bool)> ops;
+	vector<(*)(bool, bool)> ops;
 	Parse(KB* knowledgeBase); //(RB* ruleBase, KB* knowledgeBase)
 	std::vector<string> RuleVector; 
 	std::vector<string> FactVector;
