@@ -25,9 +25,6 @@ KB::~KB(){
 //Input: Fact pointer
 //Output: void
 void KB::Add(Fact * fact){
-	//checking if relationship exists in the KB
-	//cout << fact->Relationship;
-	//if(FactMap.find(fact->Relationship) == FactMap.end()){
 	if(FactMap.count(fact->Relationship) == 0){ //If it doesn't exist
 		vector<Fact*> v;
 		v.push_back(fact);
@@ -36,9 +33,7 @@ void KB::Add(Fact * fact){
 		vector<bool> diffChecker;
 		bool flag = true;
 		if(FactMap[fact->Relationship].size()!= 0){
-			//cout<<"Checking for differences"<<endl;
 				for(int j=0; j<FactMap[fact->Relationship].size(); j++){ //Iterating through Vector
-					//cout<< FactMap[fact->Relationship].at(j)->toString()<<endl;
 					if(FactMap[fact->Relationship].at(j)->components.size() == fact->components.size()){ //if they have the same amount of components
 						diffChecker.assign(fact->components.size(),false); //Mark no difference
 						for(int k = 0; k<FactMap[fact->Relationship].at(j)->components.size();k++){ //Iterate through components
@@ -62,7 +57,6 @@ void KB::Add(Fact * fact){
 						}
 					}
 				}
-				//if(diffChecker.size()==0) FactMap[fact->Relationship].push_back(fact);
 				if(flag == true) FactMap[fact->Relationship].push_back(fact);
 				diffChecker.clear();
 		}else{
@@ -91,11 +85,6 @@ void KB::Remove(string r){
 	FactMap.erase(r);
 }
 
-
-bool KB::Exists(string r){
-	return FactMap[r].size() > 0;
-
-}
 //Finds a fact and returns a pointer to that fact
 //Input: key r
 //Output: pointer to Fact with all relationships
