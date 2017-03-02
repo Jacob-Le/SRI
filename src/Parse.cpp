@@ -168,20 +168,18 @@ void Parse::ParseLine(string input){
 		return;
 	}else if(INFE){
 	}else{ //DROP
-		string searchingFor = input.substr(searchStart, nextLen+1);
-		cout << searchingFor << endl;
-		bool CheckFactinKB = KnowledgeBase->Exists(searchingFor);//KnowledgeBase->FactMap.count(searchingFor) != 0;
+		string searchingFor = input.substr(searchStart, nextLen);
+		bool CheckFactinKB = KnowledgeBase->FactMap.count(searchingFor);// == 0;
 		Rule* temp;
 		bool CheckRuleinRB = false;
 		for(int i=0; i< RuleBase->rules.size(); i++){
-			cout << searchingFor << " == " << RuleBase->rules.at(i)->name << "\n";
 			if(searchingFor == RuleBase->rules.at(i)->name){
 				temp = RuleBase->rules.at(i);
 				CheckRuleinRB = true;
 				break;
 			}
 		}
-				
+			
 		if(CheckFactinKB){
 			KnowledgeBase->Remove(searchingFor);
 		}
@@ -241,7 +239,7 @@ void Parse::AddRule(int numFcns) {
 	vector<Predicate*> tempPreds;
 	vector<bool> tempLogic;
 	int i;
-	string fcnName = Preds.at(Preds.size()-1)->name;
+	string fcnName = Preds.at(0)->name;
 	
 	for (i = 0; i < Preds.size(); i++) {
         tempPreds.push_back(Preds[i]);
