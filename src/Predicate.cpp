@@ -1,4 +1,8 @@
 //Predicate.cpp
+/*
+	Definitions of predicates, rules, and facts are stored here, along with definitions
+	of their assosciated functions.
+*/
 #include "Predicate.h"
 #include <iostream>
 #include<math.h>
