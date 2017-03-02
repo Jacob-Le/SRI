@@ -7,12 +7,12 @@
 #include "Parse.h"
 using namespace std;
 
-Parse::Parse(KB* knowledgeBase, RB* ruleBase){
+Parse::Parse(KB * knowledgeBase, RB * ruleBase){ //RB* ruleBase,
 	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
 }
 
-//substr's second argument is how far from first character to search to, not from what char to 
+//substr's second argument is how far from first character to search to, not from what char to
 //what char so this function calculates that
 int Parse::searchLength(int start, int end){
 	//cout << end << "-" << start << "=" << end-start <<endl;
@@ -29,7 +29,7 @@ void Parse::ParsePred(string input,bool factMode){
 	int delimiter1 = input.find("(");
 	string relationship = input.substr(0, delimiter1);
 	//cout << relationship << endl;
-	
+
 	int delimiter2 = input.find(",",delimiter1); //.find() sets to -1 if not found I hope
 	if(delimiter2 == -1) oneArg = true;
 	int delimiter3 = input.find(")",delimiter2);
@@ -86,7 +86,7 @@ void Parse::ParseRule(string input){
 	int searchEnd = input.find(")",0);
 	int nextLen;
 	//cout << "input: " << input;
-	
+
 	for (int i = 0; i < numRuns - 1; i++) {
 		searchStart = searchEnd + 1;
 		//cout << "searchStart:" << searchStart << endl;
@@ -143,27 +143,27 @@ void Parse::ParseRule(string input){
 int Parse::numPreds(string input){
 	//cout << "Inside numFunctin(): "<<input << endl;
 	int numOpenParens = count(input.begin(),input.end(), '(');
-	return numOpenParens;	
+	return numOpenParens;
 }
 
 
 //Oversees all parsing on a single line of input
 void Parse::ParseLine(string input){
-	
+
 	bool LOAD = false;
 	bool DUMP = false;
 	bool FACT = false;
 	bool RULE = false;
 	bool INFE = false; //short for INFERENCE
 	bool DROP = false;
-	
+
 	numRuns = numPreds(input);
 	//cout << numRuns;
 	//cout<< "input: " << input <<endl;
 	int searchStart = 0;
 	int searchEnd = input.find(")");
 	int nextLen = searchLength(searchStart, searchEnd);
-	
+
 	//Determine Command
 	string command = input.substr(searchStart, 4);
 	//cout << "command: " << command << endl;
@@ -181,7 +181,7 @@ void Parse::ParseLine(string input){
 	}else if(command == "DROP") DROP = true;
 	searchStart += 5;
 	nextLen = searchLength(searchStart, searchEnd);
-	
+
 	//Enact Command
 	if(LOAD){
 		ParseFile(input.substr(searchStart, nextLen));
@@ -191,7 +191,7 @@ void Parse::ParseLine(string input){
 		DumpToFile(input.substr(searchStart, nextLen),fileDump);
 		return;
 	}else if(FACT){
-		ParsePred(input.substr(searchStart, nextLen), true); 
+		ParsePred(input.substr(searchStart, nextLen), true);
 		return;
 	}else if(RULE){
 		//cout<< "input: "<< input << endl;
@@ -212,7 +212,7 @@ void Parse::ParseLine(string input){
 		}else{
 			cout << searchingFor << " not in KB or RB to delete\n";
 		}
-		
+
 	}
 	/*
 	ParseFunction(input.substr(searchStart, nextLen));
@@ -223,7 +223,7 @@ void Parse::ParseLine(string input){
 	}
 */
 
-	
+
 }
 
 //Parses a file
