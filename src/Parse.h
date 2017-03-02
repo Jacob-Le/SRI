@@ -10,8 +10,10 @@ class Parse{
 	RB* RuleBase;
 	KB* KnowledgeBase;
 	int numRuns;
-	Parse(KB* knowledgeBase); //(RB* ruleBase, KB* knowledgeBase)
-	std::vector<string> RuleVector;
+
+	Parse(KB* knowledgeBase, RB* ruleBase); //, KB* knowledgeBase)
+	std::vector<string> RuleVector; 
+
 	std::vector<string> FactVector;
 	//std::map<string,vector<int> > Relationship; //Maps the number of args it had
 	//std::vector<string> Entry;

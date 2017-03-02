@@ -75,12 +75,12 @@ Fact* KB::Fetch(string r, vector<string> a) {
 	return NULL; //was nullptr (probably should still be)
 }
 
-Fact* KB::Remove(Fact * fact){
+/*Fact* KB::Remove(Fact * fact){
 	vector<Fact*>::iterator pos = find(FactMap[fact->Relationship].begin(), FactMap[fact->Relationship].end(), fact);
 	Fact * temp = fact;
 	FactMap[fact->Relationship].erase(pos);
 	return temp;
-}
+}*/
 
 void KB::Remove(string r){
 	FactMap.erase(r);

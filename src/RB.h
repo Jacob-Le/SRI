@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "Predicate.cpp"
 
+
 using namespace std;
 
 class RB{
