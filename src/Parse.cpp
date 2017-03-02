@@ -175,6 +175,7 @@ void Parse::ParseLine(string input){
 		return;
 	}else if(DUMP){
 		string fileDump = KnowledgeBase->toString();
+		fileDump += RuleBase->toString();
 		DumpToFile(input.substr(searchStart, nextLen),fileDump);
 		return;
 	}else if(FACT){
@@ -188,12 +189,27 @@ void Parse::ParseLine(string input){
 	}else if(INFE){
 	}else{ //DROP
 		string searchingFor = input.substr(searchStart, nextLen+1);
-		bool CheckFactinKB = KnowledgeBase->FactMap.count(searchingFor) != 0;
-		//bool CheckRuleinRB = RuleBase->rules.count(searchingFor) != 0;
-		if(CheckFactinKB){ //CheckFactinKB && CheckRuleinRB || CheckFactinKB
+		cout << searchingFor << endl;
+		bool CheckFactinKB = KnowledgeBase->Exists(searchingFor);//KnowledgeBase->FactMap.count(searchingFor) != 0;
+		Rule* temp;
+		bool CheckRuleinRB = false;
+		for(int i=0; i< RuleBase->rules.size(); i++){
+			cout << searchingFor << " == " << RuleBase->rules.at(i)->name << "\n";
+			if(searchingFor == RuleBase->rules.at(i)->name){
+				temp = RuleBase->rules.at(i);
+				CheckRuleinRB = true;
+				break;
+			}
+		}
+				
+		if(CheckFactinKB){
 			KnowledgeBase->Remove(searchingFor);
-		//}else if(CheckRuleinRB){
-		}else{
+		}
+		if(CheckRuleinRB){
+
+			RuleBase->Remove(temp);
+		}
+		if(!CheckFactinKB && !CheckRuleinRB){
 			cout << searchingFor << " not in KB or RB to delete\n";
 		}
 		
@@ -266,7 +282,6 @@ void Parse::AddRule(int numFcns) {
 	}
 
 	Rule * newRule = new Rule(fcnName, tempLogic, tempPreds); //enactVars
-	cout << newRule->toString() << endl;
 	RuleBase->Add(newRule);
 
 }

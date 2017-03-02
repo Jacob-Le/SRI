@@ -91,6 +91,11 @@ void KB::Remove(string r){
 	FactMap.erase(r);
 }
 
+
+bool KB::Exists(string r){
+	return FactMap[r].size() > 0;
+
+}
 //Finds a fact and returns a pointer to that fact
 //Input: key r
 //Output: pointer to Fact with all relationships

@@ -34,7 +34,7 @@ void RB::Add(Rule * r){
 //Remove rules
 Rule* RB::Remove(Rule * r){
   Rule * temp = r;
-	vector<Rule*>::iterator pos = find(rules.begin(), rules.end(), r);
+  vector<Rule*>::iterator pos = find(rules.begin(), rules.end(), r);
   rules.at(distance(rules.begin(), pos))->~Rule();
   rules.erase(pos);
   return temp;
@@ -43,34 +43,11 @@ Rule* RB::Remove(Rule * r){
 //Print as string
 std::string RB::toString(){
   std::string s = "";
-    for(Rule * rule : rules){
-      rule->toString();
+    for(int i=0; i<rules.size();i++){
+      s += rules.at(i)->toString();
+	  s +='\n';
     }
     return s;
-}
-
-//Load from file
-void RB::Load(std::string filepath){
-	ofstream myfile;
-	myfile.open(filepath);
-	if (myfile) std::cout << "Error: File not found." << std::endl;//loading isn't implemented
-}
-
-//Save to file
-std::string RB::Dump(std::string filepath){
-
-	/*ofstream myfile;
-	myfile.open(filepath);
-	try {
-		if (rule::size == 0) throw throw_exception();
-
-		for (int i = 0; i < rules::size; i++) {
-			myfile << toString(vector[i]) << std::endl;
-		}
-	}
-	catch (throw_exception &e) {
-		std::cout << e.msg("Error: There are no rules to dump.") << std::endl;
-	}*/
 }
 
 //DECONSTRUCTOR-----------------------------------------------------------------------------------
