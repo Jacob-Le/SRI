@@ -13,7 +13,7 @@ Query::Query() {
 
 //FACT--------------------------------------------------------------------------
 vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
-	vector<Fact*>* result = Knowledge->Find(factKey); 
+	vector<Fact*>* result = Knowledge->Find(factKey);
 	for (int i = 0; i < result->size(); i++) result->at(i)->toString();
 	return result;
 }
@@ -75,16 +75,16 @@ vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB)
 //used in concatenate to look for dupes
 vector<Fact*> Query::preventDupes(vector<Fact*>* A, vector<Fact*> B){
 
-	vector<bool> diffChecker;		
+	vector<bool> diffChecker;
 	bool flag = true;
 	for(int i=0; i<A->size(); i++){
 		if(B.size() != 0){
 			//cout<<"Checking for differences"<<endl;
 				for(int j=0; j<B.size(); j++){ //Iterating through Vector
-					if(B.at(j)->actors.size() == A->at(i)->actors.size()){ //if they have the same amount of actors
-						diffChecker.assign(A->at(i)->actors.size(),false); //Initialize all to false
-						for(int k = 0; k<B.at(j)->actors.size();k++){ //Iterate through actors
-							if(B.at(j)->actors.at(k) != A->at(i)->actors.at(k)){ //If actor pair is different
+					if(B.at(j)->components.size() == A->at(i)->components.size()){ //if they have the same amount of components
+						diffChecker.assign(A->at(i)->components.size(),false); //Initialize all to false
+						for(int k = 0; k<B.at(j)->components.size();k++){ //Iterate through components
+							if(B.at(j)->components.at(k) != A->at(i)->components.at(k)){ //If actor pair is different
 								diffChecker.at(k) = true; //mark difference
 								break;
 							}
@@ -109,10 +109,9 @@ vector<Fact*> Query::preventDupes(vector<Fact*>* A, vector<Fact*> B){
 			B.push_back(A->at(i));
 		}
 	}
-	
-	
+}
+
+
 	void Query::printResults(){
 		for(int i=0;i<Results.size();i++) cout << Results.at(i)->toString();
 	}
-
-}

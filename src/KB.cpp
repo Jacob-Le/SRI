@@ -2,10 +2,6 @@
 //#include<map>
 #include<algorithm>
 
-#ifndef PREDICATE_H
-#define PREDICATE_H
-#endif
-
 #include "KB.h"
 
 using namespace std;
@@ -31,7 +27,7 @@ void KB::Add(Fact * fact){
 		v.push_back(fact);
 		FactMap[fact->Relationship] = v; //May or may not be null cuz temporary variable
 	}else{ //If it does exist
-		vector<bool> diffChecker;		
+		vector<bool> diffChecker;
 		bool flag = true;
 		if(FactMap[fact->Relationship].size()!= 0){
 			//cout<<"Checking for differences"<<endl;
@@ -69,7 +65,7 @@ void KB::Add(Fact * fact){
 		if(flag == false){
 			cout<<"Fact already exists"<<endl;
 		}
-	}	
+	}
 }
 
 Fact* KB::Fetch(string r, vector<string> a) {
@@ -103,4 +99,3 @@ string KB::toString(){
 	}
 	return output;
 }
-
