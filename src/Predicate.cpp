@@ -6,8 +6,11 @@
 using namespace std;
 
 //--------------------------------------------Predicate--------------------------------------//
+//Predicate is the base struct that Fact and Rule inherit from.
 
 //Swaps the member values between two Predicates
+//Input: Two target predicate addresses
+//Output: Void.
 void Predicate::p_swap(Predicate & one, Predicate & two){
   using std::swap;
   swap(one.name, two.name);
@@ -43,7 +46,9 @@ Predicate::~Predicate(){
 
 }
 
-//Evaluate function.  May need to make this virtual in the future
+//Evaluate function.
+//Input: String vector of components
+//Output: boolean representing Predicate truth value.
 bool Predicate::evaluate(vector<string> components){
   return true;
 }
@@ -59,10 +64,16 @@ Predicate& Predicate::operator = (Predicate && p){
   return *this;
 }
 
+//AND operator
+//Input: bool a, bool b
+//Output: AND value of a and b
 bool Predicate::AND(bool a, bool b) {
 	return a&&b;
 }
 
+//OR operator
+//Input: bool a, bool b
+//Output: OR value of a and b
 bool Predicate::OR(bool a, bool b) {
 	return a||b;
 }
@@ -83,6 +94,7 @@ string Predicate::toString(){
 
 
 //--------------------------------------------Fact------------------------------------//
+//Fact inherits from Predicate. Facts store knowledge, in turn stored in the Knowledge database.
 
 //Default Constructor
 Fact::Fact(){
@@ -109,6 +121,8 @@ Fact::Fact(Fact && f) : Fact(){
 
 //Evaluate function that takes in a vector of strings that represent the Fact's components
 //Will return true if fact exists in the KB, false otherwise
+//Input: String vector of components
+//Output: returns truth value of Fact
 bool Fact::evaluate(vector<string> components){
   try{
     //if(this == KB.fetch(name, components))
@@ -122,6 +136,8 @@ bool Fact::evaluate(vector<string> components){
 }
 
 //Returns a string representation of the Fact
+//Input: void
+//Output: String
 string Fact::toString(){
     string output = "FACT ";
     output = output + name +"(";
@@ -146,8 +162,11 @@ Fact& Fact::operator = (Fact && f){
 }
 
 //------------------------------------------Rule-----------------------------------------------------//
+//Rule inherits from Predicate, in turn stored in the Rule database.
 
 //Swaps the values between two rules
+//Input: Rule addresses one, two
+//Output: void.
 void Rule::r_swap(Rule & one, Rule & two){
   using std::swap;
   swap(one.name, two.name);
@@ -193,7 +212,8 @@ Rule::~Rule(){
 //of its components (which can be other Rules or Facts).  Takes in a vector of strings
 //that represent actors relevant to each component of the rule.
 //MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
-//Returns the a boolean representing the Rule's validity.
+//Input: Vector of actors
+//Output: Rule truth value
 bool Rule::evaluate(vector<string> actors){
   Predicate * first = components[0]; // LHS component to be evaluated
   Predicate * next = components[1]; // RHS component to be evaluated
@@ -219,6 +239,8 @@ bool Rule::evaluate(vector<string> actors){
 
 //If the Rule is valid, adds a Fact representative of the Rule's validity to the KB
 //MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
+//Input: Component vector from Rules
+//Output: Returns truth value 
 bool Rule::enact(vector<string> components){
   if(evaluate(components)){
     //KB.add(new Fact());
@@ -228,6 +250,8 @@ bool Rule::enact(vector<string> components){
 }
 
 //Returns a string representation of the Rule
+//Input: void
+//Output: String representation of Rule
 string Rule::toString(){
     string output = "RULE ";
 	output + name;

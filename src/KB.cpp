@@ -1,5 +1,9 @@
-//knowledge base//
-//#include<map>
+//knowledge base
+/*
+	This file handles the creation of a database holding all Facts generated
+	by the program. It contains functions that allow you to access Facts, removes
+	Facts, add Facts.
+*/
 #include<algorithm>
 
 #include "KB.h"
@@ -18,6 +22,8 @@ KB::~KB(){
 
 //Takes in a fact pointer (fact must be created outside of add) and adds it to
 //the KB if it doesn't already exist
+//Input: Fact pointer
+//Output: void
 void KB::Add(Fact * fact){
 	//checking if relationship exists in the KB
 	//cout << fact->Relationship;
@@ -68,6 +74,9 @@ void KB::Add(Fact * fact){
 	}
 }
 
+//Retrieves a specific fact from Knowledge database
+//Input: Key r, Vector of components for specific relationship
+//Output: Target fact or NULL if not found.
 Fact* KB::Fetch(string r, vector<string> a) {
 	for(Fact* f : FactMap[r]){
 		if(f->components == a) return f;
@@ -75,26 +84,29 @@ Fact* KB::Fetch(string r, vector<string> a) {
 	return NULL; //was nullptr (probably should still be)
 }
 
-/*Fact* KB::Remove(Fact * fact){
-	vector<Fact*>::iterator pos = find(FactMap[fact->Relationship].begin(), FactMap[fact->Relationship].end(), fact);
-	Fact * temp = fact;
-	FactMap[fact->Relationship].erase(pos);
-	return temp;
-}*/
-
+//Removes fact from database with key r
+//Input: Key r
+//Output: void
 void KB::Remove(string r){
 	FactMap.erase(r);
 }
 
+
 bool KB::Exists(string r){
 	return FactMap[r].size() > 0;
-}
 
+}
+//Finds a fact and returns a pointer to that fact
+//Input: key r
+//Output: pointer to Fact with all relationships
 vector<Fact*>* KB::Find(string findKey){
 	vector<Fact*>* ptr = &FactMap[findKey];
 	return ptr;
 }
 
+//Converts Knowledge database to string
+//Input: void
+//Output: string representation of knowledge database
 string KB::toString(){
 	string output = "";
 	map<string, vector<Fact*> > ::iterator it = FactMap.begin();
