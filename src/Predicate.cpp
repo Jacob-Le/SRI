@@ -74,14 +74,14 @@ bool Predicate::OR(bool a, bool b) {
 
 //Default Constructor
 Fact::Fact(){
-  string name = "";
-  vector<string> components;
+  name = "";
+  components;
 }
 
 //Constructor that takes in a string for a name, and a vector of strings for its components (Actors).
 Fact::Fact(string n, vector<string> a){
-  vector<string> components = a;
-  string Relationship = n;
+  components = a;
+  name = n;
 }
 
 //Copy constructor

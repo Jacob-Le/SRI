@@ -292,8 +292,8 @@ void Parse::AddRule(int numFcns) {
 		tempLogic.push_back(Logic[i]);
 	}
 
-	Rule * newRule = new Rule(fcnName, tempLogic, tempPreds); //enactVars
-	RuleBase->Add(newRule);
+	//Rule * newRule = new Rule(fcnName, tempLogic, tempPreds); //enactVars
+	//RuleBase->Add(newRule);
 
 }
 
