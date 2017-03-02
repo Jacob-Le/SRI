@@ -56,57 +56,34 @@ void Parse::ParsePred(string input,bool factMode){
 		delimiter2 = input.find(",",delimiter2+1);
 	}
 	if(factMode){
-		Fact* newFact = new Fact(relationship, Entries);
+		Fact* newFact = new Fact(relationship, Entries); //Make new fact if is fact
 		AddFact(newFact);
 	}else{
-		/*for(int i=0; i < Entries.size(); i++){
-			//cout << "Entries: " << Entries.at(i) << endl;
-			Entry.push_back(Entries.at(i));
-		}
-		if(Relationship.count(relationship) == 0){
-			vector<int> temp;
-			temp.push_back(Entries.size());
-			Relationship[relationship] = temp;
-		}else{
-			vector<int>* temp = &(Relationship.at(relationship));
-			//cout << temp->size();
-			temp->push_back(Entries.size());
-			//cout << temp->size();
-		}*/
 		Predicate* newPred = new Predicate(relationship,Entries);
 		Preds.push_back(newPred);
 	}
 }
 
 void Parse::ParseRule(string input){
-	//cout << "input: " << input << endl;
-	//ParsePred(input,false);
 	int numRuns = numPreds(input);
 	int searchStart;
 	int searchEnd = input.find(")",0);
 	int nextLen;
-	//cout << "input: " << input;
 	
 	for (int i = 0; i < numRuns - 1; i++) {
 		searchStart = searchEnd + 1;
-		//cout << "searchStart:" << searchStart << endl;
 		searchEnd = input.find(")", searchEnd + 1);
 		if (searchEnd == -1) searchEnd = input.size();
-		//cout << "searchEnd:" << searchEnd <<endl;
 
 		//Gets Logic Operator and updates searchStart past it
 		if (i % 2 == 0) {
 			//First Logical Operator
 			if (input[searchStart] == ':') {
 				if (input[searchStart + 3] == 'A') { //Need to have store as boolean in Rule Component
-				  //cout<<"AND"<<endl;
-					//ops.push_back(operations->and);
 					Logic.push_back(1);
 					searchStart += 6;
 				}
 				else if (input[searchStart + 3] == 'O') {
-					//cout<<"OR" << endl;
-					//ops.push_back(operations-> or );
 					Logic.push_back(0);
 					searchStart += 5;
 				}
@@ -114,21 +91,16 @@ void Parse::ParseRule(string input){
 			}
 			else if (input[searchStart + 1] == 'A' || input[searchStart + 1] == 'O') {
 				if (input[searchStart + 1] == 'A') {
-					//cout<<"AND"<<endl
-					//ops.push_back(operations->and);
 					Logic.push_back(1);
 					searchStart += 4;
 				}
 				else if (input[searchStart + 1] == 'O') {
-					//cout<<"OR" << endl;
-					//ops.push_back(operations-> or );
 					Logic.push_back(0);
 					searchStart += 3;
 				}
 			}
 		}
 		nextLen = searchLength(searchStart + 1, searchEnd);
-		//cout << "searching: " << input.substr(searchStart+1, nextLen) << endl;
 		ParsePred(input.substr(searchStart + 1, nextLen), false);
 	}
 
@@ -194,11 +166,7 @@ void Parse::ParseLine(string input){
 		ParsePred(input.substr(searchStart, nextLen), true); 
 		return;
 	}else if(RULE){
-		//cout<< "input: "<< input << endl;
-		//cout<< "nextLen: "<< nextLen << endl;
 		nextLen = searchLength(searchStart, input.size());
-		//cout << "searchStart:" << searchStart <<endl;
-		//cout << "Before Rule:" << input << endl;
 		ParseRule(input.substr(searchStart, nextLen));
 		return;
 	}else if(INFE){
@@ -214,16 +182,6 @@ void Parse::ParseLine(string input){
 		}
 		
 	}
-	/*
-	ParseFunction(input.substr(searchStart, nextLen));
-	if (numRuns-1 == 0){
-		//cout<<"chicky nugs\n";
-		AddFact();
-		return;
-	}
-*/
-
-	
 }
 
 //Parses a file
@@ -269,23 +227,14 @@ void Parse::AddFact(Fact* f){
 
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
 void Parse::AddRule(int numFcns) {
-	/*string fcnName = "";
-	while (numFcns>0) {
-		if (numFcns == 1) {
-			fcnName = Relationship.end();
-			Relationship.pop_back();
-			numFcns--;
-		}
-	}*/
-
-	vector<Predicate> tempPreds;
+	vector<Predicate*> tempPreds;
 	vector<bool> tempLogic;
 	int i;
 	//vector<string> enactVars = Preds.at(0)->components;
 	string fcnName = Preds.at(0)->name;
 	
 	for (i = 1; i < Preds.size(); i++) {
-		tempPreds.push_back(*Preds[i]);
+		tempPreds.push_back(Preds[i]);
 	}
 
 	for (i = 0; i < Logic.size(); i++) {
