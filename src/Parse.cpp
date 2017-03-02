@@ -171,7 +171,7 @@ void Parse::ParseLine(string input){
 	
 	//Enact Command
 	if(LOAD){
-		ParseFile(input.substr(searchStart, nextLen));
+		ParseFile(input.substr(searchStart, nextLen+1));
 		return;
 	}else if(DUMP){
 		string fileDump = KnowledgeBase->toString();
@@ -183,7 +183,6 @@ void Parse::ParseLine(string input){
 		return;
 	}else if(RULE){
 		nextLen = searchLength(searchStart, input.size());
-		cout << input.substr(searchStart, nextLen) << endl;
 		ParseRule(input.substr(searchStart, nextLen));
 		return;
 	}else if(INFE){
@@ -284,22 +283,4 @@ void Parse::AddRule(int numFcns) {
 
 }
 
-//Test main method
-main(){
-	KB* kb = new KB();
-	RB* rb = new RB();
-	Parse Parser = Parse(kb, rb);
-	Parser.ParseFile("Dummy.SRL");
-	string input = "FACT Alive(Roger)";
-	string input2 = "FACT Father(Roger,John)";
-	string input3 = "FACT Triplets(Roger,John,Jake)";
-	string input4 = "FACT Quadruplets(Roger,John,Jake,Peter)";
-	Parser.ParseLine(input);
-	Parser.ParseLine(input2);
-	Parser.ParseLine(input3);
-	Parser.ParseLine(input4);
-	Parser.ParseTerminalInput();
-	cout << kb->toString();
-	cout << rb->toString();
-	cout << endl;
-}
+
