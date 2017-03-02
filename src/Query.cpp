@@ -12,6 +12,10 @@ Query::Query() {
 }
 
 //FACT--------------------------------------------------------------------------
+// Returns a pointer to a list (vector) of Fact pointers with a similar relationship
+//from the Knowledge Base.
+// Takes in a pointer to the Knowledge Base and a string representative of the similar
+// relationship.
 vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
 	vector<Fact*>* result = Knowledge->Find(factKey);
 	for (int i = 0; i < result->size(); i++) result->at(i)->toString();
