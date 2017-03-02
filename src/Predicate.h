@@ -29,6 +29,9 @@ typedef struct Predicate{
 
   Predicate& operator = (Predicate p);
   Predicate& operator = (Predicate && p);
+  
+  string toString();
+  
 }Predicate;
 
 //Facts describe relationships between Actors
