@@ -37,10 +37,10 @@ void KB::Add(Fact * fact){
 			//cout<<"Checking for differences"<<endl;
 				for(int j=0; j<FactMap[fact->Relationship].size(); j++){ //Iterating through Vector
 					//cout<< FactMap[fact->Relationship].at(j)->toString()<<endl;
-					if(FactMap[fact->Relationship].at(j)->components.size() == fact->components.size()){ //if they have the same amount of components
-						diffChecker.assign(fact->components.size(),false); //Mark no difference
-						for(int k = 0; k<FactMap[fact->Relationship].at(j)->components.size();k++){ //Iterate through components
-							if(FactMap[fact->Relationship].at(j)->components.at(k) != fact->components.at(k)){ //If actor pair is different
+					if(FactMap[fact->Relationship].at(j)->actors.size() == fact->actors.size()){ //if they have the same amount of actors
+						diffChecker.assign(fact->actors.size(),false); //Mark no difference
+						for(int k = 0; k<FactMap[fact->Relationship].at(j)->actors.size();k++){ //Iterate through actors
+							if(FactMap[fact->Relationship].at(j)->actors.at(k) != fact->actors.at(k)){ //If actor pair is different
 								diffChecker.at(k) = true; //mark difference
 								break;
 							}
@@ -74,18 +74,17 @@ void KB::Add(Fact * fact){
 
 Fact* KB::Fetch(string r, vector<string> a) {
 	for(Fact* f : FactMap[r]){
-		if(f->components == a) return f;
+		if(f->actors == a) return f;
 	}
 	return NULL; //was nullptr (probably should still be)
 }
 
-//Pretty sure obsolete now
-/*Fact* KB::Remove(Fact * fact){
-	vector<Fact*>::iterator pos = Find(FactMap[fact->Relationship].begin(), FactMap[fact->Relationship].end(), fact);
+Fact* KB::Remove(Fact * fact){
+	vector<Fact*>::iterator pos = find(FactMap[fact->Relationship].begin(), FactMap[fact->Relationship].end(), fact);
 	Fact * temp = fact;
 	FactMap[fact->Relationship].erase(pos);
 	return temp;
-}*/
+}
 
 void KB::Remove(string r){
 	FactMap.erase(r);

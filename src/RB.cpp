@@ -49,12 +49,12 @@ std::string RB::toString(){
     return s;
 }
 
-//Load from file PARSE DOES THIS FOR RB
-/*void RB::Load(std::string filepath){
+//Load from file
+void RB::Load(std::string filepath){
 	ofstream myfile;
 	myfile.open(filepath);
 	if (myfile) std::cout << "Error: File not found." << std::endl;//loading isn't implemented
-}*/
+}
 
 //Save to file
 std::string RB::Dump(std::string filepath){

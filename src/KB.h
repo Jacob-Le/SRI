@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <vector>
 #include<map>
-//#include "Predicate.h"
+#include "Predicate.h"
 
 using namespace std;
 

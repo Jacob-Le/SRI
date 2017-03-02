@@ -16,7 +16,7 @@ typedef struct Predicate{
   Predicate();
   Predicate(string name, vector<string> actors);
   Predicate(const Predicate& p);
-  //Predicate(Predicate && p);
+  Predicate(Predicate && p);
 
   bool evaluate(vector<string> components);
   void p_swap(Predicate & one, Predicate & two);
@@ -27,8 +27,8 @@ typedef struct Predicate{
 
   ~Predicate();
 
-  //Predicate& operator = (Predicate p);
-  //Predicate& operator = (Predicate && p);
+  Predicate& operator = (Predicate p);
+  Predicate& operator = (Predicate && p);
 };
 
 //Facts describe relationships between Actors
@@ -40,32 +40,30 @@ typedef struct Fact : Predicate {
   //Constructors
   Fact();
   Fact(string name, vector<string> r);
-  //Fact(const Fact & r);
-  //Fact(Fact && r);
+  Fact(const Fact & r);
+  Fact(Fact && r);
 
   bool evaluate(vector<string> components); //May need to turn to virtual later
   string toString();
 
-  //Fact& operator = (Fact f);
-  //Fact& operator = (Fact && f);
+  Fact& operator = (Fact f);
+  Fact& operator = (Fact && f);
 };
 
 //Rules are made up of components (which can be either other rules or facts)
 typedef struct Rule : Predicate{
   string Relationship;
-  vector<string> enactVars;
-  
   //Vector of predicate components (Rules or facts) that make up this rule
-  vector<Predicate> components;
+  vector<Predicate*> components;
   //Function pointers that point to functions that emulate boolean operators
   vector<int> ops;
 
-  //constructors
   Rule();
-  Rule(string name, vector<string> VarsToEnact, const vector<bool> Logic, vector<Predicate> cmps);
+  //Variadic constructor that accepts any number of conditions
+  Rule(string name, const vector<bool> Logic, vector<Predicate*> cmps);
   //copy and move constructors
   Rule(const Rule & r);
-  //Rule(Rule && r);
+  Rule(Rule && r);
   ~Rule();
 
 
@@ -75,8 +73,8 @@ typedef struct Rule : Predicate{
   void r_swap(Rule & one, Rule & two);
 
   //Operator overloads
-  //Rule& operator = (Rule r);
-  //Rule& operator = (Rule && r);
+  Rule& operator = (Rule r);
+  Rule& operator = (Rule && r);
   bool operator == (const Rule & r);
   bool operator != (const Rule & r);
 };

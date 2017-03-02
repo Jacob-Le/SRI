@@ -7,13 +7,12 @@ using namespace std;
 
 vector<Fact*> Results;
 
-Query::Query(KB* Knowledge2, RB* ruleBase2) {
-	Knowledge = Knowledge2;
-	ruleBase = ruleBase2;
+Query::Query() {
+
 }
 
 //FACT--------------------------------------------------------------------------
-vector<Fact*>* Query::listFact(string factKey) {
+vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
 	vector<Fact*>* result = Knowledge->Find(factKey); 
 	for (int i = 0; i < result->size(); i++) result->at(i)->toString();
 	return result;
@@ -34,83 +33,6 @@ vector<Fact*>* Query::listFact(string factKey) {
 //		printf("\n");
 //	}
 //}
-
-void Query::CreateVarMapping(Rule* R){
-	bool notUnique = false;
-	for(int i=0; i< R->enactVars.size(); i++){
-		for(int j=0; j<varMapping.size(); j++){
-			if(R->enactVars.at(i) == varMapping.at(j)) notUnique = true;
-		}
-		if(varMapping.size() == 0 || notUnique == false) varMapping.push_back(R->enactVars.at(i));
-		notUnique = false;
-	}
-	for(int i=0; i< R->components.size(); i++){
-		for(int j=0; j< R->components.at(i).components.size(); j++){
-			for(int k=0; k < varMapping.size(); k++){
-				if(R->components.at(i).components.at(j) == varMapping.at(k)) notUnique = true;
-			}
-			notUnique = false;
-		}
-	}
-}
-
-//Should gather all possibilities for vars to be
-void Query::CreateVarBoundsMaster(Rule* R){
-	for(int i=0; i<varMapping.size(); i++){
-		vector<string> temp;
-		VarBounds[varMapping.at(i)] = temp;
-	}
-	for(int i=0; i<R->components.size(); i++){
-		string Relationship = R->components.at(i).name;
-		vector<Fact*>* listOfFacts = Knowledge->Find(Relationship);
-		CreateVarBounds(listOfFacts);
-	}	
-}
-
-//create bounds for vars
-void Query::CreateVarBounds(vector<Fact*>* Facts){
-	
-	int sizeOf = Facts->at(0)->components.size();
-	
-	//iterate through list of facts
-	for(int i=0; i<sizeOf; i++){
-		//iterate through list of actors in facts
-		for(int j=0; j<sizeOf; j++){
-			//Create pointer to vector pertaining to proper var
-			vector<string> temp;
-			temp = VarBounds[varMapping.at(j)];
-			temp.push_back(Facts->at(i)->components.at(j));
-		}
-	}
-}
-
-//prints out varBounds
-string Query::VarBoundstoString(){
-	string output = "";
-	map<string, vector<string> > ::iterator it = VarBounds.begin();
-	for(; it!= VarBounds.end(); it++){
-		output += it->first;
-		output += ": ";
-		for(int i=0; i< it->second.size();i++){
-			output += it->second.at(i);
-			output += ", ";
-		}
-		output += "\n";
-	}
-	return output;
-}
-/*
-vector<strings> params;
-vector< vector<strings> > perms;
-
-//recursive permutator
-/*g(int varOn, int numUniqueVars){
-	if(varOn > numUniqueVars){
-		return
-	}
-	//choose string from available list
-	//eliminate from other lists for proceeding vars
-}
 
 //helper function to get rid of duplicates
 vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB) {
@@ -146,7 +68,7 @@ vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB)
 		if (!found) {
 			result.push_back(resultB[i]);
 		}
-	}
+	}*/
 	return result;
 }
 
@@ -194,4 +116,3 @@ vector<Fact*> Query::preventDupes(vector<Fact*>* A, vector<Fact*> B){
 	}
 
 }
-*/
