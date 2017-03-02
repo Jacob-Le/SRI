@@ -86,6 +86,10 @@ void KB::Remove(string r){
 	FactMap.erase(r);
 }
 
+bool KB::Exists(string r){
+	return FactMap[r].size() > 0;
+}
+
 vector<Fact*>* KB::Find(string findKey){
 	vector<Fact*>* ptr = &FactMap[findKey];
 	return ptr;

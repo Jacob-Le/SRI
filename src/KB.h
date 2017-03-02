@@ -17,6 +17,5 @@ public:
 	Fact* Fetch(string r, vector<string> actors);
 	vector<Fact*>* Find(string findKey);
 	string toString();
-	//void Dump();
-	//void Load();
+	bool Exists(string r);
 };
