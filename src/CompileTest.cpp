@@ -1,4 +1,7 @@
 //CompileTest.cpp
+/*
+	Just a test file for the program.
+*/
 #include<iostream>
 #include<string>
 #include "Predicate.cpp"
@@ -7,12 +10,6 @@
 using namespace std;
 
 main(){
-  /*bool (*entry)(auto A, auto B);
-  *entry = OR;
-  vector<bool*> Ops;
-  Ops.push_back(OR);
-  string Parent = "Parent";
-  Rule<,typedef(OR)> Rule(Parent,Ops,0);*/
   string name = "Jameson";
   cout << "Start?"<<endl;
   KB* Knowledge = new KB();
@@ -38,5 +35,4 @@ main(){
 
   output = Knowledge->toString();
   cout << output<<endl;
-  //Knowledge->Find("Jaguar");
 }

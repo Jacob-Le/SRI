@@ -1,4 +1,8 @@
 //Rule database
+/*
+	The database for Rules is defined here. Allows users to add, remove, print, and find Rules
+	in the database.
+*/
 
 #include <stdlib.h>
 #include <fstream>
@@ -20,7 +24,9 @@ RB::RB(const RB &otherRB) {
 }
 
 //SOURCE CODE---------------------------------------------------------------------------------------------------------------
-//Add rules
+//Add rules to database
+//Input: Rule pointer r
+//Output: void
 void RB::Add(Rule * r){
   for(Rule * rule : rules){
     if(rule == r){
@@ -31,7 +37,9 @@ void RB::Add(Rule * r){
   rules.push_back(r);
 }
 
-//Remove rules
+//Remove rules from database
+//Input: Rule point r
+//Output: the removed Rule pointer
 Rule* RB::Remove(Rule * r){
   Rule * temp = r;
   vector<Rule*>::iterator pos = find(rules.begin(), rules.end(), r);
@@ -41,6 +49,8 @@ Rule* RB::Remove(Rule * r){
 }
 
 //Print as string
+//Input: void
+//Output: returns string representation
 std::string RB::toString(){
   std::string s = "";
     for(int i=0; i<rules.size();i++){

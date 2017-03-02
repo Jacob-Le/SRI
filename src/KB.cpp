@@ -1,5 +1,9 @@
-//knowledge base//
-//#include<map>
+//knowledge base
+/*
+	This file handles the creation of a database holding all Facts generated
+	by the program. It contains functions that allow you to access Facts, removes
+	Facts, add Facts.
+*/
 #include<algorithm>
 
 #include "KB.h"
@@ -18,6 +22,8 @@ KB::~KB(){
 
 //Takes in a fact pointer (fact must be created outside of add) and adds it to
 //the KB if it doesn't already exist
+//Input: Fact pointer
+//Output: void
 void KB::Add(Fact * fact){
 	if(FactMap.count(fact->name) == 0){ //If it doesn't exist
 		vector<Fact*> v;
@@ -66,11 +72,18 @@ void KB::Remove(string r){
 	FactMap.erase(r);
 }
 
+
+//Finds a fact and returns a pointer to that fact
+//Input: key r
+//Output: pointer to Fact with all relationships
 vector<Fact*>* KB::Find(string findKey){
 	vector<Fact*>* ptr = &FactMap[findKey];
 	return ptr;
 }
 
+//Converts Knowledge database to string
+//Input: void
+//Output: string representation of knowledge database
 string KB::toString(){
 	string output = "";
 	map<string, vector<Fact*> > ::iterator it = FactMap.begin();

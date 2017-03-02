@@ -1,4 +1,10 @@
 //Parse.cpp
+/*
+	This file controls the input/output and processes inputs to split them between rules
+	facts, and other types. It can also be considered the moderator class that handles
+	the actions of the program. There is a test main function at the bottom.
+*/
+
 #include<cstdio>
 #include<string>
 #include<iostream>
@@ -7,17 +13,24 @@
 #include "Parse.h"
 using namespace std;
 
+//Constructor
+//Input: Knowledge database and Rules database
+//Output: void, but creates a Parse object
 Parse::Parse(KB* knowledgeBase, RB* ruleBase){
 	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
 }
 
-//substr's second argument is how far from first character to search to, not from what char to 
-//what char so this function calculates that
+//Function to calculate length of string
+//Input: ints representing start and end
+//Output: int representation between end and start
 int Parse::searchLength(int start, int end){
 	return end - start;
 }
 
+//Parses a predicate, used by both ParseRules and ParseFact, pushes onto Pred vector
+//Input: Inputted string, boolean representing if string is Fact
+//Output: void
 void Parse::ParsePred(string input,bool factMode){
 	vector<string> Entries;
 	string currEntry;
@@ -58,6 +71,9 @@ void Parse::ParsePred(string input,bool factMode){
 	}
 }
 
+//Parses an input and calls AddRule to create a rule.
+//Input: Inputted string
+//Output: void 
 void Parse::ParseRule(string input){
 	int numRuns = numPreds(input);
 	int searchStart;
@@ -110,14 +126,18 @@ void Parse::ParseRule(string input){
 }
 
 
-//Lets ParseLine know how many times to run ParseFunction on input
+//Parses a line of input. Counts the number of '(' there is to count components in the string.
+//Input: Input string
+//Output: int representation of component number
 int Parse::numPreds(string input){
 	int numOpenParens = count(input.begin(),input.end(), '(');
 	return numOpenParens;	
 }
 
 
-//Oversees all parsing on a single line of input
+//Oversees all parsing on a single line of input. Determines what type of input it is.
+//Input: input string
+//Output: void
 void Parse::ParseLine(string input){
 	
 	bool LOAD = false;
@@ -196,6 +216,8 @@ void Parse::ParseLine(string input){
 }
 
 //Parses a file
+//Input: file name
+//Output: void
 void Parse::ParseFile(string fileName){
 	string input;
 	fstream file;
@@ -208,7 +230,9 @@ void Parse::ParseFile(string fileName){
 	file.close();
 }
 
-//Called by DUMP command
+//Called by DUMP command. Saves to file.
+//Input: Filename and string input
+//Output: void
 void Parse::DumpToFile(string fileName,string input){
 	fstream file;
 	file.open(fileName.c_str(),std::fstream::out);
@@ -217,6 +241,8 @@ void Parse::DumpToFile(string fileName,string input){
 }
 
 //Parses single line of input from terminal
+//Input: void
+//Output: void
 void Parse::ParseTerminalInput(){
 	cout << "Enter 'q' to quit\n";
 	string quit = "q";
@@ -229,11 +255,15 @@ void Parse::ParseTerminalInput(){
 }
 
 //Add Fact to KB once function is built
+//Input: Fact pointer f to be added
+//Output: void
 void Parse::AddFact(Fact* f){
 	KnowledgeBase->Add(f);
 }
 
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
+//Input: int representing number of functions in rule
+//Output: void
 void Parse::AddRule(int numFcns) {
 
 	vector<Predicate*> tempPreds;
@@ -254,6 +284,7 @@ void Parse::AddRule(int numFcns) {
 
 }
 
+//Test main method
 main(){
 	KB* kb = new KB();
 	RB* rb = new RB();
