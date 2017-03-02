@@ -7,8 +7,9 @@ using namespace std;
 
 vector<Fact*> Results;
 
-Query::Query() {
-
+Query::Query(KB * kb, RB * rb) {
+	KB * knowledge = kb;
+	RB * rules = rb;
 }
 
 //FACT--------------------------------------------------------------------------
@@ -23,20 +24,6 @@ vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
 }
 
 //SIMPLE RULE-------------------------------------------------------------------
-//this method will print both unconcatenated results. Maybe we'll fix it but for now it'll be a debug feature. and maybe stay that way lol
-//void Query::listSimpleRule(/*something*/) {
-//	printf("Output 1:\n");
-	//vector<string> resultA = listFact(/*some kind of key from that something*/);
-//	printf("Output 2:\n");
-	//vector<string> resultB = listFact(/*some kind of key from that something*/);/
-
-//	printf("Concatenated result:\n");
-//	vector<string> resultConcat = concatenate(resultA, resultB);
-//	for (int i = 0; i < resultConcat.size(); i++) {
-//		printf(resultConcat[i]);
-//		printf("\n");
-//	}
-//}
 
 //helper function to get rid of duplicates
 vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB) {
@@ -44,35 +31,7 @@ vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB)
 	bool found = false;
 	result = preventDupes(resultA, result);
 	result = preventDupes(resultB, result);
-	//prepare yourself for a brute force search algorithm wooooooo
-	//checks if A in B. If not, pushback onto result vector.
-	/*for (int i = 0; i < resultA.size(); i++) {
-		found = false;
-		for (int j = 0; j < resultB.size(); j++) {
-			if (resultA.at(i) == resultB.at(j)) {
-				found = true;
-				break;
-			}
-		}
 
-		if (!found) {
-			result.push_back(resultA[i]);
-		}
-	}
-	//checks if B in A. If not, pushback onto result vector.
-	for (int i = 0; i < resultB.size(); i++) {
-		found = false;
-		for (int j = 0; j < resultA.size(); j++) {
-			if (resultB[i] == resultA[j]) {
-				found = true;
-				break;
-			}
-		}
-
-		if (!found) {
-			result.push_back(resultB[i]);
-		}
-	}*/
 	return result;
 }
 
@@ -115,7 +74,39 @@ vector<Fact*> Query::preventDupes(vector<Fact*>* A, vector<Fact*> B){
 	}
 }
 
+//------------------------------Inferencing-----------------------------------------------//
 
-	void Query::printResults(){
+void CreateVarBoundsMaster(int iterate, vector<string> varMapping){
+	//Create map fcn will populate
+	for(int i=0; i<varMapping.size(); i++){
+		vector<string> temp;
+		map[varMapping.at(i)] = temp;
+	}
+	for(int i=0; i<iterate<i++){
+
+	}
+}
+
+//create bounds for vars
+map<string, vector<string> > CreateVarBounds(vector<Fact*>* Facts, vector<string> varMapping){
+	map<string, vector<string> > VarBounds;
+
+	//iterate through list of facts
+	for(int i=0; i<Facts[0]->components.size(); i++){
+		//iterate through list of actors in facts
+		for(int j=0; j<sizeOf; j++){
+			//Create pointer to vector pertaining to proper var
+			vector<string>* temp = VarBounds[varMapping.at(j)];
+			temp.push_back(Facts->at(i)->components.at(j));
+		}
+	}
+return VarBounds;
+}
+
+void Query::inference(){
+	for()
+}
+
+void Query::printResults(){
 		for(int i=0;i<Results.size();i++) cout << Results.at(i)->toString();
 	}

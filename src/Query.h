@@ -6,10 +6,13 @@ using namespace std;
 
 //Categorized according to Evie's plan
 class Query {
-	public:
+private:
+	KB * kb;
+	RB * rb;
+public:
 	//something var currentQuery <--THE THING THAT QUERY PASSES AROUND IDK WHAT IT IS THO
 
-	Query();
+	Query(KB * kb, RB * rb);
 
 	//FACT--------------------------------------------------------------------------
 	vector<Fact*>* listFact(KB* Knowledge, string factKey); //used to return vector<string>
