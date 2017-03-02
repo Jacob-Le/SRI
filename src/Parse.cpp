@@ -15,26 +15,21 @@ Parse::Parse(KB* knowledgeBase, RB* ruleBase){
 //substr's second argument is how far from first character to search to, not from what char to 
 //what char so this function calculates that
 int Parse::searchLength(int start, int end){
-	//cout << end << "-" << start << "=" << end-start <<endl;
 	return end - start;
 }
 
 void Parse::ParsePred(string input,bool factMode){
-	//start parsing input
-	//cout << "input in Pred: " << input << endl;
 	vector<string> Entries;
 	string currEntry;
 	int nextLen;
 	bool oneArg;
 	int delimiter1 = input.find("(");
 	string relationship = input.substr(0, delimiter1);
-	//cout << relationship << endl;
 	
-	int delimiter2 = input.find(",",delimiter1); //.find() sets to -1 if not found I hope
+	int delimiter2 = input.find(",",delimiter1); //.find() sets to -1 if not found
 	if(delimiter2 == -1) oneArg = true;
 	int delimiter3 = input.find(")",delimiter2);
 	if(delimiter3 == -1) delimiter3 = input.size();
-	//cout << "when " << delimiter2 << "<" << delimiter3 << endl;
 	while(delimiter2 < delimiter3){
 		if(delimiter2 == -1){
 			if(oneArg){
@@ -44,14 +39,12 @@ void Parse::ParsePred(string input,bool factMode){
 			delimiter3;
 			nextLen = searchLength(delimiter1,delimiter3);
 			currEntry = input.substr(delimiter1,nextLen);
-			//cout << "PredLast:" << currEntry << endl;
 			Entries.push_back(currEntry);
 			break;
 		}
-		nextLen = searchLength(delimiter1,delimiter2) -1; //determine search length
-		currEntry = input.substr(delimiter1+1,nextLen); //parse out actor
-		//cout << "PredLoop:" << currEntry << endl;
-		Entries.push_back(currEntry); //add to vector of actors
+		nextLen = searchLength(delimiter1,delimiter2) -1; //determines search length
+		currEntry = input.substr(delimiter1+1,nextLen); //parses out component
+		Entries.push_back(currEntry); //adds to vector of components
 		delimiter1 = delimiter2;
 		delimiter2 = input.find(",",delimiter2+1);
 	}
@@ -79,34 +72,25 @@ void Parse::ParsePred(string input,bool factMode){
 }
 
 void Parse::ParseRule(string input){
-	//cout << "input: " << input << endl;
-	//ParsePred(input,false);
 	int numRuns = numPreds(input);
 	int searchStart;
 	int searchEnd = input.find(")",0);
 	int nextLen;
-	//cout << "input: " << input;
 	
 	for (int i = 0; i < numRuns - 1; i++) {
 		searchStart = searchEnd + 1;
-		//cout << "searchStart:" << searchStart << endl;
 		searchEnd = input.find(")", searchEnd + 1);
 		if (searchEnd == -1) searchEnd = input.size();
-		//cout << "searchEnd:" << searchEnd <<endl;
 
 		//Gets Logic Operator and updates searchStart past it
 		if (i % 2 == 0) {
 			//First Logical Operator
 			if (input[searchStart] == ':') {
-				if (input[searchStart + 3] == 'A') { //Need to have store as boolean in Rule Component
-				  //cout<<"AND"<<endl;
-					//ops.push_back(operations->and);
+				if (input[searchStart + 3] == 'A') { 
 					Logic.push_back(1);
 					searchStart += 6;
 				}
 				else if (input[searchStart + 3] == 'O') {
-					//cout<<"OR" << endl;
-					//ops.push_back(operations-> or );
 					Logic.push_back(0);
 					searchStart += 5;
 				}
@@ -114,14 +98,10 @@ void Parse::ParseRule(string input){
 			}
 			else if (input[searchStart + 1] == 'A' || input[searchStart + 1] == 'O') {
 				if (input[searchStart + 1] == 'A') {
-					//cout<<"AND"<<endl
-					//ops.push_back(operations->and);
 					Logic.push_back(1);
 					searchStart += 4;
 				}
 				else if (input[searchStart + 1] == 'O') {
-					//cout<<"OR" << endl;
-					//ops.push_back(operations-> or );
 					Logic.push_back(0);
 					searchStart += 3;
 				}
@@ -141,7 +121,6 @@ void Parse::ParseRule(string input){
 
 //Lets ParseLine know how many times to run ParseFunction on input
 int Parse::numPreds(string input){
-	//cout << "Inside numFunctin(): "<<input << endl;
 	int numOpenParens = count(input.begin(),input.end(), '(');
 	return numOpenParens;	
 }
@@ -158,15 +137,12 @@ void Parse::ParseLine(string input){
 	bool DROP = false;
 	
 	numRuns = numPreds(input);
-	//cout << numRuns;
-	//cout<< "input: " << input <<endl;
 	int searchStart = 0;
 	int searchEnd = input.find(")");
 	int nextLen = searchLength(searchStart, searchEnd);
 	
 	//Determine Command
 	string command = input.substr(searchStart, 4);
-	//cout << "command: " << command << endl;
 	if(command == "LOAD"){
 		LOAD = true;
 		searchEnd = input.size()-1;
@@ -278,22 +254,22 @@ void Parse::AddRule(int numFcns) {
 		}
 	}*/
 
-	vector<Predicate> tempPreds;
+	vector<Predicate*> tempPreds;
 	vector<bool> tempLogic;
 	int i;
 	//vector<string> enactVars = Preds.at(0)->components;
 	string fcnName = Preds.at(0)->name;
 	
 	for (i = 1; i < Preds.size(); i++) {
-		tempPreds.push_back(*Preds[i]);
-	}
+        tempPreds.push_back(Preds[i]);
+    }
 
 	for (i = 0; i < Logic.size(); i++) {
 		tempLogic.push_back(Logic[i]);
 	}
 
-	//Rule * newRule = new Rule(fcnName, tempLogic, tempPreds); //enactVars
-	//RuleBase->Add(newRule);
+	Rule * newRule = new Rule(fcnName, tempLogic, tempPreds); //enactVars
+	RuleBase->Add(newRule);
 
 }
 
@@ -312,6 +288,6 @@ main(){
 	Parser.ParseLine(input4);
 	Parser.ParseTerminalInput();
 	cout << kb->toString();
-	//for(int i=0; i<argc; i++) cout << "["<< i << "]: " << argv[i] << " ";
+	cout << rb->toString();
 	cout << endl;
 }
