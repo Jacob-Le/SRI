@@ -155,9 +155,9 @@ Rule::Rule(){
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
 Rule::Rule(string n, vector<bool> Logic, vector<Predicate*> cmps){
-  string Relationship = n;
-  vector<Predicate*> components = cmps;
-  vector<bool> ops = Logic; //Operators that compare each component of the rule
+  name = n;
+  components = cmps;
+  ops = Logic; //Operators that compare each component of the rule
 }
 
 //Copy constructor

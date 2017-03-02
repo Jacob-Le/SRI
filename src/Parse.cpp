@@ -269,6 +269,7 @@ void Parse::AddRule(int numFcns) {
 	}
 
 	Rule * newRule = new Rule(fcnName, tempLogic, tempPreds); //enactVars
+	cout << newRule->toString() << endl;
 	RuleBase->Add(newRule);
 
 }

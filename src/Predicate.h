@@ -56,7 +56,7 @@ typedef struct Rule : Predicate{
   //Vector of predicate components (Rules or facts) that make up this rule
   vector<Predicate*> components;
   //Function pointers that point to functions that emulate boolean operators
-  vector<int> ops;
+  vector<bool> ops;
 
   Rule();
   //Variadic constructor that accepts any number of conditions
