@@ -26,6 +26,7 @@ void Parse::ParsePred(string input,bool factMode){
 	int delimiter1 = input.find("(");
 	string relationship = input.substr(0, delimiter1);
 	
+	
 	int delimiter2 = input.find(",",delimiter1); //.find() sets to -1 if not found
 	if(delimiter2 == -1) oneArg = true;
 	int delimiter3 = input.find(")",delimiter2);
@@ -52,20 +53,6 @@ void Parse::ParsePred(string input,bool factMode){
 		Fact* newFact = new Fact(relationship, Entries);
 		AddFact(newFact);
 	}else{
-		/*for(int i=0; i < Entries.size(); i++){
-			//cout << "Entries: " << Entries.at(i) << endl;
-			Entry.push_back(Entries.at(i));
-		}
-		if(Relationship.count(relationship) == 0){
-			vector<int> temp;
-			temp.push_back(Entries.size());
-			Relationship[relationship] = temp;
-		}else{
-			vector<int>* temp = &(Relationship.at(relationship));
-			//cout << temp->size();
-			temp->push_back(Entries.size());
-			//cout << temp->size();
-		}*/
 		Predicate* newPred = new Predicate(relationship,Entries);
 		Preds.push_back(newPred);
 	}
@@ -74,16 +61,22 @@ void Parse::ParsePred(string input,bool factMode){
 void Parse::ParseRule(string input){
 	int numRuns = numPreds(input);
 	int searchStart;
-	int searchEnd = input.find(")",0);
+	int searchEnd; 
 	int nextLen;
 	
-	for (int i = 0; i < numRuns - 1; i++) {
-		searchStart = searchEnd + 1;
-		searchEnd = input.find(")", searchEnd + 1);
-		if (searchEnd == -1) searchEnd = input.size();
+	for (int i = 0; i < numRuns; i++) {
+		
+		if( i ==0 ){
+			searchStart = 0;
+			searchEnd = input.find(")",0);
+		}else{
+			searchStart = searchEnd + 1;
+			searchEnd = input.find(")", searchEnd + 1);
+		}
+		if (searchEnd == -1) searchEnd = input.size()-1;
 
 		//Gets Logic Operator and updates searchStart past it
-		if (i % 2 == 0) {
+		if ((i+1)% 2 == 0) {
 			//First Logical Operator
 			if (input[searchStart] == ':') {
 				if (input[searchStart + 3] == 'A') { 
@@ -107,14 +100,12 @@ void Parse::ParseRule(string input){
 				}
 			}
 		}
-		nextLen = searchLength(searchStart + 1, searchEnd);
-		//cout << "searching: " << input.substr(searchStart+1, nextLen) << endl;
-		ParsePred(input.substr(searchStart + 1, nextLen), false);
+		nextLen = searchLength(searchStart, searchEnd);
+		ParsePred(input.substr(searchStart, nextLen), false);
 	}
 
 	AddRule(numRuns);
 	Preds.clear();
-	//for(int i=0; i<Logic.size();i++) cout<<Logic.at(i)<<endl;
 	Logic.clear();
 }
 
@@ -170,11 +161,8 @@ void Parse::ParseLine(string input){
 		ParsePred(input.substr(searchStart, nextLen), true); 
 		return;
 	}else if(RULE){
-		//cout<< "input: "<< input << endl;
-		//cout<< "nextLen: "<< nextLen << endl;
 		nextLen = searchLength(searchStart, input.size());
-		//cout << "searchStart:" << searchStart <<endl;
-		//cout << "Before Rule:" << input << endl;
+		cout << input.substr(searchStart, nextLen) << endl;
 		ParseRule(input.substr(searchStart, nextLen));
 		return;
 	}else if(INFE){
@@ -190,16 +178,7 @@ void Parse::ParseLine(string input){
 		}
 		
 	}
-	/*
-	ParseFunction(input.substr(searchStart, nextLen));
-	if (numRuns-1 == 0){
-		//cout<<"chicky nugs\n";
-		AddFact();
-		return;
-	}
-*/
 
-	
 }
 
 //Parses a file
@@ -207,8 +186,6 @@ void Parse::ParseFile(string fileName){
 	string input;
 	fstream file;
 	file.open(fileName.c_str(),std::fstream::in);
-	//Relationship.clear();
-	//Entry.clear();
 	cout<<"Inputting From File: "<< fileName << endl;
 	while(!file.eof()){
 	  getline(file,input);
@@ -232,7 +209,6 @@ void Parse::ParseTerminalInput(){
 	while(true){
 		string input;
 		getline(cin, input);
-		//cout << input << endl;
 		if(input.compare(quit) == 0) break;
 		ParseLine(input);
 	}
@@ -245,22 +221,13 @@ void Parse::AddFact(Fact* f){
 
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
 void Parse::AddRule(int numFcns) {
-	/*string fcnName = "";
-	while (numFcns>0) {
-		if (numFcns == 1) {
-			fcnName = Relationship.end();
-			Relationship.pop_back();
-			numFcns--;
-		}
-	}*/
 
 	vector<Predicate*> tempPreds;
 	vector<bool> tempLogic;
 	int i;
-	//vector<string> enactVars = Preds.at(0)->components;
-	string fcnName = Preds.at(0)->name;
+	string fcnName = Preds.at(Preds.size()-1)->name;
 	
-	for (i = 1; i < Preds.size(); i++) {
+	for (i = 0; i < Preds.size(); i++) {
         tempPreds.push_back(Preds[i]);
     }
 
@@ -269,6 +236,7 @@ void Parse::AddRule(int numFcns) {
 	}
 
 	Rule * newRule = new Rule(fcnName, tempLogic, tempPreds); //enactVars
+	cout << newRule->toString() << endl;
 	RuleBase->Add(newRule);
 
 }

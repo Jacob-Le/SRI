@@ -1,6 +1,7 @@
 //Predicate.cpp
 #include "Predicate.h"
 #include <iostream>
+#include<math.h>
 
 using namespace std;
 
@@ -18,15 +19,15 @@ void Predicate::p_swap(Predicate & one, Predicate & two){
 
 //Default Constructor
 Predicate::Predicate(){
-  string name = "";
-  vector<string> components;
+  name = "";
+  components;
 }
 
 //Constructor for Predicate, the base class from which both Fact and Rule extend from.
 //Takes in a string as a name, and a variable number of string arguments as Actors
 Predicate::Predicate(string n, vector<string> actors){
-  string name = n;
-  vector<string> components = actors;
+  name = n;
+  components = actors;
 }
 
 //Copy constructor
@@ -75,6 +76,17 @@ bool Predicate::AND(bool a, bool b) {
 //Output: OR value of a and b
 bool Predicate::OR(bool a, bool b) {
 	return a||b;
+}
+
+string Predicate::toString(){
+	string output;
+    output = output + name +"(";
+    for(int i=0; i < components.size(); i++){
+        output += components[i];
+        if(i+1 != components.size()) output += ", ";
+    }
+    output += ") ";
+    return output;
 }
 
 
@@ -174,9 +186,9 @@ Rule::Rule(){
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
 Rule::Rule(string n, vector<bool> Logic, vector<Predicate*> cmps){
-  string Relationship = n;
-  vector<Predicate*> components = cmps;
-  vector<bool> ops = Logic; //Operators that compare each component of the rule
+  name = n;
+  components = cmps;
+  ops = Logic; //Operators that compare each component of the rule
 }
 
 //Copy constructor
@@ -242,12 +254,14 @@ bool Rule::enact(vector<string> components){
 //Output: String representation of Rule
 string Rule::toString(){
     string output = "RULE ";
-    output = output + name +"(";
+	output + name;
     for(int i=0; i < components.size(); i++){
-        output += components[i]->name;
-        if(i+1 != components.size()) output += ", ";
+        output += components[i]->toString();
+		if( (i+1)%2 == 0 ){
+			if(ops[i/2] == 0) output += " OR ";
+			if(ops[i/2] == 1) output += " AND ";
+		} 
     }
-    output += ")\n";
     return output;
 }
 

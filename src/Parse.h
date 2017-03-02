@@ -15,8 +15,6 @@ class Parse{
 	std::vector<string> RuleVector; 
 
 	std::vector<string> FactVector;
-	//std::map<string,vector<int> > Relationship; //Maps the number of args it had
-	//std::vector<string> Entry;
 	std::vector<Predicate*> Preds;
 	std::vector<bool> Logic;
 	int searchLength(int start, int end);
