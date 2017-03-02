@@ -176,7 +176,7 @@ void Parse::ParseLine(string input){
 	}else if(DUMP){
 		string fileDump = KnowledgeBase->toString();
 		fileDump += RuleBase->toString();
-		DumpToFile(input.substr(searchStart, nextLen),fileDump);
+		DumpToFile(input.substr(searchStart, nextLen+1),fileDump);
 		return;
 	}else if(FACT){
 		ParsePred(input.substr(searchStart, nextLen), true); 
