@@ -14,9 +14,6 @@ public:
 	void Add(Fact * fact);
 	Fact* Remove(Fact * fact);
 	void Remove(string f);
-	Fact* Fetch(string r, vector<string> actors);
 	vector<Fact*>* Find(string findKey);
 	string toString();
-	//void Dump();
-	//void Load();
 };

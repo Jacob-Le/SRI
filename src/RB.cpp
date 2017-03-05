@@ -1,4 +1,8 @@
 //Rule database
+/*
+	The database for Rules is defined here. Allows users to add, remove, print, and find Rules
+	in the database.
+*/
 
 #include <stdlib.h>
 #include <fstream>
@@ -20,7 +24,9 @@ RB::RB(const RB &otherRB) {
 }
 
 //SOURCE CODE---------------------------------------------------------------------------------------------------------------
-//Add rules
+//Add rules to database
+//Input: Rule pointer r
+//Output: void
 void RB::Add(Rule * r){
   for(Rule * rule : rules){
     if(rule == r){
@@ -31,46 +37,27 @@ void RB::Add(Rule * r){
   rules.push_back(r);
 }
 
-//Remove rules
+//Remove rules from database
+//Input: Rule point r
+//Output: the removed Rule pointer
 Rule* RB::Remove(Rule * r){
   Rule * temp = r;
-	vector<Rule*>::iterator pos = find(rules.begin(), rules.end(), r);
+  vector<Rule*>::iterator pos = find(rules.begin(), rules.end(), r);
   rules.at(distance(rules.begin(), pos))->~Rule();
   rules.erase(pos);
   return temp;
 }
 
 //Print as string
+//Input: void
+//Output: returns string representation
 std::string RB::toString(){
   std::string s = "";
-    for(Rule * rule : rules){
-      rule->toString();
+    for(int i=0; i<rules.size();i++){
+      s += rules.at(i)->toString();
+	  s +='\n';
     }
     return s;
-}
-
-//Load from file
-void RB::Load(std::string filepath){
-	ofstream myfile;
-	myfile.open(filepath);
-	if (myfile) std::cout << "Error: File not found." << std::endl;//loading isn't implemented
-}
-
-//Save to file
-std::string RB::Dump(std::string filepath){
-
-	/*ofstream myfile;
-	myfile.open(filepath);
-	try {
-		if (rule::size == 0) throw throw_exception();
-
-		for (int i = 0; i < rules::size; i++) {
-			myfile << toString(vector[i]) << std::endl;
-		}
-	}
-	catch (throw_exception &e) {
-		std::cout << e.msg("Error: There are no rules to dump.") << std::endl;
-	}*/
 }
 
 //DECONSTRUCTOR-----------------------------------------------------------------------------------

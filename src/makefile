@@ -2,7 +2,7 @@ include makefile.vars # Include variable file
 
 $(BIN)/SRI_Test: $(OBJECTS)/Parse.o
 	$(GCC) $(OBJECTS)/Parse.o \
-	-o $(BIN)/SRI_Test
+	-o $(BIN)/SRI
 
 # Cleaning by deleting all the object and the excutable files
 clean:

@@ -1,4 +1,10 @@
 //Parse.cpp
+/*
+	This file controls the input/output and processes inputs to split them between rules
+	facts, and other types. It can also be considered the moderator class that handles
+	the actions of the program. There is a test main function at the bottom.
+*/
+
 #include<cstdio>
 #include<string>
 #include<iostream>
@@ -7,17 +13,24 @@
 #include "Parse.h"
 using namespace std;
 
+//Constructor
+//Input: Knowledge database and Rules database
+//Output: void, but creates a Parse object
 Parse::Parse(KB* knowledgeBase, RB* ruleBase){
 	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
 }
 
-//substr's second argument is how far from first character to search to, not from what char to 
-//what char so this function calculates that
+//Function to calculate length of string
+//Input: ints representing start and end
+//Output: int representation between end and start
 int Parse::searchLength(int start, int end){
 	return end - start;
 }
 
+//Parses a predicate, used by both ParseRules and ParseFact, pushes onto Pred vector
+//Input: Inputted string, boolean representing if string is Fact
+//Output: void
 void Parse::ParsePred(string input,bool factMode){
 	vector<string> Entries;
 	string currEntry;
@@ -25,6 +38,7 @@ void Parse::ParsePred(string input,bool factMode){
 	bool oneArg;
 	int delimiter1 = input.find("(");
 	string relationship = input.substr(0, delimiter1);
+	
 	
 	int delimiter2 = input.find(",",delimiter1); //.find() sets to -1 if not found
 	if(delimiter2 == -1) oneArg = true;
@@ -52,38 +66,33 @@ void Parse::ParsePred(string input,bool factMode){
 		Fact* newFact = new Fact(relationship, Entries);
 		AddFact(newFact);
 	}else{
-		/*for(int i=0; i < Entries.size(); i++){
-			//cout << "Entries: " << Entries.at(i) << endl;
-			Entry.push_back(Entries.at(i));
-		}
-		if(Relationship.count(relationship) == 0){
-			vector<int> temp;
-			temp.push_back(Entries.size());
-			Relationship[relationship] = temp;
-		}else{
-			vector<int>* temp = &(Relationship.at(relationship));
-			//cout << temp->size();
-			temp->push_back(Entries.size());
-			//cout << temp->size();
-		}*/
 		Predicate* newPred = new Predicate(relationship,Entries);
 		Preds.push_back(newPred);
 	}
 }
 
+//Parses an input and calls AddRule to create a rule.
+//Input: Inputted string
+//Output: void 
 void Parse::ParseRule(string input){
 	int numRuns = numPreds(input);
 	int searchStart;
-	int searchEnd = input.find(")",0);
+	int searchEnd; 
 	int nextLen;
 	
-	for (int i = 0; i < numRuns - 1; i++) {
-		searchStart = searchEnd + 1;
-		searchEnd = input.find(")", searchEnd + 1);
-		if (searchEnd == -1) searchEnd = input.size();
+	for (int i = 0; i < numRuns; i++) {
+		
+		if( i ==0 ){
+			searchStart = 0;
+			searchEnd = input.find(")",0);
+		}else{
+			searchStart = searchEnd + 1;
+			searchEnd = input.find(")", searchEnd + 1);
+		}
+		if (searchEnd == -1) searchEnd = input.size()-1;
 
 		//Gets Logic Operator and updates searchStart past it
-		if (i % 2 == 0) {
+		if ((i+1)% 2 == 0) {
 			//First Logical Operator
 			if (input[searchStart] == ':') {
 				if (input[searchStart + 3] == 'A') { 
@@ -107,26 +116,28 @@ void Parse::ParseRule(string input){
 				}
 			}
 		}
-		nextLen = searchLength(searchStart + 1, searchEnd);
-		//cout << "searching: " << input.substr(searchStart+1, nextLen) << endl;
-		ParsePred(input.substr(searchStart + 1, nextLen), false);
+		nextLen = searchLength(searchStart, searchEnd);
+		ParsePred(input.substr(searchStart, nextLen), false);
 	}
 
 	AddRule(numRuns);
 	Preds.clear();
-	//for(int i=0; i<Logic.size();i++) cout<<Logic.at(i)<<endl;
 	Logic.clear();
 }
 
 
-//Lets ParseLine know how many times to run ParseFunction on input
+//Parses a line of input. Counts the number of '(' there is to count components in the string.
+//Input: Input string
+//Output: int representation of component number
 int Parse::numPreds(string input){
 	int numOpenParens = count(input.begin(),input.end(), '(');
 	return numOpenParens;	
 }
 
 
-//Oversees all parsing on a single line of input
+//Oversees all parsing on a single line of input. Determines what type of input it is.
+//Input: input string
+//Output: void
 void Parse::ParseLine(string input){
 	
 	bool LOAD = false;
@@ -160,55 +171,56 @@ void Parse::ParseLine(string input){
 	
 	//Enact Command
 	if(LOAD){
-		ParseFile(input.substr(searchStart, nextLen));
+		ParseFile(input.substr(searchStart, nextLen+1));
 		return;
 	}else if(DUMP){
 		string fileDump = KnowledgeBase->toString();
-		DumpToFile(input.substr(searchStart, nextLen),fileDump);
+		fileDump += RuleBase->toString();
+		DumpToFile(input.substr(searchStart, nextLen+1),fileDump);
 		return;
 	}else if(FACT){
 		ParsePred(input.substr(searchStart, nextLen), true); 
 		return;
 	}else if(RULE){
-		//cout<< "input: "<< input << endl;
-		//cout<< "nextLen: "<< nextLen << endl;
 		nextLen = searchLength(searchStart, input.size());
-		//cout << "searchStart:" << searchStart <<endl;
-		//cout << "Before Rule:" << input << endl;
 		ParseRule(input.substr(searchStart, nextLen));
 		return;
 	}else if(INFE){
 	}else{ //DROP
-		string searchingFor = input.substr(searchStart, nextLen+1);
-		bool CheckFactinKB = KnowledgeBase->FactMap.count(searchingFor) != 0;
-		//bool CheckRuleinRB = RuleBase->rules.count(searchingFor) != 0;
-		if(CheckFactinKB){ //CheckFactinKB && CheckRuleinRB || CheckFactinKB
+		string searchingFor = input.substr(searchStart, nextLen);
+		bool CheckFactinKB = KnowledgeBase->FactMap.count(searchingFor);// == 0;
+		Rule* temp;
+		bool CheckRuleinRB = false;
+		for(int i=0; i< RuleBase->rules.size(); i++){
+			if(searchingFor == RuleBase->rules.at(i)->name){
+				temp = RuleBase->rules.at(i);
+				CheckRuleinRB = true;
+				break;
+			}
+		}
+			
+		if(CheckFactinKB){
 			KnowledgeBase->Remove(searchingFor);
-		//}else if(CheckRuleinRB){
-		}else{
+		}
+		if(CheckRuleinRB){
+
+			RuleBase->Remove(temp);
+		}
+		if(!CheckFactinKB && !CheckRuleinRB){
 			cout << searchingFor << " not in KB or RB to delete\n";
 		}
 		
 	}
-	/*
-	ParseFunction(input.substr(searchStart, nextLen));
-	if (numRuns-1 == 0){
-		//cout<<"chicky nugs\n";
-		AddFact();
-		return;
-	}
-*/
 
-	
 }
 
 //Parses a file
+//Input: file name
+//Output: void
 void Parse::ParseFile(string fileName){
 	string input;
 	fstream file;
 	file.open(fileName.c_str(),std::fstream::in);
-	//Relationship.clear();
-	//Entry.clear();
 	cout<<"Inputting From File: "<< fileName << endl;
 	while(!file.eof()){
 	  getline(file,input);
@@ -217,7 +229,9 @@ void Parse::ParseFile(string fileName){
 	file.close();
 }
 
-//Called by DUMP command
+//Called by DUMP command. Saves to file.
+//Input: Filename and string input
+//Output: void
 void Parse::DumpToFile(string fileName,string input){
 	fstream file;
 	file.open(fileName.c_str(),std::fstream::out);
@@ -226,41 +240,37 @@ void Parse::DumpToFile(string fileName,string input){
 }
 
 //Parses single line of input from terminal
+//Input: void
+//Output: void
 void Parse::ParseTerminalInput(){
 	cout << "Enter 'q' to quit\n";
 	string quit = "q";
 	while(true){
 		string input;
 		getline(cin, input);
-		//cout << input << endl;
 		if(input.compare(quit) == 0) break;
 		ParseLine(input);
 	}
 }
 
 //Add Fact to KB once function is built
+//Input: Fact pointer f to be added
+//Output: void
 void Parse::AddFact(Fact* f){
 	KnowledgeBase->Add(f);
 }
 
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
+//Input: int representing number of functions in rule
+//Output: void
 void Parse::AddRule(int numFcns) {
-	/*string fcnName = "";
-	while (numFcns>0) {
-		if (numFcns == 1) {
-			fcnName = Relationship.end();
-			Relationship.pop_back();
-			numFcns--;
-		}
-	}*/
 
 	vector<Predicate*> tempPreds;
 	vector<bool> tempLogic;
 	int i;
-	//vector<string> enactVars = Preds.at(0)->components;
 	string fcnName = Preds.at(0)->name;
 	
-	for (i = 1; i < Preds.size(); i++) {
+	for (i = 0; i < Preds.size(); i++) {
         tempPreds.push_back(Preds[i]);
     }
 
@@ -273,21 +283,4 @@ void Parse::AddRule(int numFcns) {
 
 }
 
-main(){
-	KB* kb = new KB();
-	RB* rb = new RB();
-	Parse Parser = Parse(kb, rb);
-	Parser.ParseFile("Dummy.SRL");
-	string input = "FACT Alive(Roger)";
-	string input2 = "FACT Father(Roger,John)";
-	string input3 = "FACT Triplets(Roger,John,Jake)";
-	string input4 = "FACT Quadruplets(Roger,John,Jake,Peter)";
-	Parser.ParseLine(input);
-	Parser.ParseLine(input2);
-	Parser.ParseLine(input3);
-	Parser.ParseLine(input4);
-	Parser.ParseTerminalInput();
-	cout << kb->toString();
-	cout << rb->toString();
-	cout << endl;
-}
+
