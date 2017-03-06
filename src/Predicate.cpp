@@ -200,7 +200,7 @@ Rule::Rule(string n, vector<string> a, vector<bool> Logic, vector<Predicate*> cm
 //Copy constructor
 Rule::Rule(const Rule & r){
   name = r.name;
-  actors = r.actors
+  actors = r.actors;
   components = r.components;
   ops = r.ops;
 }
@@ -248,9 +248,9 @@ bool Rule::evaluate(vector<string> actors){
 //MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
 //Input: Component vector from Rules
 //Output: Returns truth value of the rule
-bool Rule::enact(vector<string> components){
+bool Rule::enact(vector<string> components, KB * kb){
   if(evaluate(components)){
-    if(KB.add(new Fact(name, actors))){
+    if(kb.add(new Fact(name, actors))){
       //Run query.inference here
     }
     return true;
