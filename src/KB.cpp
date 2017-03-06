@@ -23,8 +23,8 @@ KB::~KB(){
 //Takes in a fact pointer (fact must be created outside of add) and adds it to
 //the KB if it doesn't already exist
 //Input: Fact pointer
-//Output: void
-void KB::Add(Fact * fact){
+//Output: True if successful add, false otherwise
+bool KB::Add(Fact * fact){
 	if(FactMap.count(fact->name) == 0){ //If it doesn't exist
 		vector<Fact*> v;
 		v.push_back(fact);
@@ -57,13 +57,20 @@ void KB::Add(Fact * fact){
 						}
 					}
 				}
-				if(flag == true) FactMap[fact->name].push_back(fact);
+				if(flag == true){
+					cout<<"New Fact added to existing relationship category"<<endl;
+					FactMap[fact->name].push_back(fact);
+					return true;
+				}
 				diffChecker.clear();
 		}else{
+			cout<<"New Fact added to new relationship categeory"<<endl;
 			FactMap[fact->name].push_back(fact);
+			return true;
 		}
 		if(flag == false){
 			cout<<"Fact already exists"<<endl;
+			return false;
 		}
 	}
 }

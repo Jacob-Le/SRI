@@ -1,10 +1,8 @@
 //Predicate.h
-#include<vector>
-#ifndef STDLIB_H
-#include <stdlib.h>
-#endif
-#include<cstdarg>
-#include<string>
+#pragma once
+#include <vector>
+#include <string>
+
 using namespace std;
 
 //AKA FACT OR RULE, DEPENDING ON WHAT RULE IT IS CALLED IN
@@ -29,9 +27,9 @@ typedef struct Predicate{
 
   Predicate& operator = (Predicate p);
   Predicate& operator = (Predicate && p);
-  
+
   string toString();
-  
+
 }Predicate;
 
 //Facts describe relationships between Actors
@@ -55,23 +53,26 @@ typedef struct Fact : Predicate {
 
 //Rules are made up of components (which can be either other rules or facts)
 typedef struct Rule : Predicate{
+  //Forward declaration of RB for the enact function
+  class KB;
+
   string Relationship;
-  //Vector of predicate components (Rules or facts) that make up this rule
+  //Vector of strings representative of actors involved in the rule
+  vector<string> actors;
+  //Vector of predicate components (Rules or facts) that make up this rules
   vector<Predicate*> components;
   //Function pointers that point to functions that emulate boolean operators
   vector<bool> ops;
 
   Rule();
   //Variadic constructor that accepts any number of conditions
-  Rule(string name, const vector<bool> Logic, vector<Predicate*> cmps);
+  Rule(string name, const vector<string> actors, const vector<bool> Logic, vector<Predicate*> cmps);
   //copy and move constructors
   Rule(const Rule & r);
   Rule(Rule && r);
   ~Rule();
 
-
   bool evaluate(vector<string> components);
-  bool enact(vector<string> components);
   string toString();
   void r_swap(Rule & one, Rule & two);
 
