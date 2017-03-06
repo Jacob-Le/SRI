@@ -13,8 +13,8 @@ using namespace std;
 vector<Fact*> Results;
 
 Query::Query(KB * knowledge, RB * rules) {
-	KB = knowledge;
-	RB = rules;
+	kb = knowledge;
+	rb = rules;
 }
 
 //FACT--------------------------------------------------------------------------
