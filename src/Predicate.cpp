@@ -174,6 +174,7 @@ Fact& Fact::operator = (Fact && f){
 void Rule::r_swap(Rule & one, Rule & two){
   using std::swap;
   swap(one.name, two.name);
+  swap(one.actors, two.actors);
   swap(one.components, two.components);
   swap(one.ops, two.ops);
 }
@@ -189,8 +190,9 @@ Rule::Rule(){
 
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
-Rule::Rule(string n, vector<bool> Logic, vector<Predicate*> cmps){
+Rule::Rule(string n, vector<string> a, vector<bool> Logic, vector<Predicate*> cmps){
   name = n;
+  actors = a;
   components = cmps;
   ops = Logic; //Operators that compare each component of the rule
 }
@@ -198,6 +200,7 @@ Rule::Rule(string n, vector<bool> Logic, vector<Predicate*> cmps){
 //Copy constructor
 Rule::Rule(const Rule & r){
   name = r.name;
+  actors = r.actors
   components = r.components;
   ops = r.ops;
 }
@@ -244,10 +247,12 @@ bool Rule::evaluate(vector<string> actors){
 //If the Rule is valid, adds a Fact representative of the Rule's validity to the KB
 //MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
 //Input: Component vector from Rules
-//Output: Returns truth value 
+//Output: Returns truth value of the rule
 bool Rule::enact(vector<string> components){
   if(evaluate(components)){
-    //KB.add(new Fact());
+    if(KB.add(new Fact(name, actors))){
+      //Run query.inference here
+    }
     return true;
   }
   return false;
@@ -264,7 +269,7 @@ string Rule::toString(){
 		if( (i+1)%2 == 0 ){
 			if(ops[i/2] == 0) output += " OR ";
 			if(ops[i/2] == 1) output += " AND ";
-		} 
+		}
     }
     return output;
 }
@@ -288,4 +293,3 @@ bool Rule::operator == (const Rule& r){
 bool Rule::operator != (const Rule& r){
   return !(*this == r);
 }
-

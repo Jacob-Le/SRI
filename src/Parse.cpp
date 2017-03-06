@@ -38,8 +38,8 @@ void Parse::ParsePred(string input,bool factMode){
 	bool oneArg;
 	int delimiter1 = input.find("(");
 	string relationship = input.substr(0, delimiter1);
-	
-	
+
+
 	int delimiter2 = input.find(",",delimiter1); //.find() sets to -1 if not found
 	if(delimiter2 == -1) oneArg = true;
 	int delimiter3 = input.find(")",delimiter2);
@@ -73,15 +73,15 @@ void Parse::ParsePred(string input,bool factMode){
 
 //Parses an input and calls AddRule to create a rule.
 //Input: Inputted string
-//Output: void 
+//Output: void
 void Parse::ParseRule(string input){
 	int numRuns = numPreds(input);
 	int searchStart;
-	int searchEnd; 
+	int searchEnd;
 	int nextLen;
-	
+
 	for (int i = 0; i < numRuns; i++) {
-		
+
 		if( i ==0 ){
 			searchStart = 0;
 			searchEnd = input.find(")",0);
@@ -95,7 +95,7 @@ void Parse::ParseRule(string input){
 		if ((i+1)% 2 == 0) {
 			//First Logical Operator
 			if (input[searchStart] == ':') {
-				if (input[searchStart + 3] == 'A') { 
+				if (input[searchStart + 3] == 'A') {
 					Logic.push_back(1);
 					searchStart += 6;
 				}
@@ -131,7 +131,7 @@ void Parse::ParseRule(string input){
 //Output: int representation of component number
 int Parse::numPreds(string input){
 	int numOpenParens = count(input.begin(),input.end(), '(');
-	return numOpenParens;	
+	return numOpenParens;
 }
 
 
@@ -139,19 +139,19 @@ int Parse::numPreds(string input){
 //Input: input string
 //Output: void
 void Parse::ParseLine(string input){
-	
+
 	bool LOAD = false;
 	bool DUMP = false;
 	bool FACT = false;
 	bool RULE = false;
 	bool INFE = false; //short for INFERENCE
 	bool DROP = false;
-	
+
 	numRuns = numPreds(input);
 	int searchStart = 0;
 	int searchEnd = input.find(")");
 	int nextLen = searchLength(searchStart, searchEnd);
-	
+
 	//Determine Command
 	string command = input.substr(searchStart, 4);
 	if(command == "LOAD"){
@@ -168,7 +168,7 @@ void Parse::ParseLine(string input){
 	}else if(command == "DROP") DROP = true;
 	searchStart += 5;
 	nextLen = searchLength(searchStart, searchEnd);
-	
+
 	//Enact Command
 	if(LOAD){
 		ParseFile(input.substr(searchStart, nextLen+1));
@@ -179,7 +179,7 @@ void Parse::ParseLine(string input){
 		DumpToFile(input.substr(searchStart, nextLen+1),fileDump);
 		return;
 	}else if(FACT){
-		ParsePred(input.substr(searchStart, nextLen), true); 
+		ParsePred(input.substr(searchStart, nextLen), true);
 		return;
 	}else if(RULE){
 		nextLen = searchLength(searchStart, input.size());
@@ -198,7 +198,7 @@ void Parse::ParseLine(string input){
 				break;
 			}
 		}
-			
+
 		if(CheckFactinKB){
 			KnowledgeBase->Remove(searchingFor);
 		}
@@ -209,7 +209,7 @@ void Parse::ParseLine(string input){
 		if(!CheckFactinKB && !CheckRuleinRB){
 			cout << searchingFor << " not in KB or RB to delete\n";
 		}
-		
+		//Run query.inference here
 	}
 
 }
@@ -269,7 +269,8 @@ void Parse::AddRule(int numFcns) {
 	vector<bool> tempLogic;
 	int i;
 	string fcnName = Preds.at(0)->name;
-	
+	vector<string> actNames = Preds.at(0)->components;
+
 	for (i = 0; i < Preds.size(); i++) {
         tempPreds.push_back(Preds[i]);
     }
@@ -278,9 +279,7 @@ void Parse::AddRule(int numFcns) {
 		tempLogic.push_back(Logic[i]);
 	}
 
-	Rule * newRule = new Rule(fcnName, tempLogic, tempPreds); //enactVars
+	Rule * newRule = new Rule(fcnName, actNames, tempLogic, tempPreds); //enactVars
 	RuleBase->Add(newRule);
 
 }
-
-
