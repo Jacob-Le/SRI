@@ -118,7 +118,7 @@ void Parse::ParseRule(string input){
 			}
 		}
 		nextLen = searchLength(searchStart, searchEnd);
-		ParsePred(input.substr(searchStart, nextLen), false);
+		ParsePred(input.substr(searchStart+1, nextLen), false);
 	}
 
 	AddRule(numRuns);
@@ -268,15 +268,16 @@ void Parse::AddRule(int numFcns) {
 
 	vector<Predicate*> tempPreds;
 	vector<bool> tempLogic;
-	int i;
 	string fcnName = Preds.at(0)->name;
-	vector<string> actNames = Preds.at(0)->components;
+	vector<string> enactVars;
+	enactVars = Preds.at(0)->components;
 
-	for (i = 0; i < Preds.size(); i++) {
-        tempPreds.push_back(Preds[i]);
+
+	for (int i = 1; i < Preds.size(); i++) {
+		tempPreds.push_back(Preds[i]);
     }
 
-	for (i = 0; i < Logic.size(); i++) {
+	for (int i = 0; i < Logic.size(); i++) {
 		tempLogic.push_back(Logic[i]);
 	}
 
