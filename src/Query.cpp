@@ -3,16 +3,18 @@
 	Query handles interactions between databases. Allow databases to query each other
 	for truth values of targetted facts or rules.
 */
-#include "Query.h"
 #include<iostream>
 #include<cstdio>
+
+#include "Query.h"
+
 using namespace std;
-//Constructor.
 
 vector<Fact*> Results;
 
-Query::Query() {
-
+Query::Query(KB * knowledge, RB * rules) {
+	KB = knowledge;
+	RB = rules;
 }
 
 //FACT--------------------------------------------------------------------------
@@ -84,3 +86,20 @@ Query::Query() {
 	void Query::printResults(){
 		for(int i=0;i<Results.size();i++) cout << Results.at(i)->toString();
 	}
+
+
+//----------------------------------Part 3: evaluate--------------------------------------//
+
+//If the Rule is valid, adds a Fact representative of the Rule's validity to the KB
+//MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
+//Input: Component vector from Rules
+//Output: Returns truth value of the rule
+bool Query::enact(Rule * r, vector<string> components, KB * kb){
+  if(r->evaluate(components)){
+    if(kb->Add(new Fact(r->name, r->actors))){
+      //Run query.inference here
+    }
+    return true;
+  }
+  return false;
+}

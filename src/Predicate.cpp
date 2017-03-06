@@ -3,9 +3,10 @@
 	Definitions of predicates, rules, and facts are stored here, along with definitions
 	of their assosciated functions.
 */
-#include "Predicate.h"
 #include <iostream>
 #include<math.h>
+
+#include "Predicate.h"
 
 using namespace std;
 
@@ -242,20 +243,6 @@ bool Rule::evaluate(vector<string> actors){
     next = components[count]; //advance to next one
   }
   return truth;
-}
-
-//If the Rule is valid, adds a Fact representative of the Rule's validity to the KB
-//MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
-//Input: Component vector from Rules
-//Output: Returns truth value of the rule
-bool Rule::enact(vector<string> components, KB * kb){
-  if(evaluate(components)){
-    if(kb.add(new Fact(name, actors))){
-      //Run query.inference here
-    }
-    return true;
-  }
-  return false;
 }
 
 //Returns a string representation of the Rule

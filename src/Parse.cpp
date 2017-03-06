@@ -4,13 +4,14 @@
 	facts, and other types. It can also be considered the moderator class that handles
 	the actions of the program. There is a test main function at the bottom.
 */
-
 #include<cstdio>
 #include<string>
 #include<iostream>
 #include<algorithm>
 #include<fstream>
+
 #include "Parse.h"
+
 using namespace std;
 
 //Constructor

@@ -1,9 +1,11 @@
 //Parse.h
 #include<string>
 #include<vector>
-#include<map>
-#include "RB.cpp"
-#include "KB.cpp"
+
+#include "Predicate.h"
+#include "KB.h"
+#include "RB.h"
+
 
 class Parse{
 	public:
@@ -12,7 +14,7 @@ class Parse{
 	int numRuns;
 
 	Parse(KB* knowledgeBase, RB* ruleBase); //, KB* knowledgeBase)
-	std::vector<string> RuleVector; 
+	std::vector<string> RuleVector;
 
 	std::vector<string> FactVector;
 	std::vector<Predicate*> Preds;
