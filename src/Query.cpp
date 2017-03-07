@@ -94,7 +94,7 @@ Query::Query(KB * knowledge, RB * rules) {
 //MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
 //Input: Component vector from Rules
 //Output: Returns truth value of the rule
-bool Query::enact(Rule * r, vector<string> components, KB * kb){
+bool Query::enact(Rule * r, vector<string> components){
   if(r->evaluate(components)){
     if(kb->Add(new Fact(r->name, r->actors))){
       //Run query.inference here
