@@ -77,10 +77,79 @@ vector<Fact*> Query::preventDupes(vector<Fact*>* A, vector<Fact*> B){
 		}
 	}
 }
-
 //Prints the results of the query to terminal
 //Input: void
 //Output: void
 	void Query::printResults(){
 		for(int i=0;i<Results.size();i++) cout << Results.at(i)->toString();
 	}
+	//-------------------------------------------------------PHASE 2-------------------------------------------
+void Query::CreatePredNames(Rule* r) {
+	vector<string> predNames; //Relevant relationship names
+	vector<string> ToBind; //Variables that need actors
+	for (int i = 0; i < r->components.size(); i++) {
+		predNames.push_back(r->components.at(i)->name); //Builds vector of relationship names
+		for (int j = 0; j < r->components.components.size(); j++) //Iterate through rule actors
+			ToBind.push_back(r->components.components.at(j)); //pushes actors onto ToBind
+	}
+}
+
+vector< vector<string>*> Query::PermutateAndBind(KB* kb) {
+
+	vector< vector<string>*> FromKB;
+	vector< vector<string>*> permutation;
+
+	for (int j = 0; j<predNames.size(); j++) { //(Father, Parent)
+		vector<string>* Temp;
+		Temp = kb->Find(predNames.at(i));
+		FromKB.push_back(Temp); //Fact pointer onto FromKB (Actor1, Actor2)
+	}
+	//I need to build permutation vector here
+	//ToBind holds needed actors
+	//iterate through toBind and assign an integer to each unique actor and store ints into a vector
+	//With permutated vector, we assign each relationship to X,Y
+	//Assign other half of permuted to Z,X while checking if they fit the integers assigned.
+
+	return FromKB; //vector of all relationships relevant
+}
+
+vector<string> Query::Bind() {
+	vector<int> ID = BuildID(); //builds ID vector
+	vector<string> result;
+	//match = false;
+	//foreach(relation1)
+	//vector<string> buff
+	//buff0 = relation1(source)
+	//buff1 = relation1(target)
+	// X: relation1(source) (0)
+	// Y: relation1(target) (1)
+	//foreach(relation2)
+	// foreach(buff)
+	//  if relation2(index) == buff: match = true;
+
+	//return result;
+}
+
+vector<int> Query::BuildID() {
+	vector<int> id; //holds actor id for building (X,Y,Z,X) or whatever combo it is
+	int currnum = 0;
+	for (int i = 0; i < ToBind.size(); i++) {//Iterate through needed actors
+		if (id.size() != 0) { //If IDs are not empty, do the thing
+			for (int j = 0; j < i; j++) { //Iterate through processed indexes
+				if (ToBind[i] == ToBind[j]) { //If it's occured already, put it in again
+					id.push_back(id[j]);
+					break;
+				}
+				else { //ID is empty, put 0 in index 1
+					id.push_back(currnum);
+					currnum++;
+				}
+			}
+		}
+		else {
+			id.push_back(currnum);
+			currnum++;
+		}
+	}
+	return id;
+}
