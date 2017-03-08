@@ -83,7 +83,7 @@ vector<Fact*> Query::preventDupes(vector<Fact*>* A, vector<Fact*> B){
 	void Query::printResults(){
 		for(int i=0;i<Results.size();i++) cout << Results.at(i)->toString();
 	}
-	//-------------------------------------------------------PHASE 2-------------------------------------------
+	//-------------------------------------------------------PHASE 1-------------------------------------------
 void Query::CreatePredNames(Rule* r) {
 	vector<string> predNames; //Relevant relationship names
 	vector<string> ToBind; //Variables that need actors
@@ -101,7 +101,7 @@ vector< vector<string>*> Query::PermutateAndBind(KB* kb) {
 
 	for (int j = 0; j<predNames.size(); j++) { //(Father, Parent)
 		vector<string>* Temp;
-		Temp = kb->Find(predNames.at(i));
+		Temp = kb->Find(predNames.at(i)); //passes in a relationship name
 		FromKB.push_back(Temp); //Fact pointer onto FromKB (Actor1, Actor2)
 	}
 	//I need to build permutation vector here
@@ -112,22 +112,33 @@ vector< vector<string>*> Query::PermutateAndBind(KB* kb) {
 
 	return FromKB; //vector of all relationships relevant
 }
-
+//-----------------------PHASE 2---------------------------------------------------------
 vector<string> Query::Bind() {
 	vector<int> ID = BuildID(); //builds ID vector
+	vector< vector<string*> > toBeBinded = PermutateAndBind(KnowledgeBase);
 	vector<string> result;
-	//match = false;
-	//foreach(relation1)
-	//vector<string> buff
-	//buff0 = relation1(source)
-	//buff1 = relation1(target)
-	// X: relation1(source) (0)
-	// Y: relation1(target) (1)
-	//foreach(relation2)
-	// foreach(buff)
-	//  if relation2(index) == buff: match = true;
+	string varStorage[];
+	bool match = false;
+	for (int i = 0; i < toBeBinded.size() - 1; i++) {
+		currRelation = toBeBinded[i].name;
+		varStorage[ID[i]] = toBeBinded[i].component[0];
+		varStorage[ID[i+1]] = toBeBinded[i].component[1];
+		for (int j = i + 1; j < toBeBinded.size() - 1; j++) {
+			if (toBeBinded[j].relation != currRelation) {
+				if (variable array[ID[j]] != nullptr) varStorage[ID[j]] = toBeBinded[j].component[0];
+				else break;
+				if (variable array[ID[j + 1]] != nullptr) varStorage[ID[j+1]] = toBeBinded[j].component[1];
+				else break;
+				result.push_back(toBeBinded[i].component[0]);
+				result.push_back(toBeBinded[i].component[1]);
+				result.push_back(toBeBinded[j].component[0]);
+				result.push_back(toBeBinded[j].component[1]);
+				//call phase 3(result);
+			}
+		}
+	}//YAAAY FUCK THIS SHIT
 
-	//return result;
+	return result;
 }
 
 vector<int> Query::BuildID() {

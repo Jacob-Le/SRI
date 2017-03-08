@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
-//#include "KB.cpp"
+#include "KB.cpp"
+#include "Predicate.cpp"
 using namespace std;
 
 //Categorized according to Evie's plan
@@ -15,8 +16,11 @@ class Query {
 	vector<Fact*>* listFact(KB* Knowledge, string factKey); //used to return vector<string>
 
 	//SIMPLE RULE-------------------------------------------------------------------
-	void listSimpleRule(/*something*/);
+	//void listSimpleRule(/*something*/);
 	void printResults();
 	vector<Fact*> concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB);
 	vector<Fact*> preventDupes(vector<Fact*>* A, vector<Fact*> B);
+	void CreatePredNames(Rule* r);
+	vector< vector<string>*> PermutateAndBind(KB* kb);
+	vector<string> Bind();
 };
