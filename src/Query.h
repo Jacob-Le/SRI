@@ -1,14 +1,18 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "RB.cpp"
 #include "KB.cpp"
-#include "Predicate.cpp"
+
+//#include "Predicate.cpp"
 using namespace std;
 
 //Categorized according to Evie's plan
 class Query {
 	public:
 	//something var currentQuery <--THE THING THAT QUERY PASSES AROUND IDK WHAT IT IS THO
+	vector<string> predNames; //Relevant relationship names
+	vector<string> ToBind; //Variables that need actors
 
 	Query();
 
@@ -21,6 +25,7 @@ class Query {
 	vector<Fact*> concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB);
 	vector<Fact*> preventDupes(vector<Fact*>* A, vector<Fact*> B);
 	void CreatePredNames(Rule* r);
-	vector< vector<string>*> PermutateAndBind(KB* kb);
-	vector<string> Bind();
+	vector< vector<Fact*>*> PermutateAndBind(KB* kb);
+	vector<string> Bind(KB* KnowledgeBase);
+	vector<int> BuildID();
 };

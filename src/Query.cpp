@@ -85,23 +85,21 @@ vector<Fact*> Query::preventDupes(vector<Fact*>* A, vector<Fact*> B){
 	}
 	//-------------------------------------------------------PHASE 1-------------------------------------------
 void Query::CreatePredNames(Rule* r) {
-	vector<string> predNames; //Relevant relationship names
-	vector<string> ToBind; //Variables that need actors
 	for (int i = 0; i < r->components.size(); i++) {
 		predNames.push_back(r->components.at(i)->name); //Builds vector of relationship names
-		for (int j = 0; j < r->components.components.size(); j++) //Iterate through rule actors
-			ToBind.push_back(r->components.components.at(j)); //pushes actors onto ToBind
+		for (int j = 0; j < r->components.at(i)->components.size(); j++) //Iterate through rule actors
+			ToBind.push_back(r->components.at(i)->components.at(j)); //pushes actors onto ToBind
 	}
 }
 
-vector< vector<string>*> Query::PermutateAndBind(KB* kb) {
+vector< vector<Fact*>*> Query::PermutateAndBind(KB* kb) {
 
-	vector< vector<string>*> FromKB;
-	vector< vector<string>*> permutation;
+	vector< vector<Fact*>*> FromKB;
+	vector< vector<Fact*>*> permutation;
 
 	for (int j = 0; j<predNames.size(); j++) { //(Father, Parent)
-		vector<string>* Temp;
-		Temp = kb->Find(predNames.at(i)); //passes in a relationship name
+		vector<Fact*>* Temp;
+		Temp = kb->Find(predNames.at(j)); //passes in a relationship name
 		FromKB.push_back(Temp); //Fact pointer onto FromKB (Actor1, Actor2)
 	}
 	//I need to build permutation vector here
@@ -113,26 +111,27 @@ vector< vector<string>*> Query::PermutateAndBind(KB* kb) {
 	return FromKB; //vector of all relationships relevant
 }
 //-----------------------PHASE 2---------------------------------------------------------
-vector<string> Query::Bind() {
-	vector<int> ID = BuildID(); //builds ID vector
-	vector< vector<string*> > toBeBinded = PermutateAndBind(KnowledgeBase);
+vector<string> Query::Bind(KB* KnowledgeBase) {
+	vector<int> ID;
+	ID = BuildID(); //builds ID vector
+	vector< vector<Fact*>* > toBeBinded = PermutateAndBind(KnowledgeBase);
 	vector<string> result;
-	string varStorage[];
+	vector<string> varStorage;
 	bool match = false;
 	for (int i = 0; i < toBeBinded.size() - 1; i++) {
-		currRelation = toBeBinded[i].name;
-		varStorage[ID[i]] = toBeBinded[i].component[0];
-		varStorage[ID[i+1]] = toBeBinded[i].component[1];
+		string currRelation = toBeBinded[i]->at(0)->name;
+		varStorage[ID[i]] = toBeBinded[i]->components[0];
+		varStorage[ID[i+1]] = toBeBinded[i]->components[1];
 		for (int j = i + 1; j < toBeBinded.size() - 1; j++) {
-			if (toBeBinded[j].relation != currRelation) {
-				if (variable array[ID[j]] != nullptr) varStorage[ID[j]] = toBeBinded[j].component[0];
+			if (toBeBinded[j]->relation != currRelation) {
+				if (varStorage[ID[j]] != nullptr) varStorage[ID[j]] = toBeBinded[j]->components[0];
 				else break;
-				if (variable array[ID[j + 1]] != nullptr) varStorage[ID[j+1]] = toBeBinded[j].component[1];
+				if (varStorage[ID[j + 1]] != nullptr) varStorage[ID[j+1]] = toBeBinded[j]->components[1];
 				else break;
-				result.push_back(toBeBinded[i].component[0]);
-				result.push_back(toBeBinded[i].component[1]);
-				result.push_back(toBeBinded[j].component[0]);
-				result.push_back(toBeBinded[j].component[1]);
+				result.push_back(toBeBinded[i]->components[0]);
+				result.push_back(toBeBinded[i]->components[1]);
+				result.push_back(toBeBinded[j]->components[0]);
+				result.push_back(toBeBinded[j]->components[1]);
 				//call phase 3(result);
 			}
 		}
