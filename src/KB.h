@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdlib.h>
 #include <vector>
 #include<map>
@@ -11,12 +13,9 @@ public:
 	KB();
 	~KB();
 
-	void Add(Fact * fact);
+	bool Add(Fact * fact);
 	Fact* Remove(Fact * fact);
 	void Remove(string f);
-	Fact* Fetch(string r, vector<string> actors);
 	vector<Fact*>* Find(string findKey);
 	string toString();
-	//void Dump();
-	//void Load();
 };
