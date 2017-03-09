@@ -117,22 +117,23 @@ vector<string> Query::Bind(KB* KnowledgeBase) {
 	vector< vector<Fact*>* > toBeBinded = PermutateAndBind(KnowledgeBase);
 	vector<string> result;
 	vector<string> varStorage;
-	for (int i = 0; i < toBeBinded[0].size(); i++){
-		varStorage.push_back(toBeBinded[0][i]->component[0]);
-		varStorage.push_back(toBeBinded[0][i]->component[1]);
-		for (int j = 0; j < toBeBinded[1].size(); j++){
-			if (varStorage[ID[2]] == nullptr) varStorage.push_back(toBeBinded[1][j]->component[0]);
+	for (int i = 0; i < toBeBinded[0]->size(); i++){
+		varStorage.push_back(toBeBinded[0]->at(i)->components[0]);
+		varStorage.push_back(toBeBinded[0]->at(i)->components[1]);
+		for (int j = 0; j < toBeBinded[1]->size(); j++){
+			if (varStorage[ID[2]] == nullptr) varStorage.push_back(toBeBinded[1]->at(j)->components[0]);
 			else break;
-			if (varStorage[ID[3]] == nullptr) varStorage.push_back(toBeBinded[1][j]->compnonent[1]);
+			if (varStorage[ID[3]] == nullptr) varStorage.push_back(toBeBinded[1]->at(j)->components[1]);
 			else break;
-			result.push_back(toBeBinded[0][i]->component[0]);
-			result.push_back(toBeBinded[0][i]->component[1]);
-			result.push_back(toBeBinded[1][j]->component[0]);
-			result.push_back(toBeBinded[1][j]->component[1]);
+			result.push_back(toBeBinded[0]->at(i)->components[0]);
+			result.push_back(toBeBinded[0]->at(i)->components[1]);
+			result.push_back(toBeBinded[1]->at(i)->components[0]);
+			result.push_back(toBeBinded[1]->at(i)->components[1]);
 			//call phase 3(result); Passes actors in an array. eg [John,Mary,Ahmed,John] of [X, Y, Z, Z]
 		}
 
 	return result; //Change return types depending on how you use this function.
+	}
 }
 
 vector<int> Query::BuildID() {
