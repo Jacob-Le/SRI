@@ -129,7 +129,7 @@ vector<string> Query::Bind(KB* KnowledgeBase) {
 			result.push_back(toBeBinded[0][i]->component[1]);
 			result.push_back(toBeBinded[1][j]->component[0]);
 			result.push_back(toBeBinded[1][j]->component[1]);
-			//call phase 3(result); Passes strings representing actors. eg ["John","Mary","Ahmed","John"] of [X, Y, Z, Z]
+			//call phase 3(result); Passes actors in an array. eg [John,Mary,Ahmed,John] of [X, Y, Z, Z]
 		}
 
 	return result; //Change return types depending on how you use this function.
