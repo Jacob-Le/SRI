@@ -12,7 +12,7 @@ private:
 public:
 	//something var currentQuery <--THE THING THAT QUERY PASSES AROUND IDK WHAT IT IS THO
 
-	Query(KB * knowledge, RB * Rules);
+	Query(KB * kb, RB * rb);
 
 	//FACT--------------------------------------------------------------------------
 	vector<Fact*>* listFact(KB* Knowledge, string factKey); //used to return vector<string>
