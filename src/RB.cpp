@@ -3,7 +3,7 @@
 	The database for Rules is defined here. Allows users to add, remove, print, and find Rules
 	in the database.
 */
-
+#pragma once
 #include <stdlib.h>
 #include <fstream>
 #include <algorithm>

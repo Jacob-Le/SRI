@@ -1,7 +1,6 @@
 //Rule database
-#include <stdlib.h>
+#pragma once
 #include "Predicate.cpp"
-
 
 using namespace std;
 

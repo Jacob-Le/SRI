@@ -1,22 +1,48 @@
 #pragma once
 #include <string>
 #include <vector>
-//#include "KB.cpp"
+#include "RB.cpp"
+#include "KB.cpp"
+
+//#include "Predicate.cpp"
+
 using namespace std;
 
 //Categorized according to Evie's plan
 class Query {
-	public:
+private:
+	KB * kb;
+	RB * rb;
+public:
 	//something var currentQuery <--THE THING THAT QUERY PASSES AROUND IDK WHAT IT IS THO
+	vector<string> predNames; //Relevant relationship names
+	vector<string> ToBind; //Variables that need actors
+	
+	vector<string> varMapping;
+	void CreateVarMapping(Rule* R);
+	
+	map<string, vector<string> > VarBounds;
+	void CreateVarBoundsMaster(Rule* R);
+	void CreateVarBounds(vector<Fact*>* Facts);
+	string VarBoundstoString();
 
-	Query();
+	Query(KB * kb, RB * rb);
 
 	//FACT--------------------------------------------------------------------------
 	vector<Fact*>* listFact(KB* Knowledge, string factKey); //used to return vector<string>
 
 	//SIMPLE RULE-------------------------------------------------------------------
-	void listSimpleRule(/*something*/);
+	//void listSimpleRule(/*something*/);
 	void printResults();
 	vector<Fact*> concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB);
 	vector<Fact*> preventDupes(vector<Fact*>* A, vector<Fact*> B);
+
+	void CreatePredNames(Rule* r);
+	vector< vector<Fact*>*> PermutateAndBind(KB* kb);
+	vector<string> Bind(KB* KnowledgeBase);
+	vector<int> BuildID();
+
+	//Part 3: evaluate Rules -------------------------------------------------------
+	bool enact(Rule * r, vector<string> s, KB * kb);
+
 };
