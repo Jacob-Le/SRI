@@ -15,7 +15,7 @@ vector<Fact*> Results;
 Query::Query(KB * knowledge, RB * rules) {
 	kb = knowledge;
 	rb = rules;
-
+}
 //FACT--------------------------------------------------------------------------
 // Returns a pointer to a list (vector) of Fact pointers with a similar relationship
 //from the Knowledge Base.
