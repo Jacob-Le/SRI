@@ -118,17 +118,17 @@ vector<string> Query::Bind(KB* KnowledgeBase) {
 	vector<string> result;
 	vector<string> varStorage;
 	for (int i = 0; i < toBeBinded[0].size(); i++){
-		varStorage.push_back(toBeBinded[0][i].component[0]);
-		varStorage.push_back(toBeBinded[0][i].component[1]);
+		varStorage.push_back(toBeBinded[0][i]->component[0]);
+		varStorage.push_back(toBeBinded[0][i]->component[1]);
 		for (int j = 0; j < toBeBinded[1].size(); j++){
-			if (varStorage[ID[2]] == nullptr) varStorage.push_back(toBeBinded[1][j].component[0]);
+			if (varStorage[ID[2]] == nullptr) varStorage.push_back(toBeBinded[1][j]->component[0]);
 			else break;
-			if (varStorage[ID[3]] == nullptr) varStorage.push_back(toBeBinded[1][j].compnonent[1]);
+			if (varStorage[ID[3]] == nullptr) varStorage.push_back(toBeBinded[1][j]->compnonent[1]);
 			else break;
-			result.push_back(toBeBinded[0][i].component[0]);
-			result.push_back(toBeBinded[0][i].component[1]);
-			result.push_back(toBeBinded[1][j].component[0]);
-			result.push_back(toBeBinded[1][j].component[1]);
+			result.push_back(toBeBinded[0][i]->component[0]);
+			result.push_back(toBeBinded[0][i]->component[1]);
+			result.push_back(toBeBinded[1][j]->component[0]);
+			result.push_back(toBeBinded[1][j]->component[1]);
 			//call phase 3(result); Passes strings representing actors. eg ["John","Mary","Ahmed","John"] of [X, Y, Z, Z]
 		}
 
