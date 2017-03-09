@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdlib.h>
 #include <vector>
 #include<map>
@@ -11,7 +13,7 @@ public:
 	KB();
 	~KB();
 
-	void Add(Fact * fact);
+	bool Add(Fact * fact);
 	Fact* Remove(Fact * fact);
 	void Remove(string f);
 	vector<Fact*>* Find(string findKey);
