@@ -95,11 +95,14 @@ Query::Query(KB * knowledge, RB * rules) {
 //Input: Component vector from Rules
 //Output: Returns truth value of the rule
 bool Query::enact(Rule * r, vector<string> components){
-  if(r->evaluate(components)){
-    if(kb->Add(new Fact(r->name, r->actors))){
-      //Run query.inference here
-    }
-    return true;
-  }
-  return false;
+	vector<Fact*> * v = kb->Find(r->name);
+	if(!v){
+		if(r->evaluate(components)){
+	    if(kb->Add(new Fact(r->name, r->actors))){
+	      //Run query.inference here
+	    }
+	    return true;
+	  }
+	  return false;
+	}else return std::find(v.begin(), v.end(),value)!=v.end());
 }
