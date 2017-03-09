@@ -117,27 +117,22 @@ vector<string> Query::Bind(KB* KnowledgeBase) {
 	vector< vector<Fact*>* > toBeBinded = PermutateAndBind(KnowledgeBase);
 	vector<string> result;
 	vector<string> varStorage;
-	bool match = false;
-	for (int i = 0; i < toBeBinded.size() - 1; i++) {
-		string currRelation = toBeBinded[i]->at(0)->name;
-		varStorage[ID[i]] = toBeBinded[i]->components[0];
-		varStorage[ID[i+1]] = toBeBinded[i]->components[1];
-		for (int j = i + 1; j < toBeBinded.size() - 1; j++) {
-			if (toBeBinded[j]->relation != currRelation) {
-				if (varStorage[ID[j]] != nullptr) varStorage[ID[j]] = toBeBinded[j]->components[0];
-				else break;
-				if (varStorage[ID[j + 1]] != nullptr) varStorage[ID[j+1]] = toBeBinded[j]->components[1];
-				else break;
-				result.push_back(toBeBinded[i]->components[0]);
-				result.push_back(toBeBinded[i]->components[1]);
-				result.push_back(toBeBinded[j]->components[0]);
-				result.push_back(toBeBinded[j]->components[1]);
-				//call phase 3(result);
-			}
+	for (int i = 0; i < toBeBinded[0].size(); i++){
+		varStorage.push_back(toBeBinded[0][i].component[0]);
+		varStorage.push_back(toBeBinded[0][i].component[1]);
+		for (int j = 0; j < toBeBinded[1].size(); j++){
+			if (varStorage[ID[2]] == nullptr) varStorage.push_back(toBeBinded[1][j].component[0]);
+			else break;
+			if (varStorage[ID[3]] == nullptr) varStorage.push_back(toBeBinded[1][j].compnonent[1]);
+			else break;
+			result.push_back(toBeBinded[0][i].component[0]);
+			result.push_back(toBeBinded[0][i].component[1]);
+			result.push_back(toBeBinded[1][j].component[0]);
+			result.push_back(toBeBinded[1][j].component[1]);
+			//call phase 3(result); Passes strings representing actors. eg ["John","Mary","Ahmed","John"] of [X, Y, Z, Z]
 		}
-	}//YAAAY FUCK THIS SHIT
 
-	return result;
+	return result; //Change return types depending on how you use this function.
 }
 
 vector<int> Query::BuildID() {
@@ -147,7 +142,7 @@ vector<int> Query::BuildID() {
 		if (id.size() != 0) { //If IDs are not empty, do the thing
 			for (int j = 0; j < i; j++) { //Iterate through processed indexes
 				if (ToBind[i] == ToBind[j]) { //If it's occured already, put it in again
-					id.push_back(id[j]);
+					id.push_back(id[i]);
 					break;
 				}
 				else { //ID is empty, put 0 in index 1
