@@ -7,13 +7,12 @@ using namespace std;
 class KB{
 public:
 	//map, stored facts categorized by relationship
-	std::map <string, vector<Fact*> > FactMap;
+	std::map <string, vector<Predicate*> > FactMap;
 	KB();
 	~KB();
 
-	bool Add(Fact * fact);
-	Fact* Remove(Fact * fact);
+	bool Add(Predicate* pred);
 	void Remove(string f);
-	vector<Fact*>* Find(string findKey);
+	vector<Predicate*>* Find(string findKey);
 	string toString();
 };
