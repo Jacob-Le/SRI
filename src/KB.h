@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <vector>
 #include<map>
+#pragma once
+#include "Predicate.cpp"
 
 using namespace std;
 

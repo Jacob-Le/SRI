@@ -1,6 +1,6 @@
 //Rule database
 #pragma once
-#include "Predicate.cpp"
+#include "FactRule.cpp"
 
 using namespace std;
 
