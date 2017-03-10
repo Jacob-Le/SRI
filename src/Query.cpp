@@ -21,8 +21,8 @@ Query::Query(KB * knowledge, RB * rules) {
 //from the Knowledge Base.
 // Takes in a pointer to the Knowledge Base and a string representative of the similar
 // relationship.
-vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
-	vector<Fact*>* result = Knowledge->Find(factKey);
+vector<Predicate*>* Query::listFact(KB* Knowledge, string factKey) {
+	vector<Predicate*>* result = Knowledge->Find(factKey);
 	for (int i = 0; i < result->size(); i++) result->at(i)->toString();
 	return result;
 }
@@ -30,8 +30,8 @@ vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
 //SIMPLE RULE-------------------------------------------------------------------
 
 //helper function to get rid of duplicates
-vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB) {
-	vector<Fact*> result;
+vector<Predicate*> Query::concatenate(vector<Predicate*>* resultA, vector<Predicate*>* resultB) {
+	vector<Predicate*> result;
 	bool found = false;
 	result = preventDupes(resultA, result);
 	result = preventDupes(resultB, result);
@@ -47,7 +47,7 @@ vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB)
 //Output: Returns truth value of the rule
 bool Query::enact(Rule * r, vector<string> components, KB * kb){
   if(r->evaluate(components)){
-    if(kb->Add(new Fact(r->name, r->actors))){
+    if(kb->Add(new Predicate(r->name, r->actors))){
       //Run query.inference here
     }
     return true;
@@ -69,13 +69,13 @@ void CreateVarBoundsMaster(int iterate, vector<string> varMapping){
 }
 
 //create bounds for vars
-map<string, vector<string> > CreateVarBounds(vector<Fact*>* Facts, vector<string> varMapping){
+map<string, vector<string> > CreateVarBounds(vector<Predicate*>* Facts, vector<string> varMapping){
 	map<string, vector<string> > VarBounds;
 
 	//iterate through list of facts
 	for(int i=0; i<Facts[0]->components.size(); i++){
 		//iterate through list of actors in facts
-		for(int j=0; j<sizeOf; j++){
+		for(int j=0; j<Facts[0]->components.components.size(); j++){
 			//Create pointer to vector pertaining to proper var
 			vector<string>* temp = VarBounds[varMapping.at(j)];
 			temp.push_back(Facts->at(i)->components.at(j));

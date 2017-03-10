@@ -33,10 +33,12 @@ typedef struct Rule : Predicate{
   vector<Predicate*> components;
   //Function pointers that point to functions that emulate boolean operators
   vector<bool> ops;
+  
+  map<int,vector<string> > RuleTempVars;
 
   Rule();
   //Variadic constructor that accepts any number of conditions
-  Rule(string name, const vector<string> actors, const vector<bool> Logic, vector<Predicate*> cmps);
+  Rule(string name, const vector<string> actors, const vector<bool> Logic, vector<Predicate*> cmps, map<int,vector<string> > tempest);
   //copy and move constructors
   Rule(const Rule & r);
   Rule(Rule && r);

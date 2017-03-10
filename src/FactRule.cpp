@@ -101,11 +101,12 @@ Rule::Rule(){
 
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
-Rule::Rule(string n, vector<string> a, vector<bool> Logic, vector<Predicate*> cmps){
+Rule::Rule(string n, vector<string> a, vector<bool> Logic, vector<Predicate*> cmps, map<int,vector<string> > tempest){
   name = n;
   actors = a;
   components = cmps;
   ops = Logic; //Operators that compare each component of the rule
+  temp = tempest;
 }
 
 //Copy constructor
@@ -114,6 +115,7 @@ Rule::Rule(const Rule & r){
   actors = r.actors;
   components = r.components;
   ops = r.ops;
+  temp = r.temp;
 }
 
 //Move constructor

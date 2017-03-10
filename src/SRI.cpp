@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <iostream>
-#include "Predicate.cpp"
-#include "KB.cpp"
-#include "RB.cpp"
+//#include "Predicate.cpp"
+//#include "KB.cpp"
+//#include "RB.cpp"
 #include "Parse.cpp"
-#include "Query.cpp"
+//#include "Query.cpp"
 
 using namespace std;
 

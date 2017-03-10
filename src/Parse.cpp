@@ -270,18 +270,25 @@ void Parse::AddRule(int numFcns) {
 	vector<bool> tempLogic;
 	string fcnName = Preds.at(0)->name;
 	vector<string> enactVars;
+	map<int,vector<string>> temp; //stores the rules' temp vars because rule needs to point to itself in the RB
 	enactVars = Preds.at(0)->components;
 
 
-	for (int i = 1; i < Preds.size(); i++) {
-		tempPreds.push_back(Preds[i]);
+	for (int i = 1; i < Preds.size(); i++) 
+		if(rb->count(Preds[i])==1){ //Rule
+			temp[i] = Preds[i]->components;
+			tempPreds.push_back(rb->at(Preds[i]->name));
+		}else{ //Fact
+			Fact* newFact = new Fact(Preds[i]->name, Preds[i]->components);
+			tempPreds.push_back(newFact);
+		}
     }
 
 	for (int i = 0; i < Logic.size(); i++) {
 		tempLogic.push_back(Logic[i]);
 	}
 
-	Rule * newRule = new Rule(fcnName, actNames, tempLogic, tempPreds); //enactVars
+	Rule * newRule = new Rule(fcnName, actNames, tempLogic, tempPreds, temp); 
 	RuleBase->Add(newRule);
 
 }

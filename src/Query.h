@@ -1,6 +1,4 @@
-#include "Predicate.h"
-#include "KB.h"
-#include "RB.h"
+#include "RB.cpp"
 
 using namespace std;
 
@@ -15,13 +13,13 @@ public:
 	Query(KB * kb, RB * rb);
 
 	//FACT--------------------------------------------------------------------------
-	vector<Fact*>* listFact(KB* Knowledge, string factKey); //used to return vector<string>
+	vector<Predicate*>* listFact(KB* Knowledge, string factKey); //used to return vector<string>
 
 	//SIMPLE RULE-------------------------------------------------------------------
 	void listSimpleRule(/*something*/);
 	void printResults();
-	vector<Fact*> concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB);
-	vector<Fact*> preventDupes(vector<Fact*>* A, vector<Fact*> B);
+	vector<Predicate*> concatenate(vector<Predicate*>* resultA, vector<Predicate*>* resultB);
+	vector<Predicate*> preventDupes(vector<Predicate*>* A, vector<Predicate*> B);
 
 
 	//Part 3: evaluate Rules -------------------------------------------------------

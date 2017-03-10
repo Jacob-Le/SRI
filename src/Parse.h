@@ -2,9 +2,9 @@
 #include<string>
 #include<vector>
 
-#include "Predicate.h"
-#include "KB.h"
-#include "RB.h"
+//#include "Predicate.h"
+//#include "KB.h"
+#include "Query.cpp"
 
 
 class Parse{
