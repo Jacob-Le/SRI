@@ -83,14 +83,25 @@ bool Predicate::OR(bool a, bool b) {
 	return a||b;
 }
 
-string Predicate::toString(){
-	string output;
+string Predicate::InKBtoString(){
+    string output = "FACT ";
     output = output + name +"(";
     for(int i=0; i < components.size(); i++){
         output += components[i];
         if(i+1 != components.size()) output += ", ";
     }
-    output += ") ";
+    output += ")\n";
+    return output;
+}
+
+string Predicate::toString(){
+	string output = "";
+    output = output + name +"(";
+    for(int i=0; i < components.size(); i++){
+        output += components[i];
+        if(i+1 != components.size()) output += ", ";
+    }
+	output += ") ";
     return output;
 }
 

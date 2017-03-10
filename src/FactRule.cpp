@@ -1,4 +1,5 @@
 //FactRule.cpp
+#include "FactRule.h"
 
 //--------------------------------------------Fact------------------------------------//
 //Fact inherits from Predicate. Facts store knowledge, in turn stored in the Knowledge database.
@@ -86,6 +87,7 @@ void Rule::r_swap(Rule & one, Rule & two){
   swap(one.actors, two.actors);
   swap(one.components, two.components);
   swap(one.ops, two.ops);
+  swap(one.RuleTempVars, two.RuleTempVars);
 }
 
 //Default constructor
@@ -106,7 +108,7 @@ Rule::Rule(string n, vector<string> a, vector<bool> Logic, vector<Predicate*> cm
   actors = a;
   components = cmps;
   ops = Logic; //Operators that compare each component of the rule
-  temp = tempest;
+  RuleTempVars = tempest;
 }
 
 //Copy constructor
@@ -115,7 +117,7 @@ Rule::Rule(const Rule & r){
   actors = r.actors;
   components = r.components;
   ops = r.ops;
-  temp = r.temp;
+  RuleTempVars = r.RuleTempVars;
 }
 
 //Move constructor
@@ -164,7 +166,17 @@ string Rule::toString(){
     string output = "RULE ";
 	output + name;
     for(int i=0; i < components.size(); i++){
-        output += components[i]->toString();
+		if(RuleTempVars.count(i)==1){ //if rule get its mapped temp vars
+			vector<string> temp = RuleTempVars.at(i);
+			output = output + components[i]->name + '(';
+			for(int j=0; j < temp.size(); j++){
+				output += temp[j];
+				if(i+1 != temp.size()) output += ", ";
+			}
+			output += ") ";
+		}else{ //if fact get its components
+			output += components[i]->toString();
+		}      
 		if( (i+1)%2 == 0 ){
 			if(ops[i/2] == 0) output += " OR ";
 			if(ops[i/2] == 1) output += " AND ";

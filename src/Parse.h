@@ -11,9 +11,10 @@ class Parse{
 	public:
 	RB* RuleBase;
 	KB* KnowledgeBase;
+	Query* QQ;
 	int numRuns;
 
-	Parse(KB* knowledgeBase, RB* ruleBase); //, KB* knowledgeBase)
+	Parse(KB* knowledgeBase, RB* ruleBase, Query* QQ); //, KB* knowledgeBase)
 	std::vector<string> RuleVector;
 
 	std::vector<string> FactVector;
@@ -27,6 +28,6 @@ class Parse{
 	void ParseFile(string fileName);
 	void DumpToFile(string fileName,string input);
 	void ParseTerminalInput();
-	void AddFact(Fact* factptr);
+	void AddFact(Predicate* factptr);
 	void AddRule(int numFcns);
 };

@@ -29,6 +29,7 @@ typedef struct Predicate{
   Predicate& operator = (Predicate && p);
 
   string toString();
+  string InKBtoString();
 
 }Predicate;
 

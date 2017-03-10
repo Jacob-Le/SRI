@@ -29,7 +29,7 @@ vector<Predicate*>* Query::listFact(KB* Knowledge, string factKey) {
 }
 
 //SIMPLE RULE-------------------------------------------------------------------
-
+/*
 //helper function to get rid of duplicates
 vector<Predicate*> Query::concatenate(vector<Predicate*>* resultA, vector<Predicate*>* resultB) {
 	vector<Predicate*> result;
@@ -39,7 +39,7 @@ vector<Predicate*> Query::concatenate(vector<Predicate*>* resultA, vector<Predic
 
 	return result;
 }
-
+*/
 //----------------------------------Part 3: evaluate--------------------------------------//
 
 //If the Rule is valid, adds a Fact representative of the Rule's validity to the KB
@@ -58,37 +58,105 @@ bool Query::enact(Rule * r, vector<string> components, KB * kb){
 
 //------------------------------Inferencing-----------------------------------------------//
 
-void CreateVarBoundsMaster(int iterate, vector<string> varMapping){
-	//Create map fcn will populate
-	for(int i=0; i<varMapping.size(); i++){
-		vector<string> temp;
-		map[varMapping.at(i)] = temp;
+ //Will handle the calling of inference functions
+ void Query::inference(Rule* rule){
+   CreateVarMapping(rule); 
+   CreatePredNames(rule);
+   CreateVarBoundsMaster(rule);
+   cout << "VarBounds: " << VarBoundstoString() << endl;
+   Bind(kb);
+ }
+
+ //creates a list of the unique vars
+ void Query::CreateVarMapping(Rule* R){
+	bool notUnique = false;
+	for(int i=0; i< R->actors.size(); i++){
+		for(int j=0; j<varMapping.size(); j++){
+			if(R->actors.at(i) == varMapping.at(j)) notUnique = true;
+		}
+		if(varMapping.size() == 0 || notUnique == false){
+			varMapping.push_back(R->actors.at(i));
+			cout << R->actors.at(i) << " ";
+		}
+		notUnique = false;
 	}
-	for(int i=0; i<iterate<i++){
-
-	}
-}
-
-//create bounds for vars
-map<string, vector<string> > CreateVarBounds(vector<Predicate*>* Facts, vector<string> varMapping){
-	map<string, vector<string> > VarBounds;
-
-	//iterate through list of facts
-	for(int i=0; i<Facts[0]->components.size(); i++){
-		//iterate through list of actors in facts
-		for(int j=0; j<sizeOf; j++){
-			//Create pointer to vector pertaining to proper var
-			vector<string>* temp = VarBounds[varMapping.at(j)];
-			temp.push_back(Facts->at(i)->components.at(j));
+	
+	vector<string> temp;
+	for(int i=0; i< R->components.size(); i++){
+		if(R->RuleTempVars.count(i)==1){ //if rule get its mapped temp vars
+			for(int j=0; j = R->RuleTempVars.at(i).size(); j++){
+				temp.push_back(R->RuleTempVars.at(i).at(j));
+			}
+		}else{ //if fact get its components
+		    cout << R->components.at(i)->toString();
+		    cout << R->components.at(i)->components.size();
+			for(int j=0; j < R->components.at(i)->components.size(); j++){
+				cout << R->components.at(i)->components.at(j) << " ";
+				temp.push_back(R->components.at(i)->components.at(j));
+			}
+		}
+		//cout << temp.size();
+		for(int j=0; j< temp.size(); j++){
+			cout << "Comparing " << temp.at(j) << ":\n";
+			for(int k=0; k < varMapping.size(); k++){
+				cout << varMapping.at(k) << " ";
+				if(temp.at(j) == varMapping.at(k)) notUnique = true;
+			}
+			if(notUnique == false){
+				varMapping.push_back(temp.at(j));
+				cout << temp.at(j) << " ";
+			}
+			notUnique = false;
 		}
 	}
-return VarBounds;
 }
-
-void Query::inference(){
-	for()
-}
-
+ 
+//Should gather all possibilities for vars to be
+ void Query::CreateVarBoundsMaster(Rule* R){
+ 	for(int i=0; i<varMapping.size(); i++){
+ 		vector<string> temp;
+ 		VarBounds[varMapping.at(i)] = temp;
+ 	}
+ 	for(int i=0; i<R->components.size(); i++){
+ 		string Relationship = R->components.at(i)->name;
+ 		vector<Predicate*>* listOfFacts = kb->Find(Relationship);
+ 		CreateVarBounds(listOfFacts);
+ 	}	
+ }
+ 
+ //create bounds for vars (Called in VarBoundsMaster() )
+ void Query::CreateVarBounds(vector<Predicate*>* Facts){
+ 	
+ 	int sizeOf = Facts->at(0)->components.size();
+ 	
+ 	//iterate through list of facts
+ 	for(int i=0; i<sizeOf; i++){
+ 		//iterate through list of actors in facts
+ 		for(int j=0; j<sizeOf; j++){
+ 			//Create pointer to vector pertaining to proper var
+ 			vector<string> temp;
+ 			temp = VarBounds[varMapping.at(j)];
+ 			temp.push_back(Facts->at(i)->components.at(j));
+ 		}
+ 	}
+ }
+ 
+ //prints out varBounds
+ string Query::VarBoundstoString(){
+ 	string output = "";
+ 	map<string, vector<string> > ::iterator it = VarBounds.begin();
+ 	for(; it!= VarBounds.end(); it++){
+ 		output += it->first;
+ 		output += ": ";
+ 		for(int i=0; i< it->second.size();i++){
+ 			output += it->second.at(i);
+ 			output += ", ";
+ 		}
+ 		output += "\n";
+ 	}
+ 	return output;
+ }
+ 
 //Prints the results of the query to terminal
 //Input: void
 //Output: void
@@ -97,44 +165,65 @@ void Query::inference(){
 	}
 	//-------------------------------------------------------PHASE 1-------------------------------------------
 void Query::CreatePredNames(Rule* r) {
+	vector<string> temp;
+	cout << "PredNames: ";
 	for (int i = 0; i < r->components.size(); i++) {
+		cout << r->components.at(i)->name << " ";
 		predNames.push_back(r->components.at(i)->name); //Builds vector of relationship names
-		for (int j = 0; j < r->components.at(i)->components.size(); j++) //Iterate through rule actors
-			ToBind.push_back(r->components.at(i)->components.at(j)); //pushes actors onto ToBind
+		if(r->RuleTempVars.count(i)==1){ //if rule get its mapped temp vars
+			temp = r->RuleTempVars.at(i);
+		}else{ //if rule get its components
+			temp = r->components.at(i)->components;
+		}
+		for (int j = 0; j < temp.size(); j++){ //Iterate through rule actors
+		    cout << "Into ToBind: " << temp.at(j) << " ";
+			ToBind.push_back(temp.at(j)); //pushes actors onto ToBind
+		}
 	}
+    for(int i = 0; i < ToBind.size(); i++){
+  	  cout<<"ToBind: "<<ToBind[i]<<", ";
+    }
+    cout<<endl;
 }
 
-vector< vector<Predicate*>*> Query::PermutateAndBind(KB* kb) {
+vector< vector<Predicate*>*> Query::KBSlice(KB* kb) {
 
 	vector< vector<Predicate*>*> FromKB;
 	vector< vector<Predicate*>*> permutation;
+  cout<<"FromKB: ";
 
 	for (int j = 0; j<predNames.size(); j++) { //(Father, Parent)
 		vector<Predicate*>* Temp;
 		Temp = kb->Find(predNames.at(j)); //passes in a relationship name
+    cout<<Temp<< ", ";
 		FromKB.push_back(Temp); //Fact pointer onto FromKB (Actor1, Actor2)
 	}
-return VarBounds;
+  cout<<endl;
+return FromKB;
 }
 
 //-----------------------PHASE 2---------------------------------------------------------
 vector<string> Query::Bind(KB* KnowledgeBase) {
 	vector<int> ID;
 	ID = BuildID(); //builds ID vector
-	vector< vector<Predicate*>* > toBeBinded = PermutateAndBind(KnowledgeBase);
+	vector< vector<Predicate*>* > toBeBinded = KBSlice(KnowledgeBase);
 	vector<string> result;
-	map<int,string> varStorage;
-	for (int i = 0; i < toBeBinded[0]->size(); i++){
+	map<int, string> varStorage;
+	for (int i = 0; i < toBeBinded[0]->size(); i++) {
 		varStorage[ID[0]] = toBeBinded[0]->at(i)->components[0];
-		varStorage.[ID[1]] = toBeBinded[0]->at(i)->components[1];
-		for (int j = 0; j < toBeBinded[1]->size(); j++){
-			if (varStorage.find(ID[2]) != varStorage.end()) break;
-			if (varStorage.find(ID[3]) != varStorage.end()) break;
-			result.push_back(toBeBinded[0]->at(i)->components[0]);
-			result.push_back(toBeBinded[0]->at(i)->components[1]);
+		varStorage[ID[1]] = toBeBinded[0]->at(i)->components[1];
+		result.push_back(toBeBinded[0]->at(i)->components[0]);
+		result.push_back(toBeBinded[0]->at(i)->components[1]);
+    cout<<"Result[0] = "<<toBeBinded[0]->at(i)->components[0]<<endl;
+    cout<<"Result[1] = "<<toBeBinded[0]->at(i)->components[1]<<endl;
+		for (int j = 0; j < toBeBinded[1]->size(); j++) {
+			if (varStorage.count(ID[2]) == 1) break;
+			if (varStorage.count(ID[3]) == 1) break;
 			result.push_back(toBeBinded[1]->at(i)->components[0]);
 			result.push_back(toBeBinded[1]->at(i)->components[1]);
-			//call phase 3(result); Passes actors in an array. eg [John,Mary,Ahmed,John] of [X, Y, Z, Z]
+      cout<<"Result[2] = "<<toBeBinded[1]->at(i)->components[0]<<endl;
+    	cout<<"Result[3] = "<<toBeBinded[1]->at(i)->components[1]<<endl;
+			//call phase 3(result); Passes actors in an array. eg [John,Mary,Ahmed,John] of [X, Y, Z, X]
 		}
 		varStorage.clear();
 	}
@@ -162,6 +251,10 @@ vector<int> Query::BuildID() {
 			currnum++;
 		}
 	}
+  for(int i = 0; i < id.size(); i++){
+  	cout<<id[i]<<", ";
+  }
+  cout<<endl;
 	return id;
 }
 

@@ -17,9 +17,10 @@ using namespace std;
 //Constructor
 //Input: Knowledge database and Rules database
 //Output: void, but creates a Parse object
-Parse::Parse(KB* knowledgeBase, RB* ruleBase){
+Parse::Parse(KB* knowledgeBase, RB* ruleBase, Query* QQ2){
 	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
+	QQ = QQ2;
 }
 
 //Function to calculate length of string
@@ -64,7 +65,8 @@ void Parse::ParsePred(string input,bool factMode){
 		delimiter2 = input.find(",",delimiter2+1);
 	}
 	if(factMode){
-		Fact* newFact = new Fact(relationship, Entries);
+		//for(int i=0; i< Entries.size(); i++) cout << Entries.at(i) << " ";
+		Predicate* newFact = new Predicate(relationship, Entries);
 		AddFact(newFact);
 	}else{
 		Predicate* newPred = new Predicate(relationship,Entries);
@@ -87,7 +89,7 @@ void Parse::ParseRule(string input){
 			searchStart = 0;
 			searchEnd = input.find(")",0);
 		}else{
-			searchStart = searchEnd + 1;
+			searchStart = searchEnd + 2;
 			searchEnd = input.find(")", searchEnd + 1);
 		}
 		if (searchEnd == -1) searchEnd = input.size()-1;
@@ -95,30 +97,30 @@ void Parse::ParseRule(string input){
 		//Gets Logic Operator and updates searchStart past it
 		if ((i+1)% 2 == 0) {
 			//First Logical Operator
-			if (input[searchStart] == ':') {
-				if (input[searchStart + 3] == 'A') {
+			if (input[searchStart] == '-') {
+				if (input[searchStart + 2] == 'A') {
 					Logic.push_back(1);
 					searchStart += 6;
 				}
-				else if (input[searchStart + 3] == 'O') {
+				else if (input[searchStart + 2] == 'O') {
 					Logic.push_back(0);
 					searchStart += 5;
 				}
 				//If additional Logical Operator
 			}
-			else if (input[searchStart + 1] == 'A' || input[searchStart + 1] == 'O') {
-				if (input[searchStart + 1] == 'A') {
+			else if (input[searchStart + 0] == 'A' || input[searchStart + 0] == 'O') {
+				if (input[searchStart + 0] == 'A') {
 					Logic.push_back(1);
 					searchStart += 4;
 				}
-				else if (input[searchStart + 1] == 'O') {
+				else if (input[searchStart + 0] == 'O') {
 					Logic.push_back(0);
 					searchStart += 3;
 				}
 			}
 		}
 		nextLen = searchLength(searchStart, searchEnd);
-		ParsePred(input.substr(searchStart+1, nextLen), false);
+		ParsePred(input.substr(searchStart, nextLen), false);
 	}
 
 	AddRule(numRuns);
@@ -184,9 +186,17 @@ void Parse::ParseLine(string input){
 		return;
 	}else if(RULE){
 		nextLen = searchLength(searchStart, input.size());
+		//cout <<input.substr(searchStart, nextLen) << endl;
 		ParseRule(input.substr(searchStart, nextLen));
 		return;
 	}else if(INFE){
+		nextLen = searchLength(searchStart, input.size());
+		int index = RuleBase->CheckIfRuleExists(input.substr(searchStart, nextLen));
+		if( index != -1){
+			QQ->inference(RuleBase->rules[index]);
+		}else{
+			cout<<"No results in RuleBase for: "<< input.substr(searchStart, nextLen) << endl;
+		}
 	}else{ //DROP
 		string searchingFor = input.substr(searchStart, nextLen);
 		bool CheckFactinKB = KnowledgeBase->FactMap.count(searchingFor);// == 0;
@@ -257,7 +267,7 @@ void Parse::ParseTerminalInput(){
 //Add Fact to KB once function is built
 //Input: Fact pointer f to be added
 //Output: void
-void Parse::AddFact(Fact* f){
+void Parse::AddFact(Predicate* f){
 	KnowledgeBase->Add(f);
 }
 
@@ -274,12 +284,17 @@ void Parse::AddRule(int numFcns) {
 	enactVars = Preds.at(0)->components;
 
 
-	for (int i = 1; i < Preds.size(); i++) 
-		if(rb->count(Preds[i])==1){ //Rule
-			temp[i] = Preds[i]->components;
-			tempPreds.push_back(rb->at(Preds[i]->name));
+	for (int i = 1; i < Preds.size(); i++){ 
+		int index = RuleBase->CheckIfRuleExists(Preds[i]->name);
+		if(index != -1){ //Rule
+			vector<string> bluh;
+			for(int j = 0; j < Preds[i]->components.size(); j++){
+				bluh.push_back(Preds[i]->components.at(j));
+			}
+			temp[i] = bluh;
+			tempPreds.push_back(RuleBase->rules.at(index));
 		}else{ //Fact
-			Fact* newFact = new Fact(Preds[i]->name, Preds[i]->components);
+			Fact* newFact = new Fact(Preds[i]->name, Preds[i]->components, KnowledgeBase);
 			tempPreds.push_back(newFact);
 		}
     }
@@ -288,7 +303,7 @@ void Parse::AddRule(int numFcns) {
 		tempLogic.push_back(Logic[i]);
 	}
 
-	Rule * newRule = new Rule(fcnName, actNames, tempLogic, tempPreds, temp); 
+	Rule * newRule = new Rule(fcnName, enactVars, tempLogic, tempPreds, temp); 
 	RuleBase->Add(newRule);
 
 }

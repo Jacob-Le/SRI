@@ -10,7 +10,7 @@ typedef struct Fact : Predicate {
 
   //Constructors
   Fact();
-  Fact(string name, vector<string> r);
+  Fact(string name, vector<string> r, KB* kb);
   Fact(const Fact & r);
   Fact(Fact && r);
 

@@ -65,3 +65,13 @@ std::string RB::toString(){
 RB::~RB() {
 
 }
+
+int RB::CheckIfRuleExists(string name){
+	cout << "Looking for: " << name << endl << "In RB: ";
+	for(int i=0; i< rules.size(); i++){
+		cout << rules.at(i)->name << " ";
+		if(rules.at(i)->name == name) return i;
+	}
+	cout << endl;
+	return -1;
+}

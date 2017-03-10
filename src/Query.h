@@ -21,6 +21,16 @@ public:
 
 	Query(KB * kb, RB * rb);
 
+	
+	vector<string> varMapping;
+ 	void CreateVarMapping(Rule* R);
+ 	
+ 	map<string, vector<string> > VarBounds;
+ 	void CreateVarBoundsMaster(Rule* R);
+ 	void CreateVarBounds(vector<Predicate*>* Facts);
+ 	string VarBoundstoString();
+	void inference(Rule* r);
+	
 	//FACT--------------------------------------------------------------------------
 	vector<Predicate*>* listFact(KB* Knowledge, string factKey); //used to return vector<string>
 
@@ -35,7 +45,7 @@ public:
 	bool enact(Rule * r, vector<string> s, KB * kb);
 
 	void CreatePredNames(Rule* r);
-	vector< vector<Predicate*>*> PermutateAndBind(KB* kb);
+	vector< vector<Predicate*>*> KBSlice(KB* kb);
 	vector<string> Bind(KB* KnowledgeBase);
 	vector<int> BuildID();
 
