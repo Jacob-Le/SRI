@@ -185,8 +185,6 @@ Rule::Rule(){
   string name = "";
   //Vector of predicate components (Rules or facts) that make up this rule
   vector<Predicate*> components;
-  
-  vector<string> actors;
   //Function pointers that point to functions that emulate boolean operators
   vector<bool> ops;
 }

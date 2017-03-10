@@ -12,7 +12,7 @@ using namespace std;
 
 //Constructor, initializes as empty
 KB::KB(){
-	map<string, vector<Fact*> > * FactMap = new map<string, vector<Fact*> >();
+	map<string, vector<Predicate*> > * FactMap = new map<string, vector<Predicate*> >();
 }
 
 //Destructor
@@ -24,20 +24,20 @@ KB::~KB(){
 //the KB if it doesn't already exist
 //Input: Fact pointer
 //Output: void
-bool KB::Add(Fact * fact){
-	if(FactMap.count(fact->name) == 0){ //If it doesn't exist
-		vector<Fact*> v;
-		v.push_back(fact);
-		FactMap[fact->name] = v; //May or may not be null cuz temporary variable
+bool KB::Add(Predicate * pred){
+	if(FactMap.count(pred->name) == 0){ //If it doesn't exist
+		vector<Predicate*> v;
+		v.push_back(pred);
+		FactMap[pred->name] = v; //May or may not be null cuz temporary variable
 	}else{ //If it does exist
 		vector<bool> diffChecker;
 		bool flag = true;
-		if(FactMap[fact->name].size()!= 0){
-				for(int j=0; j<FactMap[fact->name].size(); j++){ //Iterating through Vector
-					if(FactMap[fact->name].at(j)->components.size() == fact->components.size()){ //if they have the same amount of components
-						diffChecker.assign(fact->components.size(),false); //Mark no difference
-						for(int k = 0; k<FactMap[fact->name].at(j)->components.size();k++){ //Iterate through components
-							if(FactMap[fact->name].at(j)->components.at(k) != fact->components.at(k)){ //If actor pair is different
+		if(FactMap[pred->name].size()!= 0){
+				for(int j=0; j<FactMap[pred->name].size(); j++){ //Iterating through Vector
+					if(FactMap[pred->name].at(j)->components.size() == pred->components.size()){ //if they have the same amount of components
+						diffChecker.assign(pred->components.size(),false); //Mark no difference
+						for(int k = 0; k<FactMap[pred->name].at(j)->components.size();k++){ //Iterate through components
+							if(FactMap[pred->name].at(j)->components.at(k) != pred->components.at(k)){ //If actor pair is different
 								diffChecker.at(k) = true; //mark difference
 								break;
 							}
@@ -59,13 +59,13 @@ bool KB::Add(Fact * fact){
 				}
 				if(flag == true){
 				  cout<<"New Fact added to existing relationship category"<<endl;
-				  FactMap[fact->name].push_back(fact);
+				  FactMap[pred->name].push_back(pred);
   				  return true;
 				}
 				diffChecker.clear();
 		}else{
 			cout<<"New Fact added to new relationship category"<<endl;
-			FactMap[fact->name].push_back(fact);
+			FactMap[pred->name].push_back(pred);
 			return true;
 		}
 		if(flag == false){
@@ -83,8 +83,8 @@ void KB::Remove(string r){
 //Finds a fact and returns a pointer to that fact
 //Input: key r
 //Output: pointer to Fact with all relationships
-vector<Fact*>* KB::Find(string findKey){
-	vector<Fact*>* ptr = &FactMap[findKey];
+vector<Predicate*>* KB::Find(string findKey){
+	vector<Predicate*>* ptr = &FactMap[findKey];
 	return ptr;
 }
 
@@ -93,7 +93,7 @@ vector<Fact*>* KB::Find(string findKey){
 //Output: string representation of knowledge database
 string KB::toString(){
 	string output = "";
-	map<string, vector<Fact*> > ::iterator it = FactMap.begin();
+	map<string, vector<Predicate*> > ::iterator it = FactMap.begin();
 	for(; it!= FactMap.end(); it++){
 		for(int i=0; i< it->second.size();i++) output += it->second.at(i)->toString();
 	}

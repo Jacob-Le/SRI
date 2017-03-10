@@ -1,6 +1,8 @@
 //Rule database
 #pragma once
+
 #include "FactRule.cpp"
+
 
 using namespace std;
 
