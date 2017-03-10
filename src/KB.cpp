@@ -23,6 +23,7 @@ KB::~KB(){
 //Takes in a fact pointer (fact must be created outside of add) and adds it to
 //the KB if it doesn't already exist
 //Input: Fact pointer
+<<<<<<< HEAD
 //Output: void
 bool KB::Add(Predicate * pred){
 	if(FactMap.count(pred->name) == 0){ //If it doesn't exist

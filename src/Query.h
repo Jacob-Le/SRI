@@ -1,4 +1,11 @@
+
+#pragma once
+#include <string>
+#include <vector>
 #include "RB.cpp"
+//#include "KB.cpp"
+
+//#include "Predicate.cpp"
 
 using namespace std;
 
@@ -9,6 +16,8 @@ private:
 	RB * rb;
 public:
 	//something var currentQuery <--THE THING THAT QUERY PASSES AROUND IDK WHAT IT IS THO
+	vector<string> predNames; //Relevant relationship names
+	vector<string> ToBind; //Variables that need actors
 
 	Query(KB * kb, RB * rb);
 
@@ -16,7 +25,7 @@ public:
 	vector<Predicate*>* listFact(KB* Knowledge, string factKey); //used to return vector<string>
 
 	//SIMPLE RULE-------------------------------------------------------------------
-	void listSimpleRule(/*something*/);
+	//void listSimpleRule(/*something*/);
 	void printResults();
 	vector<Predicate*> concatenate(vector<Predicate*>* resultA, vector<Predicate*>* resultB);
 	vector<Predicate*> preventDupes(vector<Predicate*>* A, vector<Predicate*> B);
@@ -24,4 +33,11 @@ public:
 
 	//Part 3: evaluate Rules -------------------------------------------------------
 	bool enact(Rule * r, vector<string> s, KB * kb);
+
+	void CreatePredNames(Rule* r);
+	vector< vector<Predicate*>*> PermutateAndBind(KB* kb);
+	vector<string> Bind(KB* KnowledgeBase);
+	vector<int> BuildID();
+
+
 };
