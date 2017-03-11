@@ -27,7 +27,7 @@ public:
 	//void listSimpleRule(/*something*/);
 	void printResults();
 	vector<Fact*> concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB);
-	vector<Fact*> preventDupes(vector<Fact*>* A, vector<Fact*> B);
+	//vector<Fact*> preventDupes(vector<Fact*>* A, vector<Fact*> B);
 
 	void inference(vector<string> newFact);
 	bool ruleEvaluate(Rules * r, vector<string> actors);
