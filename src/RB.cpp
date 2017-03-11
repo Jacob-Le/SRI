@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <algorithm>
+#include <map>
 
 #include "RB.h"
 
