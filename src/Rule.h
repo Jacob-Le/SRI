@@ -7,8 +7,6 @@ using namespace std;
 
 //Rules are made up of components (which can be either other rules or facts)
 typedef struct Rule : Predicate{
-  //Forward declaration of RB for the enact function
-  class KB;
 
   string Relationship;
   //Vector of strings representative of actors involved in the rule

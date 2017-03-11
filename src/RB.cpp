@@ -15,7 +15,7 @@ using namespace std;
 //CONSTRUCTORS-------------------------------------------------------------------------------------------------------------
 //Default. Nothing here since rules is declared as empty already.
 RB::RB(){
-	std::vector<Rule*> rules;
+	map<string, Rule*> rules;
 }
 
 //copy constructor

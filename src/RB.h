@@ -9,7 +9,7 @@ public:
   RB(const RB &otherRB);
   ~RB();
 
-  std::vector<Rule*> rules;
+  map<string, Rule*> rules;
 
   void Add(Rule * r);
   Rule* Remove(Rule * r);
