@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <iostream>
-#include "Predicate.cpp"
+#include "Rule.cpp"
 #include "KB.cpp"
 #include "RB.cpp"
 #include "Parse.cpp"
