@@ -86,20 +86,20 @@ return VarBounds;
 
 void Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
 	string relation = newFact[0];
-	int reqSize = newFact.size() - 1;
+	//int reqSize = newFact.size() - 1;
 
 	vector<string> path;
 
-	Rule * r = rb.rules[relation];//Get this thing from rulebase
+	Rule * r = rb->rules[relation];//Get this thing from rulebase
 	
 	for (int i = 0; i < r->components.size(); i++) {
-		if(ruleEvaluate(r, actors)) kb.add(newFact, actors); //lol rip definitely going to change this
+		if(ruleEvaluate(r, actors)) kb->add(newFact, actors); //lol rip definitely going to change this
 	}
 }
 
 bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
 	vector<bool> truthValues;
-	if (kb.evaluate(name, actors)) return true;
+	if (kb->evaluate(name, actors)) return true;
 	else {
 		//call helper function
 		bool finalValue;
@@ -117,9 +117,9 @@ bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
 }
 
 bool Query::ruleEvalHelper(string name, vector<string> actors) {
-	if (kb.evaluate(name, actors)) return true;
+	if (kb->evaluate(name, actors)) return true;
 	else {
-		if (rb.rules.count(name) == 1)return true;
+		if (rb->rules.count(name) == 1)return true;
 		else return false;
 	}
 }
