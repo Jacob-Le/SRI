@@ -84,9 +84,48 @@ map<string, vector<string> > CreateVarBounds(vector<Fact*>* Facts, vector<string
 return VarBounds;
 }
 
-void Query::inference(){
-	for()
+void Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
+	string relation = newFact[0];
+	int reqSize = newFact.size() - 1;
+
+	vector<string> path;
+
+	Rule * r = rb.rules[relation];//Get this thing from rulebase
+	
+	for (int i = 0; i < r->components.size(); i++) {
+		if(ruleEvaluate(r, actors)) kb.add(newFact);
+	}
 }
+
+bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
+	vector<bool> truthValues;
+	if (kb.evaluate(name, actors)) return true;
+	else {
+		//call helper function
+		bool finalValue;
+		for(int i = 0; i < r->components.size(); i++) {
+			truthValues.push_back(ruleEvalHelper(r->components[i].name, actors));
+		}
+		finalValue = truthValues[0];
+		int opCount = 0;
+		for (int i = 1; i < r->truthValues.size(); i++) {
+			if (r->ops[opCount] == 0) finalValue = finalValue || truthValues[i];
+			else finalValue = finalValue && truthValues[i];
+		}
+		return finalValue;
+	}
+}
+
+bool Query::ruleEvalHelper(string name, vector<string> actors) {
+	if (kb.evaluate(name, actors)) return true;
+	else {
+		if (rb.rules.count(name) == 1)return true;
+		else return false;
+	}
+}
+
+//vector<string> Query::factIterator(string key, map<auto> step, vector<string> newFact) {
+//}
 
 //Prints the results of the query to terminal
 //Input: void
@@ -94,77 +133,79 @@ void Query::inference(){
 	void Query::printResults(){
 		for(int i=0;i<Results.size();i++) cout << Results.at(i)->toString();
 	}
+
+	//IGNORE EVERYTHING BELOW THIS FUNCTION LOL
 	//-------------------------------------------------------PHASE 1-------------------------------------------
-void Query::CreatePredNames(Rule* r) {
-	for (int i = 0; i < r->components.size(); i++) {
-		predNames.push_back(r->components.at(i)->name); //Builds vector of relationship names
-		for (int j = 0; j < r->components.at(i)->components.size(); j++) //Iterate through rule actors
-			ToBind.push_back(r->components.at(i)->components.at(j)); //pushes actors onto ToBind
-	}
-}
-
-vector< vector<Fact*>*> Query::PermutateAndBind(KB* kb) {
-
-	vector< vector<Fact*>*> FromKB;
-	vector< vector<Fact*>*> permutation;
-
-	for (int j = 0; j<predNames.size(); j++) { //(Father, Parent)
-		vector<Fact*>* Temp;
-		Temp = kb->Find(predNames.at(j)); //passes in a relationship name
-		FromKB.push_back(Temp); //Fact pointer onto FromKB (Actor1, Actor2)
-	}
-	//I need to build permutation vector here
-	//ToBind holds needed actors
-	//iterate through toBind and assign an integer to each unique actor and store ints into a vector
-	//With permutated vector, we assign each relationship to X,Y
-	//Assign other half of permuted to Z,X while checking if they fit the integers assigned.
-
-	return FromKB; //vector of all relationships relevant
-}
-//-----------------------PHASE 2---------------------------------------------------------
-vector<string> Query::Bind(KB* KnowledgeBase) {
-	vector<int> ID;
-	ID = BuildID(); //builds ID vector
-	vector< vector<Fact*>* > toBeBinded = PermutateAndBind(KnowledgeBase);
-	vector<string> result;
-	map<int,string> varStorage;
-	for (int i = 0; i < toBeBinded[0]->size(); i++){
-		varStorage[ID[0]] = toBeBinded[0]->at(i)->components[0];
-		varStorage.[ID[1]] = toBeBinded[0]->at(i)->components[1];
-		for (int j = 0; j < toBeBinded[1]->size(); j++){
-			if (varStorage.find(ID[2]) != varStorage.end()) break;
-			if (varStorage.find(ID[3]) != varStorage.end()) break;
-			result.push_back(toBeBinded[0]->at(i)->components[0]);
-			result.push_back(toBeBinded[0]->at(i)->components[1]);
-			result.push_back(toBeBinded[1]->at(i)->components[0]);
-			result.push_back(toBeBinded[1]->at(i)->components[1]);
-			//call phase 3(result); Passes actors in an array. eg [John,Mary,Ahmed,John] of [X, Y, Z, Z]
-		}
-		varStorage.clear();
-	}
-	return result; //Change return types depending on how you use this function.
-}
-
-vector<int> Query::BuildID() {
-	vector<int> id; //holds actor id for building (X,Y,Z,X) or whatever combo it is
-	int currnum = 0;
-	for (int i = 0; i < ToBind.size(); i++) {//Iterate through needed actors
-		if (id.size() != 0) { //If IDs are not empty, do the thing
-			for (int j = 0; j < i; j++) { //Iterate through processed indexes
-				if (ToBind[i] == ToBind[j]) { //If it's occured already, put it in again
-					id.push_back(id[i]);
-					break;
-				}
-				else { //ID is empty, put 0 in index 1
-					id.push_back(currnum);
-					currnum++;
-				}
-			}
-		}
-		else {
-			id.push_back(currnum);
-			currnum++;
-		}
-	}
-	return id;
-}
+//void Query::CreatePredNames(Rule* r) {
+//	for (int i = 0; i < r->components.size(); i++) {
+//		predNames.push_back(r->components.at(i)->name); //Builds vector of relationship names
+//		for (int j = 0; j < r->components.at(i)->components.size(); j++) //Iterate through rule actors
+//			ToBind.push_back(r->components.at(i)->components.at(j)); //pushes actors onto ToBind
+//	}
+//}
+//
+//vector< vector<Fact*>*> Query::PermutateAndBind(KB* kb) {
+//
+//	vector< vector<Fact*>*> FromKB;
+//	vector< vector<Fact*>*> permutation;
+//
+//	for (int j = 0; j<predNames.size(); j++) { //(Father, Parent)
+//		vector<Fact*>* Temp;
+//		Temp = kb->Find(predNames.at(j)); //passes in a relationship name
+//		FromKB.push_back(Temp); //Fact pointer onto FromKB (Actor1, Actor2)
+//	}
+//	//I need to build permutation vector here
+//	//ToBind holds needed actors
+//	//iterate through toBind and assign an integer to each unique actor and store ints into a vector
+//	//With permutated vector, we assign each relationship to X,Y
+//	//Assign other half of permuted to Z,X while checking if they fit the integers assigned.
+//
+//	return FromKB; //vector of all relationships relevant
+//}
+////-----------------------PHASE 2---------------------------------------------------------
+//vector<string> Query::Bind(KB* KnowledgeBase) {
+//	vector<int> ID;
+//	ID = BuildID(); //builds ID vector
+//	vector< vector<Predicate*>* > toBeBinded = PermutateAndBind(KnowledgeBase);
+//	vector<string> result;
+//	map<int, string> varStorage;
+//	for (int i = 0; i < toBeBinded[0]->size(); i++) {
+//		varStorage[ID[0]] = toBeBinded[0]->at(i)->components[0];
+//		varStorage[ID[1]] = toBeBinded[0]->at(i)->components[1];
+//		result.push_back(toBeBinded[0]->at(i)->components[0]);
+//		result.push_back(toBeBinded[0]->at(i)->components[1]);
+//		for (int j = 0; j < toBeBinded[1]->size(); j++) {
+//			if (varStorage.count(ID[2]) == 1) break;
+//			if (varStorage.count(ID[3]) == 1) break;
+//			result.push_back(toBeBinded[1]->at(i)->components[0]);
+//			result.push_back(toBeBinded[1]->at(i)->components[1]);
+//			//call phase 3(result); Passes actors in an array. eg [John,Mary,Ahmed,John] of [X, Y, Z, X]
+//		}
+//		varStorage.clear();
+//	}
+//	return result; //Change return types depending on how you use this function.
+//}
+//
+//vector<int> Query::BuildID() {
+//	vector<int> id; //holds actor id for building (X,Y,Z,X) or whatever combo it is
+//	int currnum = 0;
+//	for (int i = 0; i < ToBind.size(); i++) {//Iterate through needed actors
+//		if (id.size() != 0) { //If IDs are not empty, do the thing
+//			for (int j = 0; j < i; j++) { //Iterate through processed indexes
+//				if (ToBind[i] == ToBind[j]) { //If it's occured already, put it in again
+//					id.push_back(id[i]);
+//					break;
+//				}
+//				else { //ID is empty, put 0 in index 1
+//					id.push_back(currnum);
+//					currnum++;
+//				}
+//			}
+//		}
+//		else {
+//			id.push_back(currnum);
+//			currnum++;
+//		}
+//	}
+//	return id;
+//}
