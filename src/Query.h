@@ -29,10 +29,14 @@ public:
 	vector<Fact*> concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB);
 	vector<Fact*> preventDupes(vector<Fact*>* A, vector<Fact*> B);
 
-	void CreatePredNames(Rule* r);
-	vector< vector<Fact*>*> PermutateAndBind(KB* kb);
-	vector<string> Bind(KB* KnowledgeBase);
-	vector<int> BuildID();
+	void inference(vector<string> newFact);
+	bool ruleEvaluate(Rules * r, vector<string> actors);
+	bool ruleEvalHelper(string name, vector<string> actors);
+
+	//void CreatePredNames(Rule* r);
+	//vector< vector<Fact*>*> PermutateAndBind(KB* kb);
+	//vector<string> Bind(KB* KnowledgeBase);
+	//vector<int> BuildID();
 
 	//Part 3: evaluate Rules -------------------------------------------------------
 	bool enact(Rule * r, vector<string> s, KB * kb);
