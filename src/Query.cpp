@@ -93,7 +93,7 @@ void Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
 	Rule * r = rb.rules[relation];//Get this thing from rulebase
 	
 	for (int i = 0; i < r->components.size(); i++) {
-		if(ruleEvaluate(r, actors)) kb.add(newFact);
+		if(ruleEvaluate(r, actors)) kb.add(newFact, actors); //lol rip definitely going to change this
 	}
 }
 
