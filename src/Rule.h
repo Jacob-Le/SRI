@@ -13,12 +13,10 @@ typedef struct Rule : Predicate{
   vector<string> actors;
   //Vector of predicate components (Rules or facts) that make up this rules
   vector<string> components;
-  //Function pointers that point to functions that emulate boolean operators
-  vector<bool> ops;
 
   Rule();
   //Variadic constructor that accepts any number of conditions
-  Rule(string name, const vector<string> actors, const vector<bool> Logic, vector<string> cmps);
+  Rule(string name, const vector<string> actors, vector<string> cmps);
   //copy and move constructors
   Rule(const Rule & r);
   Rule(Rule && r);
