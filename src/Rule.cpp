@@ -35,11 +35,10 @@ Rule::Rule(){
 
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
-Rule::Rule(string n, vector<string> a, vector<bool> Logic, vector<Predicate*> cmps){
+Rule::Rule(string n, vector<string> a, vector<string> cmps){
   name = n;
   actors = a;
   components = cmps;
-  ops = Logic; //Operators that compare each component of the rule
 }
 
 //Copy constructor
