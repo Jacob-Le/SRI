@@ -17,7 +17,7 @@ using namespace std;
 //Constructor
 //Input: Knowledge database and Rules database
 //Output: void, but creates a Parse object
-Parse::Parse(KB* knowledgeBase, RB* ruleBase, Query* QQ2){
+Parse::Parse(KB* knowledgeBase);, RB* ruleBase, Query* QQ2){
 	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
 	QQ = QQ2;
@@ -33,14 +33,14 @@ int Parse::searchLength(int start, int end){
 //Parses a predicate, used by both ParseRules and ParseFact, pushes onto Pred vector
 //Input: Inputted string, boolean representing if string is Fact
 //Output: void
-void Parse::ParsePred(string input,bool factMode){
+void Parse::ParsePred(string input, bool factMode){
 	vector<string> Entries;
 	string currEntry;
 	int nextLen;
 	bool oneArg;
 	int delimiter1 = input.find("(");
 	string relationship = input.substr(0, delimiter1);
-
+	Entries.push_back(relationship);
 
 	int delimiter2 = input.find(",",delimiter1); //.find() sets to -1 if not found
 	if(delimiter2 == -1) oneArg = true;
@@ -64,13 +64,12 @@ void Parse::ParsePred(string input,bool factMode){
 		delimiter1 = delimiter2;
 		delimiter2 = input.find(",",delimiter2+1);
 	}
+	//Testing print statement
+	for(int i=0; i< Entries.size(); i++) cout << Entries.at(i) << " ";
 	if(factMode){
-		//for(int i=0; i< Entries.size(); i++) cout << Entries.at(i) << " ";
-		Predicate* newFact = new Predicate(relationship, Entries);
-		AddFact(newFact);
+		AddFact(Entries);
 	}else{
-		Predicate* newPred = new Predicate(relationship,Entries);
-		Preds.push_back(newPred);
+		Preds.push_back(Entries);
 	}
 }
 
@@ -193,9 +192,19 @@ void Parse::ParseLine(string input){
 		nextLen = searchLength(searchStart, input.size());
 		int index = RuleBase->CheckIfRuleExists(input.substr(searchStart, nextLen));
 		if( index != -1){
-			QQ->inference(RuleBase->rules[index]);
+			vector<string> input;
+			input.push_back(RuleBase->rules[index]->name);
+			for(int i=0; i < RuleBase->rules[index]->actors.size(); i++){
+				input.push_back("");
+			}
+			QQ->inference(input);
 		}else{
-			cout<<"No results in RuleBase for: "<< input.substr(searchStart, nextLen) << endl;
+			if(numPreds == 1){
+				ParsePred(input.substr(searchStart, nextLen),false);
+				QQ->inference(Preds.at(0));
+				Preds.clear();
+			}
+			else cout<<"No results in RuleBase for: "<< input.substr(searchStart, nextLen) << endl;
 		}
 	}else{ //DROP
 		string searchingFor = input.substr(searchStart, nextLen);
@@ -267,7 +276,7 @@ void Parse::ParseTerminalInput(){
 //Add Fact to KB once function is built
 //Input: Fact pointer f to be added
 //Output: void
-void Parse::AddFact(Predicate* f){
+void Parse::AddFact(vector<string> f){
 	KnowledgeBase->Add(f);
 }
 
@@ -278,10 +287,13 @@ void Parse::AddRule(int numFcns) {
 
 	vector<Predicate*> tempPreds;
 	vector<bool> tempLogic;
-	string fcnName = Preds.at(0)->name;
+	string fcnName = Preds.at(0).at(0);
 	vector<string> enactVars;
 	map<int,vector<string>> temp; //stores the rules' temp vars because rule needs to point to itself in the RB
-	enactVars = Preds.at(0)->components;
+	for(int i=1; i< Preds.at(0).size(); i++){
+		string temp = Preds.at(0).at(i);
+		enactVars.push_back(temp);
+	}
 
 
 	for (int i = 1; i < Preds.size(); i++){ 
@@ -305,5 +317,13 @@ void Parse::AddRule(int numFcns) {
 
 	Rule * newRule = new Rule(fcnName, enactVars, tempLogic, tempPreds, temp); 
 	RuleBase->Add(newRule);
+	Preds.clear();
+}
 
+int main(){
+  //KB* knowledge = new KB();
+  RB* rules = new RB();
+  //Query* query = new Query(knowledge, rules);
+  Parse* Parser = new Parse(knowledge,rules, query);
+  Parser->ParseTerminalInput();
 }

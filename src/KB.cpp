@@ -5,6 +5,9 @@
 	Facts, add Facts.
 */
 #include<algorithm>
+#include<iostream>
+
+using namespace std;
 
 #include "KB.h"
 
@@ -12,7 +15,7 @@ using namespace std;
 
 //Constructor, initializes as empty
 KB::KB(){
-	map<string, vector<Predicate*> > * FactMap = new map<string, vector<Predicate*> >();
+	map<string, vector<vector<string> > >* FactMap;
 }
 
 //Destructor
@@ -20,82 +23,74 @@ KB::~KB(){
 	FactMap.clear();
 }
 
-//Takes in a fact pointer (fact must be created outside of add) and adds it to
-//the KB if it doesn't already exist
-//Input: Fact pointer
-//Output: void
-bool KB::Add(Predicate * pred){
-	if(FactMap.count(pred->name) == 0){ //If it doesn't exist
-		vector<Predicate*> v;
-		v.push_back(pred);
-		FactMap[pred->name] = v; //May or may not be null cuz temporary variable
-	}else{ //If it does exist
-		vector<bool> diffChecker;
-		bool flag = true;
-		if(FactMap[pred->name].size()!= 0){
-				for(int j=0; j<FactMap[pred->name].size(); j++){ //Iterating through Vector
-					if(FactMap[pred->name].at(j)->components.size() == pred->components.size()){ //if they have the same amount of components
-						diffChecker.assign(pred->components.size(),false); //Mark no difference
-						for(int k = 0; k<FactMap[pred->name].at(j)->components.size();k++){ //Iterate through components
-							if(FactMap[pred->name].at(j)->components.at(k) != pred->components.at(k)){ //If actor pair is different
-								diffChecker.at(k) = true; //mark difference
-								break;
-							}
-						}
-						bool factMatch = false;
-						for(int k =0; k<diffChecker.size(); k++){ //Iterate through diffChecker
-							if(diffChecker.at(k)==true){ //If there is a difference
-								//FactMap[fact->name].push_back(fact); //Add fact
-								factMatch = false;
-								break;
-							}
-							factMatch=true; //THIS IS FALSE IF THERE IS A DIFFERENCE
-						}
-						if(factMatch == true){ //if it matches
-							flag = false;
-							break;
-						}
-					}
-				}
-				if(flag == true){
-				  cout<<"New Fact added to existing relationship category"<<endl;
-				  FactMap[pred->name].push_back(pred);
-  				  return true;
-				}
-				diffChecker.clear();
-		}else{
-			cout<<"New Fact added to new relationship category"<<endl;
-			FactMap[pred->name].push_back(pred);
-			return true;
+void KB::Add(vector<string> theFact){
+	string name = theFact.at(0);
+	if(FactMap.count(name) == 0){ //if fact is not already in KB
+		vector<vector<string> > temp; //create vector of vector of strings
+		for(int i=0; i<theFact.size(); i++){
+			int j;
+			if(i == theFact.size()-1) break; //because [0] is the rule name, j needs to be +1 than i, also want to run 1 less time than size of the vector
+			else j = i + 1; //sets vertical level we are at
+			vector<string> evenTemper; //create vector to go into the vector of vector of strings
+			temp.push_back(evenTemper); //puts it onto that vector
+			temp.at(i).push_back(theFact.at(j)); //populate temp
 		}
-		if(flag == false){
-			cout<<"Fact already exists"<<endl;
-			return false;
+		FactMap[name] = temp; //map the fact to temp
+	}else{ //if it is in KB
+		for(int i=0; i<FactMap[name].size(); i++){
+			int j;
+			if(i == theFact.size() -1) break;
+			else j = i + 1;
+			FactMap[name].at(i).push_back(theFact.at(j)); //add the new fact actors onto their corresponding vector
 		}
 	}
+		
 }
 
 void KB::Remove(string r){
-	FactMap.erase(r);
+	if(FactMap.count(r) == 0){ //if its not there
+		cout<< "'" << r << "' does not exist in Knowledge Base and so cannot be removed."<< endl;
+	}else{
+		FactMap.erase(r);
+	}
 }
 
-
-//Finds a fact and returns a pointer to that fact
-//Input: key r
-//Output: pointer to Fact with all relationships
-vector<Predicate*>* KB::Find(string findKey){
-	vector<Predicate*>* ptr = &FactMap[findKey];
-	return ptr;
-}
 
 //Converts Knowledge database to string
 //Input: void
 //Output: string representation of knowledge database
 string KB::toString(){
 	string output = "";
-	map<string, vector<Predicate*> > ::iterator it = FactMap.begin();
+	map<string, vector<vector<string> > > ::iterator it = FactMap.begin();
 	for(; it!= FactMap.end(); it++){
-		for(int i=0; i< it->second.size();i++) output += it->second.at(i)->InKBtoString();
+		int j = 0; //Can't do nested for loop because trying to traverse left to right then down
+		while(true){
+			output = output + "FACT " + it->first + "(";
+			for(int i=0; i< it->second.size();i++){
+				//cout << "[" << j<< "][" << i << "]: " << it->second.at(i).at(j) << " ";
+				output += it->second.at(i).at(j);
+				if(i != it->second.size()-1) output += ","; 
+			}
+			//cout << endl; Comment these out if want to see how navigating KB
+			output += ")\n";
+			if(j+1 < it->second.at(j).size()) j++;
+			else break; //initially had loop above in the while loop condition but it broke when j was larger than the vector indices
+		}
 	}
 	return output;
+}
+
+
+int main(){
+	KB* Keiba = new KB();
+	vector<string> Father1 = {"Father","Tom","Blake"};
+	vector<string> Father2 = {"Father","Tom","Brake"};
+	vector<string> Mother1 = {"Mother","Jane","Bruce"};
+	Keiba->Add(Father1);
+	Keiba->Add(Father2);
+	Keiba->Add(Mother1);
+	cout << Keiba->toString();
+	Keiba->Remove("Father");
+	Keiba->Remove("Dinosaur");
+	cout << Keiba->toString();
 }

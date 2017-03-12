@@ -18,7 +18,7 @@ class Parse{
 	std::vector<string> RuleVector;
 
 	std::vector<string> FactVector;
-	std::vector<Predicate*> Preds;
+	std::vector<vector<string> > Preds;
 	std::vector<bool> Logic;
 	int searchLength(int start, int end);
 	void ParsePred(string input, bool FactMode);
@@ -28,6 +28,6 @@ class Parse{
 	void ParseFile(string fileName);
 	void DumpToFile(string fileName,string input);
 	void ParseTerminalInput();
-	void AddFact(Predicate* factptr);
+	void AddFact(vector<string>);
 	void AddRule(int numFcns);
 };
