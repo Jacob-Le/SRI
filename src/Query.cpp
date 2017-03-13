@@ -103,9 +103,11 @@ map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Fathe
 		Rules * r = rb->rules[relation];
 		if (ruleEvaluate(r)) {
 			//split components of r
-			vector< vector<string> >path = traverse(actors, kb->FactMap[relation]);
-			for (int i = 0; i < path.size(); i++) {
-				output[relation][i].push_back(&path[i]);
+			for (int j = 0; j < r->components.size(); j++) {
+				vector< vector<string> >path = traverse(actors, *kb.FactMaps[r->components[j][0]]);
+				for (int i = 0; i < path.size(); i++) {
+					output[relation][i].push_back(&path[i]);
+				}//get rid of copies here
 			}
 		}
 	}
@@ -114,20 +116,19 @@ map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Fathe
 //["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]
 bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
 	vector<bool> truthValues;
-	vector<int> ops;
+	int ops;
 	if (kb->evaluate(r->name, actors)) return true;
 	else {
 		//call helper function
 		bool finalValue;
 		for(int i = 0; i < r->components.size(); i++) {
-			if ((i + 1) % 4 != 0) ops.push_back(r->components[i]);
-			else if(i % 4 != 0)truthValues.push_back(ruleEvalHelper(r->components[i], actors));
+			ops = r->ops;
+			truthValues.push_back(ruleEvalHelper(r->components[i][0], actors));
 			else continue;
 		}
 		finalValue = truthValues[0];
-		int opCount = 0;
 		for (int i = 1; i < r->truthValues.size(); i++) {
-			if (ops[opCount] == 0) finalValue = finalValue || truthValues[i];
+			if (ops == 0) finalValue = finalValue || truthValues[i];
 			else finalValue = finalValue && truthValues[i];
 		}
 		return finalValue;
