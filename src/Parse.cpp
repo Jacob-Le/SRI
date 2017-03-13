@@ -17,10 +17,10 @@ using namespace std;
 //Constructor
 //Input: Knowledge database and Rules database
 //Output: void, but creates a Parse object
-Parse::Parse(KB* knowledgeBase, RB* ruleBase, Query* QQ2){
+Parse::Parse(KB* knowledgeBase, RB* ruleBase){//, Query* QQ2){
 	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
-	QQ = QQ2;
+	//QQ = QQ2;
 }
 
 //Function to calculate length of string
@@ -55,17 +55,19 @@ void Parse::ParsePred(string input, bool factMode){
 			delimiter3;
 			nextLen = searchLength(delimiter1,delimiter3);
 			currEntry = input.substr(delimiter1,nextLen);
+			//cout << currEntry << "\n";
 			Entries.push_back(currEntry);
 			break;
 		}
 		nextLen = searchLength(delimiter1,delimiter2) -1; //determines search length
 		currEntry = input.substr(delimiter1+1,nextLen); //parses out component
+		//cout << currEntry << "\n";
 		Entries.push_back(currEntry); //adds to vector of components
 		delimiter1 = delimiter2;
 		delimiter2 = input.find(",",delimiter2+1);
 	}
 	//Testing print statement
-	for(int i=0; i< Entries.size(); i++) cout << Entries.at(i) << " ";
+	//for(int i=0; i< Entries.size(); i++) cout << Entries.at(i) << " ";
 	if(factMode){
 		AddFact(Entries);
 	}else{
@@ -95,7 +97,7 @@ void Parse::ParseRule(string input){
 		if (searchEnd == -1) searchEnd = input.size()-1;
 
 		//Gets Logic Operator and updates searchStart past it
-		if ((i == 1) {
+		if (i == 1) {
 			//Logical Operator
 			if (input[searchStart] == '-') {
 				if (input[searchStart + 2] == 'A') {
@@ -106,6 +108,7 @@ void Parse::ParseRule(string input){
 					Logic = 0;
 					searchStart += 5;
 				}
+			}
 		}
 		nextLen = searchLength(searchStart, searchEnd);
 		ParsePred(input.substr(searchStart, nextLen), false);
@@ -128,7 +131,7 @@ int Parse::numPreds(string input){
 //Input: input string
 //Output: void
 void Parse::ParseLine(string input){
-
+	
 	bool LOAD = false;
 	bool DUMP = false;
 	bool FACT = false;
@@ -168,15 +171,14 @@ void Parse::ParseLine(string input){
 		DumpToFile(input.substr(searchStart, nextLen+1),fileDump);
 		return;
 	}else if(FACT){
-		ParsePred(input.substr(searchStart, nextLen), true);
+		ParsePred(input.substr(searchStart, nextLen+1), true);
 		return;
 	}else if(RULE){
 		nextLen = searchLength(searchStart, input.size());
-		//cout <<input.substr(searchStart, nextLen) << endl;
 		ParseRule(input.substr(searchStart, nextLen));
 		return;
 	}else if(INFE){
-		nextLen = searchLength(searchStart, input.size());
+		/*nextLen = searchLength(searchStart, input.size());
 		if(RuleBase->rules.count(input.substr(searchStart, nextLen))==0){
 			vector<string> input;
 			input.push_back(RuleBase->rules[index]->name);
@@ -191,26 +193,17 @@ void Parse::ParseLine(string input){
 				Preds.clear();
 			}
 			else cout<<"No results in RuleBase for: '"<< input.substr(searchStart, nextLen) << "'\n";
-		}
+		}*/
 	}else{ //DROP
 		string searchingFor = input.substr(searchStart, nextLen);
 		bool CheckFactinKB = KnowledgeBase->FactMap.count(searchingFor);// == 0;
-		Rule* temp;
-		bool CheckRuleinRB = false;
-		for(int i=0; i< RuleBase->rules.size(); i++){
-			if(searchingFor == RuleBase->rules.at(i)->name){
-				temp = RuleBase->rules.at(i);
-				CheckRuleinRB = true;
-				break;
-			}
-		}
+		bool CheckRuleinRB = RuleBase->rules.count(searchingFor);
 
 		if(CheckFactinKB){
 			KnowledgeBase->Remove(searchingFor);
 		}
 		if(CheckRuleinRB){
-
-			RuleBase->Remove(temp);
+			RuleBase->Remove(searchingFor);
 		}
 		if(!CheckFactinKB && !CheckRuleinRB){
 			cout << searchingFor << " not in KB or RB to delete\n";
@@ -230,6 +223,7 @@ void Parse::ParseFile(string fileName){
 	cout<<"Inputting From File: "<< fileName << endl;
 	while(!file.eof()){
 	  getline(file,input);
+	  if(input.size() == 0) break;
 	  ParseLine(input);
 	}
 	file.close();
@@ -281,7 +275,7 @@ void Parse::AddRule(bool Logic) {
 	//Delete the input Pred so doesn't go into the components
 	Preds.erase(Preds.begin());
 
-	Rule * newRule = new Rule(fcnName, enactVars, Logic, Preds); 
+	Rule * newRule = new Rule(fcnName, Logic, enactVars, Preds); 
 	RuleBase->Add(newRule);
 	Preds.clear();
 }
@@ -289,7 +283,7 @@ void Parse::AddRule(bool Logic) {
 int main(){
   KB* knowledge = new KB();
   RB* rules = new RB();
-  Query* query = new Query(knowledge, rules);
-  Parse* Parser = new Parse(knowledge,rules, query);
+  //Query* query = new Query(knowledge, rules);
+  Parse* Parser = new Parse(knowledge,rules);//, query);
   Parser->ParseTerminalInput();
 }

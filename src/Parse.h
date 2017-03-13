@@ -2,19 +2,19 @@
 #include<string>
 #include<vector>
 
-//#include "Predicate.h"
-//#include "KB.h"
-#include "Query.cpp"
+//#include "Query.cpp" would mean not needing to inherit KB and RB anymore
+#include "KB.cpp"
+#include "RB.cpp"
 
 
 class Parse{
 	public:
 	RB* RuleBase;
 	KB* KnowledgeBase;
-	Query* QQ;
+	//Query* QQ;
 	int numRuns;
 
-	Parse(KB* knowledgeBase, RB* ruleBase, Query* QQ); //, KB* knowledgeBase)
+	Parse(KB* knowledgeBase, RB* ruleBase);//, Query* QQ); 
 	std::vector<string> RuleVector;
 
 	std::vector<string> FactVector;
