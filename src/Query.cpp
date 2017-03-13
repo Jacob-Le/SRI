@@ -99,17 +99,16 @@ map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Fathe
 	//SORT OUT LOGIC OPS HERE
 	vector<string> path;
 
-	if (kb.evaluate(relation, vector<string> actors(1, newFact.end()))) {
-		if (rb.rules.count(relation) >= 1) {
-			Rules * r = rb.rules[relation];
-			if (ruleEvaluate(r)) {
-				vector< vector<string> >path = traverse(actors, kb.FactMaps[relation]);
-				for (int i = 0; i < path.size(); i++) {
-					output[relation][i].push_back(&path[i]);
-				}
-			}else output["invalid"] = vector<string> invalid; //some kind of invalid marker
-		}else output["invalid"] = vector<string> invalid; //some kind of invalid marker
-	}else output["invalid"] = vector<string> invalid; //some kind of invalid marker
+	if (kb->FactMap.count(relation) >= 1 || rb.rules.count(relation) >= 1) {
+		Rules * r = rb->rules[relation];
+		if (ruleEvaluate(r)) {
+			//split components of r
+			vector< vector<string> >path = traverse(actors, kb->FactMap[relation]);
+			for (int i = 0; i < path.size(); i++) {
+				output[relation][i].push_back(&path[i]);
+			}
+		}
+	}
 	return output;
 }
 //["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]
