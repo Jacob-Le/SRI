@@ -15,11 +15,11 @@ typedef struct Rule{
   //Vector of strings representative of actors involved in the rule
   vector<string> actors;
   //Vector of predicate components (Rules or facts) that make up this rules
-  vector<string> components;
+  vector<vector<string>> components;
 
   Rule();
   //Variadic constructor that accepts any number of conditions
-  Rule(string name, int ops, const vector<string> actors, vector<string> cmps);
+  Rule(string name, int ops, const vector<string> actors, const vector<vector<string>> cmps);
   //copy and move constructors
   Rule(const Rule & r);
   Rule(Rule && r);

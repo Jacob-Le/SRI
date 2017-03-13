@@ -27,15 +27,17 @@ void Rule::r_swap(Rule & one, Rule & two){
 //Default constructor
 Rule::Rule(){
   string name = "";
-  //Vector of predicate components (Rules or facts) that make up this rule
-  vector<Predicate*> components;
-  //Function pointers that point to functions that emulate boolean operators
-  vector<bool> ops;
+  //Logical operator associated with this rule represented by an int
+  int ops;
+  //Vector of actors
+  vector<string> actors;
+  //Vector of components (Rules or facts) that make up this rule
+  vector<vector<string>> components;
 }
 
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
-Rule::Rule(string n, int o, vector<string> a, vector<string> cmps){
+Rule::Rule(string n, int o, const vector<string> a, const vector<vector<string>> cmps){
   name = n;
   ops = o;
   actors = a;
@@ -59,35 +61,6 @@ Rule::Rule(Rule && r) : Rule(){
 Rule::~Rule(){
 
 }
-
-//Evaluates the Rule and verifies if the rule is valid or not depending on the validity
-//of its components (which can be other Rules or Facts).  Takes in a vector of strings
-//that represent actors relevant to each component of the rule.
-//MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
-//Input: Vector of actors
-//Output: Rule truth value
-// bool Rule::evaluate(vector<string> actors){
-//   Predicate * first = components[0]; // LHS component to be evaluated
-//   Predicate * next = components[1]; // RHS component to be evaluated
-//
-//   //range of components to take from components vector
-//   vector<string> range = vector<string>(actors.begin(), actors.begin() + first->components.size());
-//
-//   bool truth = first->evaluate(range); //evaluate using the range of components that pertain to the particular component
-//   int count = 0;
-//   while(next && count + 1 <= components.size()){
-//     //Take range of components for the next vector
-//     vector<string> next_range = vector<string>(range.end(), range.end() + next->components.size());
-// 	bool temp;
-// 	if (ops[count] == 0) temp = OR(truth, next->evaluate(next_range));
-// 	else temp = AND(truth, next->evaluate(next_range)); //Perform boolean operation using 0 or 1;
-//     truth = temp;
-//     count += 1;
-//     range = next_range;
-//     next = components[count]; //advance to next one
-//   }
-//   return truth;
-// }
 
 //Returns a string representation of the Rule
 //Input: void

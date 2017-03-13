@@ -18,7 +18,7 @@ int main () {
   //GarbageCollector * garbageCollector = new GarbageCollector();
 
   // Instantiate a new TCPSocketServer Object that listens on all insterfaces on port 9999
-  // NOTE: the address and port number is irrelevant, as long as the client and server side have the same
+  // NOTE: the port number is irrelevant, as long as the client and server side have the same.  IP address should be 192.168.1.1
   //TCPServerSocket * tcpServerSocket = new TCPServerSocket("0.0.0.0",9999,100);
 
   try{ // try just in case we cannot allocate buffer

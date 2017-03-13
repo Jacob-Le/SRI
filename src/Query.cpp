@@ -92,6 +92,7 @@ return VarBounds;
 //[1] : [Bob, Mary]
 
 map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
+	//Create bounded buffer here (with mutex)
 	string relation = newFact[0];
 	//int reqSize = newFact.size() - 1;
 	vector<string> actors = newFact.erase(1, newFact.end());
@@ -113,7 +114,8 @@ map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Fathe
 	}
 	return output;
 }
-//["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]
+
+//["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]  Requires Pipelining for AND and multithreading for OR
 bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
 	if (kb->evaluate(r->name, actors)) return true;
 	vector<bool> truthValues;
@@ -121,15 +123,15 @@ bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
 	else {
 		//call helper function
 		bool finalValue;
-		for(int i = 0; i < r->components.size(); i++) {
+		for(int i = 0; i < r->components.size(); i++) { //For OR, use thread.detach() to asynchronously execute for multithreading
 			ops = r->ops;
-			truthValues.push_back(ruleEvalHelper(r->components[i][0], actors));
+			truthValues.push_back(ruleEvalHelper(r->components[i][0], actors)); //For each ruleEvaluate create a new thread
 			else continue;
 		}
 		finalValue = truthValues[0];
 		for (int i = 1; i < r->truthValues.size(); i++) {
 			if (ops == 0) finalValue = finalValue || truthValues[i];
-			else finalValue = finalValue && truthValues[i];
+			else finalValue = finalValue && truthValues[i]; //If AND, use thread.join() for synchronous (pipelining)
 		}
 		return finalValue;
 	}
@@ -138,7 +140,7 @@ bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
 bool Query::ruleEvalHelper(string name, vector<string> actors) {
 	if (kb->evaluate(name, actors)) return true;
 	else {
-		if (rb->rules.count(name) == 1)return true; //Assume RB contains only uniquely named rules
+		if (rb->rules.count(name))ruleEvaluate(rb[name], actors); //not sure what to put in, CHANGE LATER
 		else return false;
 	}
 }
