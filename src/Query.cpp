@@ -87,29 +87,43 @@ return VarBounds;
 void Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
 	string relation = newFact[0];
 	//int reqSize = newFact.size() - 1;
+	map<string, string> output;
 
 	vector<string> path;
 
 	Rule * r = rb->rules[relation];//Get this thing from rulebase
+	bool ruleIsValid = ruleEvaluate(r, actors);
 	
-	for (int i = 0; i < r->components.size(); i++) {
-		if(ruleEvaluate(r, actors)) kb->add(newFact, actors); //lol rip definitely going to change this
-	}
-}
+	if (ruleIsValid) {
+		int i;
+		for (i = 1; i < newFact.size(); i++) {
+			if (newFact[i] != " ") output[] = newFact[i];
+		}
 
+		for (i = 0; i < r->components.size(); i++) {
+			if (i % 4 == 0) {
+				
+			}
+		}
+	} //lol rip definitely going to change this
+}
+//["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]
 bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
 	vector<bool> truthValues;
-	if (kb->evaluate(name, actors)) return true;
+	vector<int> ops;
+	if (kb->evaluate(r->name, actors)) return true;
 	else {
 		//call helper function
 		bool finalValue;
 		for(int i = 0; i < r->components.size(); i++) {
-			truthValues.push_back(ruleEvalHelper(r->components[i].name, actors));
+			if ((i + 1) % 4 != 0) ops.push_back(r->components[i]);
+			else if(i % 4 != 0)truthValues.push_back(ruleEvalHelper(r->components[i], actors));
+			else continue;
 		}
 		finalValue = truthValues[0];
 		int opCount = 0;
 		for (int i = 1; i < r->truthValues.size(); i++) {
-			if (r->ops[opCount] == 0) finalValue = finalValue || truthValues[i];
+			if (ops[opCount] == 0) finalValue = finalValue || truthValues[i];
 			else finalValue = finalValue && truthValues[i];
 		}
 		return finalValue;
@@ -122,6 +136,10 @@ bool Query::ruleEvalHelper(string name, vector<string> actors) {
 		if (rb->rules.count(name) == 1)return true;
 		else return false;
 	}
+}
+
+void Query::traverseAndAdd(target, vector<auto> step) {
+
 }
 
 //vector<string> Query::factIterator(string key, map<auto> step, vector<string> newFact) {
