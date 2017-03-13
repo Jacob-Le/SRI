@@ -17,7 +17,7 @@ using namespace std;
 //Constructor
 //Input: Knowledge database and Rules database
 //Output: void, but creates a Parse object
-Parse::Parse(KB* knowledgeBase);, RB* ruleBase, Query* QQ2){
+Parse::Parse(KB* knowledgeBase, RB* ruleBase, Query* QQ2){
 	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
 	QQ = QQ2;
@@ -81,10 +81,11 @@ void Parse::ParseRule(string input){
 	int searchStart;
 	int searchEnd;
 	int nextLen;
+	bool Logic;
 
 	for (int i = 0; i < numRuns; i++) {
 
-		if( i ==0 ){
+		if( i == 0 ){
 			searchStart = 0;
 			searchEnd = input.find(")",0);
 		}else{
@@ -94,37 +95,23 @@ void Parse::ParseRule(string input){
 		if (searchEnd == -1) searchEnd = input.size()-1;
 
 		//Gets Logic Operator and updates searchStart past it
-		if ((i+1)% 2 == 0) {
-			//First Logical Operator
+		if ((i == 1) {
+			//Logical Operator
 			if (input[searchStart] == '-') {
 				if (input[searchStart + 2] == 'A') {
-					Logic.push_back(1);
+					Logic = 1;
 					searchStart += 6;
 				}
 				else if (input[searchStart + 2] == 'O') {
-					Logic.push_back(0);
+					Logic = 0;
 					searchStart += 5;
 				}
-				//If additional Logical Operator
-			}
-			else if (input[searchStart + 0] == 'A' || input[searchStart + 0] == 'O') {
-				if (input[searchStart + 0] == 'A') {
-					Logic.push_back(1);
-					searchStart += 4;
-				}
-				else if (input[searchStart + 0] == 'O') {
-					Logic.push_back(0);
-					searchStart += 3;
-				}
-			}
 		}
 		nextLen = searchLength(searchStart, searchEnd);
 		ParsePred(input.substr(searchStart, nextLen), false);
 	}
 
-	AddRule(numRuns);
-	Preds.clear();
-	Logic.clear();
+	AddRule(Logic);
 }
 
 
@@ -190,8 +177,7 @@ void Parse::ParseLine(string input){
 		return;
 	}else if(INFE){
 		nextLen = searchLength(searchStart, input.size());
-		int index = RuleBase->CheckIfRuleExists(input.substr(searchStart, nextLen));
-		if( index != -1){
+		if(RuleBase->rules.count(input.substr(searchStart, nextLen))==0){
 			vector<string> input;
 			input.push_back(RuleBase->rules[index]->name);
 			for(int i=0; i < RuleBase->rules[index]->actors.size(); i++){
@@ -204,7 +190,7 @@ void Parse::ParseLine(string input){
 				QQ->inference(Preds.at(0));
 				Preds.clear();
 			}
-			else cout<<"No results in RuleBase for: "<< input.substr(searchStart, nextLen) << endl;
+			else cout<<"No results in RuleBase for: '"<< input.substr(searchStart, nextLen) << "'\n";
 		}
 	}else{ //DROP
 		string searchingFor = input.substr(searchStart, nextLen);
@@ -283,47 +269,27 @@ void Parse::AddFact(vector<string> f){
 //Creates rule from FactVector, Logic, and Relationship and puts it into the RB
 //Input: int representing number of functions in rule
 //Output: void
-void Parse::AddRule(int numFcns) {
+void Parse::AddRule(bool Logic) {
 
-	vector<Predicate*> tempPreds;
-	vector<bool> tempLogic;
 	string fcnName = Preds.at(0).at(0);
 	vector<string> enactVars;
-	map<int,vector<string>> temp; //stores the rules' temp vars because rule needs to point to itself in the RB
 	for(int i=1; i< Preds.at(0).size(); i++){
 		string temp = Preds.at(0).at(i);
 		enactVars.push_back(temp);
 	}
+	
+	//Delete the input Pred so doesn't go into the components
+	Preds.erase(Preds.begin());
 
-
-	for (int i = 1; i < Preds.size(); i++){ 
-		int index = RuleBase->CheckIfRuleExists(Preds[i]->name);
-		if(index != -1){ //Rule
-			vector<string> bluh;
-			for(int j = 0; j < Preds[i]->components.size(); j++){
-				bluh.push_back(Preds[i]->components.at(j));
-			}
-			temp[i] = bluh;
-			tempPreds.push_back(RuleBase->rules.at(index));
-		}else{ //Fact
-			Fact* newFact = new Fact(Preds[i]->name, Preds[i]->components, KnowledgeBase);
-			tempPreds.push_back(newFact);
-		}
-    }
-
-	for (int i = 0; i < Logic.size(); i++) {
-		tempLogic.push_back(Logic[i]);
-	}
-
-	Rule * newRule = new Rule(fcnName, enactVars, tempLogic, tempPreds, temp); 
+	Rule * newRule = new Rule(fcnName, enactVars, Logic, Preds); 
 	RuleBase->Add(newRule);
 	Preds.clear();
 }
 
 int main(){
-  //KB* knowledge = new KB();
+  KB* knowledge = new KB();
   RB* rules = new RB();
-  //Query* query = new Query(knowledge, rules);
+  Query* query = new Query(knowledge, rules);
   Parse* Parser = new Parse(knowledge,rules, query);
   Parser->ParseTerminalInput();
 }

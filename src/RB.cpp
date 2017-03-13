@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <algorithm>
+#include <map>
 
 #include "RB.h"
 
@@ -15,7 +16,7 @@ using namespace std;
 //CONSTRUCTORS-------------------------------------------------------------------------------------------------------------
 //Default. Nothing here since rules is declared as empty already.
 RB::RB(){
-	std::vector<Rule*> rules;
+	map<string, Rule*> rules;
 }
 
 //copy constructor
@@ -30,9 +31,9 @@ RB::RB(const RB &otherRB) {
 void RB::Add(Rule * r){
   for(Rule * rule : rules){
     if(rule == r){
-			std::cout << "Error: Rule already exists." << "\n" <<std::endl;
+			cout << "Error: Rule already exists.\n";
 			return;
-		}
+	}
   }
   rules.push_back(r);
 }
@@ -51,11 +52,11 @@ Rule* RB::Remove(Rule * r){
 //Print as string
 //Input: void
 //Output: returns string representation
-std::string RB::toString(){
-  std::string s = "";
-    for(int i=0; i<rules.size();i++){
-      s += rules.at(i)->toString();
-	  s +='\n';
+string RB::toString(){
+  string s = "";
+    map<string, Rule*> ::iterator it = rules.begin();
+	for(; it!= FactMap.end(); it++){
+      s += it->second->toString();
     }
     return s;
 }
@@ -64,14 +65,4 @@ std::string RB::toString(){
 //rules destructs itself automatically at the end.
 RB::~RB() {
 
-}
-
-int RB::CheckIfRuleExists(string name){
-	cout << "Looking for: " << name << endl << "In RB: ";
-	for(int i=0; i< rules.size(); i++){
-		cout << rules.at(i)->name << " ";
-		if(rules.at(i)->name == name) return i;
-	}
-	cout << endl;
-	return -1;
 }

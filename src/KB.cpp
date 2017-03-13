@@ -81,7 +81,7 @@ string KB::toString(){
 }
 
 
-int main(){
+/*int main(){
 	KB* Keiba = new KB();
 	vector<string> Father1 = {"Father","Tom","Blake"};
 	vector<string> Father2 = {"Father","Tom","Brake"};
@@ -93,4 +93,4 @@ int main(){
 	Keiba->Remove("Father");
 	Keiba->Remove("Dinosaur");
 	cout << Keiba->toString();
-}
+}*/
