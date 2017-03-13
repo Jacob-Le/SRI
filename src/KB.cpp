@@ -1,19 +1,8 @@
-//knowledge base
-/*
-	This file handles the creation of a database holding all Facts generated
-	by the program. It contains functions that allow you to access Facts, removes
-	Facts, add Facts.
-*/
+#include "KB.h"
 #include<algorithm>
 #include<iostream>
-
 using namespace std;
 
-#include "KB.h"
-
-using namespace std;
-
-//Constructor, initializes as empty
 KB::KB(){
 	map<string, vector<vector<string> > >* FactMap;
 }
@@ -94,3 +83,4 @@ string KB::toString(){
 	Keiba->Remove("Dinosaur");
 	cout << Keiba->toString();
 }*/
+

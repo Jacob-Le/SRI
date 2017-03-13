@@ -1,4 +1,5 @@
 //Rule.h
+
 #pragma once
 #include <vector>
 #include <string>
@@ -20,6 +21,7 @@ typedef struct Rule{
   Rule();
   //Variadic constructor that accepts any number of conditions
   Rule(string name, int ops, const vector<string> actors, vector<vector<string> > cmps);
+
   //copy and move constructors
   Rule(const Rule & r);
   Rule(Rule && r);
@@ -34,3 +36,4 @@ typedef struct Rule{
   bool operator == (const Rule & r);
   bool operator != (const Rule & r);
 }Rule;
+

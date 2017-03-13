@@ -13,6 +13,7 @@ using namespace std;
 //------------------------------------------Rule-----------------------------------------------------//
 //Rule is stored in the Rule database.
 
+
 //Swaps the values between two rules
 //Input: Rule addresses one, two
 //Output: void.
@@ -140,4 +141,6 @@ bool Rule::operator == (const Rule& r){
 
 bool Rule::operator != (const Rule& r){
   return !(*this == r);
+
 }
+
