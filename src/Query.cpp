@@ -57,6 +57,9 @@ bool Query::enact(Rule * r, vector<string> components, KB * kb){
 
 //------------------------------Inferencing-----------------------------------------------//
 
+//Check if AND or OR
+//if OR, only check the ones with the right number of actors.
+
 void CreateVarBoundsMaster(int iterate, vector<string> varMapping){
 	//Create map fcn will populate
 	for(int i=0; i<varMapping.size(); i++){
@@ -84,28 +87,30 @@ map<string, vector<string> > CreateVarBounds(vector<Fact*>* Facts, vector<string
 return VarBounds;
 }
 
-void Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
+//Grandfather->vector
+//[0]: [John, John]
+//[1] : [Bob, Mary]
+
+map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
 	string relation = newFact[0];
 	//int reqSize = newFact.size() - 1;
-	map<string, string> output;
-
+	vector<string> actors = newFact.erase(1, newFact.end());
+	map<string, vector<string>>* output;
+	//SORT OUT LOGIC OPS HERE
 	vector<string> path;
 
-	Rule * r = rb->rules[relation];//Get this thing from rulebase
-	bool ruleIsValid = ruleEvaluate(r, actors);
-	
-	if (ruleIsValid) {
-		int i;
-		for (i = 1; i < newFact.size(); i++) {
-			if (newFact[i] != " ") output[] = newFact[i];
-		}
-
-		for (i = 0; i < r->components.size(); i++) {
-			if (i % 4 == 0) {
-				
-			}
-		}
-	} //lol rip definitely going to change this
+	if (kb.evaluate(relation, vector<string> actors(1, newFact.end()))) {
+		if (rb.rules.count(relation) >= 1) {
+			Rules * r = rb.rules[relation];
+			if (ruleEvaluate(r)) {
+				vector< vector<string> >path = traverse(actors, kb.FactMaps[relation]);
+				for (int i = 0; i < path.size(); i++) {
+					output[relation][i].push_back(&path[i]);
+				}
+			}else output["invalid"] = vector<string> invalid; //some kind of invalid marker
+		}else output["invalid"] = vector<string> invalid; //some kind of invalid marker
+	}else output["invalid"] = vector<string> invalid; //some kind of invalid marker
+	return output;
 }
 //["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]
 bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
@@ -138,12 +143,25 @@ bool Query::ruleEvalHelper(string name, vector<string> actors) {
 	}
 }
 
-void Query::traverseAndAdd(target, vector<auto> step) {
-
+vector< vector<string> > Query::traverse(vector<string> actors, vector<string> actorList) {
+	vector< vector<string> > result;
+	int initSize = actorList[0].size();
+	bool invalid = false;
+	for (int i = 0; i < initSize; i++) {
+		vector<string> path;
+		for (int j = 0; j < actorList.size(); j++) {
+			if (actorList[j].size() < initSize) {
+				invalid = true;
+				break;
+			}
+			else {
+				path.push_back(actorList[j][i]);
+		}
+		if (invalid == true)break;
+		result.push_back(path);
+	}
+		return result;
 }
-
-//vector<string> Query::factIterator(string key, map<auto> step, vector<string> newFact) {
-//}
 
 //Prints the results of the query to terminal
 //Input: void
@@ -151,79 +169,3 @@ void Query::traverseAndAdd(target, vector<auto> step) {
 	void Query::printResults(){
 		for(int i=0;i<Results.size();i++) cout << Results.at(i)->toString();
 	}
-
-	//IGNORE EVERYTHING BELOW THIS FUNCTION LOL
-	//-------------------------------------------------------PHASE 1-------------------------------------------
-//void Query::CreatePredNames(Rule* r) {
-//	for (int i = 0; i < r->components.size(); i++) {
-//		predNames.push_back(r->components.at(i)->name); //Builds vector of relationship names
-//		for (int j = 0; j < r->components.at(i)->components.size(); j++) //Iterate through rule actors
-//			ToBind.push_back(r->components.at(i)->components.at(j)); //pushes actors onto ToBind
-//	}
-//}
-//
-//vector< vector<Fact*>*> Query::PermutateAndBind(KB* kb) {
-//
-//	vector< vector<Fact*>*> FromKB;
-//	vector< vector<Fact*>*> permutation;
-//
-//	for (int j = 0; j<predNames.size(); j++) { //(Father, Parent)
-//		vector<Fact*>* Temp;
-//		Temp = kb->Find(predNames.at(j)); //passes in a relationship name
-//		FromKB.push_back(Temp); //Fact pointer onto FromKB (Actor1, Actor2)
-//	}
-//	//I need to build permutation vector here
-//	//ToBind holds needed actors
-//	//iterate through toBind and assign an integer to each unique actor and store ints into a vector
-//	//With permutated vector, we assign each relationship to X,Y
-//	//Assign other half of permuted to Z,X while checking if they fit the integers assigned.
-//
-//	return FromKB; //vector of all relationships relevant
-//}
-////-----------------------PHASE 2---------------------------------------------------------
-//vector<string> Query::Bind(KB* KnowledgeBase) {
-//	vector<int> ID;
-//	ID = BuildID(); //builds ID vector
-//	vector< vector<Predicate*>* > toBeBinded = PermutateAndBind(KnowledgeBase);
-//	vector<string> result;
-//	map<int, string> varStorage;
-//	for (int i = 0; i < toBeBinded[0]->size(); i++) {
-//		varStorage[ID[0]] = toBeBinded[0]->at(i)->components[0];
-//		varStorage[ID[1]] = toBeBinded[0]->at(i)->components[1];
-//		result.push_back(toBeBinded[0]->at(i)->components[0]);
-//		result.push_back(toBeBinded[0]->at(i)->components[1]);
-//		for (int j = 0; j < toBeBinded[1]->size(); j++) {
-//			if (varStorage.count(ID[2]) == 1) break;
-//			if (varStorage.count(ID[3]) == 1) break;
-//			result.push_back(toBeBinded[1]->at(i)->components[0]);
-//			result.push_back(toBeBinded[1]->at(i)->components[1]);
-//			//call phase 3(result); Passes actors in an array. eg [John,Mary,Ahmed,John] of [X, Y, Z, X]
-//		}
-//		varStorage.clear();
-//	}
-//	return result; //Change return types depending on how you use this function.
-//}
-//
-//vector<int> Query::BuildID() {
-//	vector<int> id; //holds actor id for building (X,Y,Z,X) or whatever combo it is
-//	int currnum = 0;
-//	for (int i = 0; i < ToBind.size(); i++) {//Iterate through needed actors
-//		if (id.size() != 0) { //If IDs are not empty, do the thing
-//			for (int j = 0; j < i; j++) { //Iterate through processed indexes
-//				if (ToBind[i] == ToBind[j]) { //If it's occured already, put it in again
-//					id.push_back(id[i]);
-//					break;
-//				}
-//				else { //ID is empty, put 0 in index 1
-//					id.push_back(currnum);
-//					currnum++;
-//				}
-//			}
-//		}
-//		else {
-//			id.push_back(currnum);
-//			currnum++;
-//		}
-//	}
-//	return id;
-//}
