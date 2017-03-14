@@ -32,6 +32,8 @@ public:
 	void inference(vector<string> newFact);
 	bool ruleEvaluate(Rules * r, vector<string> actors);
 	bool ruleEvalHelper(string name, vector<string> actors);
+	bool factEvaluate(vector<string> actors, string name);
+	vector< vector<string> > traverse(vector<string> actors, vector<string> actorList);
 
 	//void CreatePredNames(Rule* r);
 	//vector< vector<Fact*>*> PermutateAndBind(KB* kb);

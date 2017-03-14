@@ -92,16 +92,16 @@ return VarBounds;
 //[1] : [Bob, Mary]
 
 map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
-	//Create bounded buffer here (with mutex)
 	string relation = newFact[0];
 	//int reqSize = newFact.size() - 1;
-	vector<string> actors = newFact.erase(1, newFact.end());
+	vector<string> actors = newFact.erase(1);
 	map<string, vector<string>>* output;
+	//SORT OUT LOGIC OPS HERE
 	vector<string> path;
 
-	if (kb->FactMap.count(relation) >= 1 || rb.rules.count(relation) >= 1) {
+	if (kb->FactMap.count(relation) >= 1 && rb.rules.count(relation) >= 1) {
 		Rules * r = rb->rules[relation];
-		if (ruleEvaluate(r)) {
+		if (ruleEvaluate(r, actors)) {
 			//split components of r
 			for (int j = 0; j < r->components.size(); j++) {
 				vector< vector<string> >path = traverse(actors, *kb.FactMaps[r->components[j][0]]);
@@ -109,37 +109,39 @@ map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Fathe
 					output[relation][i].push_back(&path[i]);
 				}//get rid of copies here
 			}
-		}
+		}//somehow return an empty output?
 	}
+	output = removeDoubles(output);
 	return output;
 }
-
-//["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]  Requires Pipelining for AND and multithreading for OR
+//["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]
 bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
-	if (kb->evaluate(r->name, actors)) return true;
-	vector<bool> truthValues;
-	int ops;
-	else {
+	if (factEvaluate(actors, r->name)) return true;
+	truthValues = false;
+	int ops = r->ops;
+	else if(ops == 0){
 		//call helper function
 		bool finalValue;
-		for(int i = 0; i < r->components.size(); i++) { //For OR, use thread.detach() to asynchronously execute for multithreading
-			ops = r->ops;
-			truthValues.push_back(ruleEvalHelper(r->components[i][0], actors)); //For each ruleEvaluate create a new thread
-			else continue;
-		}
-		finalValue = truthValues[0];
-		for (int i = 1; i < r->truthValues.size(); i++) {
-			if (ops == 0) finalValue = finalValue || truthValues[i];
-			else finalValue = finalValue && truthValues[i]; //If AND, use thread.join() for synchronous (pipelining)
+		for(int i = 0; i < r->components.size(); i++) {
+			vector<string> nextActor;
+			for (int n = 1; n < r->components.size(); n++) {
+				nextActor.push_back(actors[stoi(r->components[i][n]]));
+			}
+			truthValues = truthValues || ruleEvalHelper(r->components[i][0], nextActor);
 		}
 		return finalValue;
 	}
+	else if (ops == 1) {
+		//AND
+		return finalValue;
+	}
+	else return finalValue;
 }
 
 bool Query::ruleEvalHelper(string name, vector<string> actors) {
-	if (kb->evaluate(name, actors)) return true;
+	if (factEvaluate(name, actors)) return true;
 	else {
-		if (rb->rules.count(name))ruleEvaluate(rb[name], actors); //not sure what to put in, CHANGE LATER
+		if (rb->rules.count(name) == 1) return ruleEvaluate(rb->rules[name],actors);
 		else return false;
 	}
 }
@@ -147,20 +149,79 @@ bool Query::ruleEvalHelper(string name, vector<string> actors) {
 vector< vector<string> > Query::traverse(vector<string> actors, vector<string> actorList) {
 	vector< vector<string> > result;
 	int initSize = actorList[0].size();
+	bool invalid = false;
 	for (int i = 0; i < initSize; i++) {
 		vector<string> path;
 		for (int j = 0; j < actorList.size(); j++) {
-			if (actorList[j].size() < initSize) break;
-			else path.push_back(actorList[j][i]);
-			result.push_back(path);
+			if (actorList[j].size() < initSize) {
+				invalid = true;
+				break;
+			}else if(actorList[j][i] == actors[j]) {
+				path.push_back(actorList[j][i]);
+				break;
+			}
+			else if (actors[j] == "_") {
+				path.push_back(actorList[j][i]);
+			}
+			else {
+				invalid = true;
+				break;
 			}
 		}
-		return result;
+		if (invalid == true)break;
+		result.push_back(path);
 	}
+	return result;
+}
+
+bool Query::factEvaluate(vector<string> actors, string name) {
+	vector< vector<string> > result;
+	vector< vector<string> > actorList;
+	bool isValid = false;
+
+	if (kb->FactMap.count(name) >= 1) {
+		actorList = *FactMap[name];
+		int initSize = actorList[0].size();
+		bool broken = false;
+		for (int i = 0; i < initSize; i++) {
+			vector<string> path;
+			bool matchFound = false;
+			for (int j = 0; j < actorList.size(); j++) {
+				if (actorList[j].size() < initSize) {
+					broken = true;
+					break;
+				}
+				else if (actorList[j][i] == actor[j]) {
+					matchFound = true;
+					break;
+				}
+				else if(actor[j] == "_"){
+					matchFound = true;
+				}
+				else {
+					matchFound = false;
+					break;
+				}
+			}
+			isValid = matchFound;
+			if (broken == true)break;
+		}
+	}
+	return isValid;
+}
 
 //Prints the results of the query to terminal
 //Input: void
 //Output: void
-	void Query::printResults(){
-		for(int i=0;i<Results.size();i++) cout << Results.at(i)->toString();
+void Query::printResults() {
+	for (int i = 0; i < Results.size(); i++) {
+		cout << Results.at(i)->toString();
 	}
+}
+
+map<string, vector<string> > * Query::removeDoubles(map<string, vector<string> > * target) {
+	map<string, vector<string> > * output;
+	//placeholder method
+	output = target;
+	return output;
+}
