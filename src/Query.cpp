@@ -116,28 +116,26 @@ map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Fathe
 }
 //["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]
 bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
-	vector<bool> truthValues;
-	int ops;
 	if (factEvaluate(actors, r->name)) return true;
-	else {
+	truthValues = false;
+	int ops = r->ops;
+	else if(ops == 0){
 		//call helper function
 		bool finalValue;
 		for(int i = 0; i < r->components.size(); i++) {
-			ops = r->ops;
 			vector<string> nextActor;
 			for (int n = 1; n < r->components.size(); n++) {
-				nextActor.push_back(actors[r->components[i][n]]);
+				nextActor.push_back(actors[stoi(r->components[i][n]]));
 			}
-			truthValues.push_back(ruleEvalHelper(r->components[i][0], nextActor));
-			else continue;
-		}
-		finalValue = truthValues[0];
-		for (int i = 1; i < r->truthValues.size(); i++) {
-			if (ops == 0) finalValue = finalValue || truthValues[i];
-			else finalValue = finalValue && truthValues[i];
+			truthValues = truthValues || ruleEvalHelper(r->components[i][0], nextActor);
 		}
 		return finalValue;
 	}
+	else if (ops == 1) {
+		//AND
+		return finalValue;
+	}
+	else return finalValue;
 }
 
 bool Query::ruleEvalHelper(string name, vector<string> actors) {
