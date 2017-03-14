@@ -1,5 +1,6 @@
 //Rule database
 #pragma once
+#include "Rule.cpp"
 
 using namespace std;
 
@@ -9,11 +10,9 @@ public:
   RB(const RB &otherRB);
   ~RB();
 
-  std::vector<Rule*> rules;
+  map<string, Rule*> rules;
 
   void Add(Rule * r);
-  Rule* Remove(Rule * r);
-  std::string toString();
-  void Load(std::string filepath);
-  std::string Dump(std::string filepath);
+  void Remove(string name);
+  string toString();
 };

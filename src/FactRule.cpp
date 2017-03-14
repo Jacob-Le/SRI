@@ -1,102 +1,5 @@
-//Predicate.cpp
-/*
-	Definitions of predicates, rules, and facts are stored here, along with definitions
-	of their assosciated functions.
-*/
-#include <iostream>
-#include<math.h>
-
-#include "Predicate.h"
-
-using namespace std;
-
-//--------------------------------------------Predicate--------------------------------------//
-//Predicate is the base struct that Fact and Rule inherit from.
-
-//Swaps the member values between two Predicates
-//Input: Two target predicate addresses
-//Output: Void.
-void Predicate::p_swap(Predicate & one, Predicate & two){
-  using std::swap;
-  swap(one.name, two.name);
-  swap(one.components, two.components);
-}
-
-//Default Constructor
-Predicate::Predicate(){
-  name = "";
-  components;
-}
-
-//Constructor for Predicate, the base class from which both Fact and Rule extend from.
-//Takes in a string as a name, and a variable number of string arguments as Actors
-Predicate::Predicate(string n, vector<string> actors){
-  name = n;
-  components = actors;
-}
-
-//Copy constructor
-Predicate::Predicate(const Predicate & p){
-  name = p.name;
-  components = p.components;
-}
-
-//Move constructor
-Predicate::Predicate(Predicate && p) : Predicate(){
-  p_swap(*this, p);
-}
-
-//Destructor
-Predicate::~Predicate(){
-
-}
-
-//Evaluate function.
-//Input: String vector of components
-//Output: boolean representing Predicate truth value.
-bool Predicate::evaluate(vector<string> components){
-  return true;
-}
-
-//Operator overloads for copy and move assignment
-Predicate& Predicate::operator = (Predicate p){
-  p_swap(*this, p);
-  return *this;
-}
-
-Predicate& Predicate::operator = (Predicate && p){
-  p_swap(*this, p);
-  return *this;
-}
-
-//AND operator
-//Input: bool a, bool b
-//Output: AND value of a and b
-bool Predicate::AND(bool a, bool b) {
-	return a&&b;
-}
-
-//OR operator
-//Input: bool a, bool b
-//Output: OR value of a and b
-bool Predicate::OR(bool a, bool b) {
-	return a||b;
-}
-
-string Predicate::toString(){
-	string output;
-    output = output + name +"(";
-    for(int i=0; i < components.size(); i++){
-        output += components[i];
-        if(i+1 != components.size()) output += ", ";
-    }
-    output += ") ";
-    return output;
-}
-
-
-
-
+//FactRule.cpp
+#include "FactRule.h"
 
 //--------------------------------------------Fact------------------------------------//
 //Fact inherits from Predicate. Facts store knowledge, in turn stored in the Knowledge database.
@@ -108,15 +11,17 @@ Fact::Fact(){
 }
 
 //Constructor that takes in a string for a name, and a vector of strings for its components (Actors).
-Fact::Fact(string n, vector<string> a){
+Fact::Fact(string n, vector<string> a, KB* knowledge){
   components = a;
   name = n;
+  kb = knowledge;
 }
 
 //Copy constructor
 Fact::Fact(const Fact & f){
   name = f.name;
   components = f.components;
+  kb = f.kb;
 }
 
 //Move constructor
@@ -129,13 +34,17 @@ Fact::Fact(Fact && f) : Fact(){
 //Input: String vector of components
 //Output: returns truth value of Fact
 bool Fact::evaluate(vector<string> components){
-  try{
+  /*try{
     //if(this == KB.fetch(name, components))
     return true;
   }
   catch(const std::invalid_argument& ia){
     cout << "ERROR: Fact does not exist" << ia.what() << "\n" << endl;
     return false;
+  }*/
+  vector<Predicate*>* temp = kb->Find(name);
+  for(int i=0; i < components.size(); i++){
+	  if(components == temp->at(i)->components) return true;
   }
   return false;
 }
@@ -178,6 +87,7 @@ void Rule::r_swap(Rule & one, Rule & two){
   swap(one.actors, two.actors);
   swap(one.components, two.components);
   swap(one.ops, two.ops);
+  swap(one.RuleTempVars, two.RuleTempVars);
 }
 
 //Default constructor
@@ -185,17 +95,20 @@ Rule::Rule(){
   string name = "";
   //Vector of predicate components (Rules or facts) that make up this rule
   vector<Predicate*> components;
+  
+  vector<string> actors;
   //Function pointers that point to functions that emulate boolean operators
   vector<bool> ops;
 }
 
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
-Rule::Rule(string n, vector<string> a, vector<bool> Logic, vector<Predicate*> cmps){
+Rule::Rule(string n, vector<string> a, vector<bool> Logic, vector<Predicate*> cmps, map<int,vector<string> > tempest){
   name = n;
   actors = a;
   components = cmps;
   ops = Logic; //Operators that compare each component of the rule
+  RuleTempVars = tempest;
 }
 
 //Copy constructor
@@ -204,6 +117,7 @@ Rule::Rule(const Rule & r){
   actors = r.actors;
   components = r.components;
   ops = r.ops;
+  RuleTempVars = r.RuleTempVars;
 }
 
 //Move constructor
@@ -252,7 +166,17 @@ string Rule::toString(){
     string output = "RULE ";
 	output + name;
     for(int i=0; i < components.size(); i++){
-        output += components[i]->toString();
+		if(RuleTempVars.count(i)==1){ //if rule get its mapped temp vars
+			vector<string> temp = RuleTempVars.at(i);
+			output = output + components[i]->name + '(';
+			for(int j=0; j < temp.size(); j++){
+				output += temp[j];
+				if(i+1 != temp.size()) output += ", ";
+			}
+			output += ") ";
+		}else{ //if fact get its components
+			output += components[i]->toString();
+		}      
 		if( (i+1)%2 == 0 ){
 			if(ops[i/2] == 0) output += " OR ";
 			if(ops[i/2] == 1) output += " AND ";

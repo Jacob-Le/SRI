@@ -1,46 +1,16 @@
-//Predicate.h
 #pragma once
-#include <vector>
-#include <string>
-
-using namespace std;
-
-//AKA FACT OR RULE, DEPENDING ON WHAT RULE IT IS CALLED IN
-typedef struct Predicate{
-  string name;
-  vector<string> components;
-
-  //Constructors
-  Predicate();
-  Predicate(string name, vector<string> actors);
-  Predicate(const Predicate& p);
-  Predicate(Predicate && p);
-
-  bool evaluate(vector<string> components);
-  void p_swap(Predicate & one, Predicate & two);
-  friend void p_swap(Predicate & one, Predicate & two);
-
-  bool AND(bool,bool);
-  bool OR(bool,bool);
-
-  ~Predicate();
-
-  Predicate& operator = (Predicate p);
-  Predicate& operator = (Predicate && p);
-
-  string toString();
-
-}Predicate;
+#include "KB.cpp"
 
 //Facts describe relationships between Actors
 typedef struct Fact : Predicate {
 
   string Relationship;
   vector<string> components;
+  KB* kb;
 
   //Constructors
   Fact();
-  Fact(string name, vector<string> r);
+  Fact(string name, vector<string> r, KB* kb);
   Fact(const Fact & r);
   Fact(Fact && r);
 
@@ -54,7 +24,7 @@ typedef struct Fact : Predicate {
 //Rules are made up of components (which can be either other rules or facts)
 typedef struct Rule : Predicate{
   //Forward declaration of RB for the enact function
-  class KB;
+  //class KB;
 
   string Relationship;
   //Vector of strings representative of actors involved in the rule
@@ -63,10 +33,12 @@ typedef struct Rule : Predicate{
   vector<Predicate*> components;
   //Function pointers that point to functions that emulate boolean operators
   vector<bool> ops;
+  
+  map<int,vector<string> > RuleTempVars;
 
   Rule();
   //Variadic constructor that accepts any number of conditions
-  Rule(string name, const vector<string> actors, const vector<bool> Logic, vector<Predicate*> cmps);
+  Rule(string name, const vector<string> actors, const vector<bool> Logic, vector<Predicate*> cmps, map<int,vector<string> > tempest);
   //copy and move constructors
   Rule(const Rule & r);
   Rule(Rule && r);
