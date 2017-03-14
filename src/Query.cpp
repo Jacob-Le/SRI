@@ -97,7 +97,6 @@ map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Fathe
 	//int reqSize = newFact.size() - 1;
 	vector<string> actors = newFact.erase(1, newFact.end());
 	map<string, vector<string>>* output;
-	//SORT OUT LOGIC OPS HERE
 	vector<string> path;
 
 	if (kb->FactMap.count(relation) >= 1 || rb.rules.count(relation) >= 1) {

@@ -1,28 +1,27 @@
-#pragma once
-
-#include <stdlib>
+#include <stdlib.h>
+#include <iostream>
 #include <thread>
 
-#include "Connection.h"
+//#include "Connection.h"
 //#include "TCPServerSocket.h"
 
 using namespace std;
 
-void threadFunction(int x){
-  cout<< "thread" << x <<endl;
+void threadFunction(std::mutex * mtx, int x){
+  mtx->lock()
+  std::cout<< "thread" << x << std::endl;
 }
 
 //Attempts to manage threads via a bounded buffer class. Use in SRI.cpp
 int main () {
-  BoundedBuffer <int> * boundedBuffer; // Declare an integer Bound Buffer
+  std::mutex mtx;
   //GarbageCollector * garbageCollector = new GarbageCollector();
 
   // Instantiate a new TCPSocketServer Object that listens on all insterfaces on port 9999
   // NOTE: the port number is irrelevant, as long as the client and server side have the same.  IP address should be 192.168.1.1
   //TCPServerSocket * tcpServerSocket = new TCPServerSocket("0.0.0.0",9999,100);
 
-  try{ // try just in case we cannot allocate buffer
-    boundedBuffer = new BoundedBuffer <int>(BUFFER_SIZE); // instantiate buffer with
+  try{
     // CREATE OBJECTS HERE
 
     //tcpServerSocket->initializeSocket();
@@ -36,6 +35,10 @@ int main () {
       //garbageCollector->addConnection(c);
     //}
     //Create threads here.  Most likely have to use loops for each rule or something
+    //NOTE: each time evaluate is executed, EITHER rule or fact, then must use unique_lock.
+
+    //A lock requires a mutex, and a condition variable.  Use unique_lock
+
     std::thread t1(threadFunction, 21);
 
     // Wait for the threads to finish
@@ -44,10 +47,8 @@ int main () {
 
   }
   catch (int) { // If exception caught
-    cout << "Exception caught here\n"; // Print message
-    boundedBuffer = NULL; // set boundedBuffer to NULL to avoid destruction
+    std::cout << "Exception caught here\n"; // Print message
   }
-  if (boundedBuffer != NULL) delete (boundedBuffer); // Destruct boundedBuffer if instantiated
   //delete(garbageCollector);
   //delete(tcpServerSocket);
 }
