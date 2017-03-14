@@ -10,7 +10,7 @@
 
 using namespace std;
 
-vector<Fact*> Results;
+//vector<Fact*> Results; REPLACE?
 
 Query::Query(KB * knowledge, RB * rules) {
 	kb = knowledge;
@@ -21,23 +21,24 @@ Query::Query(KB * knowledge, RB * rules) {
 //from the Knowledge Base.
 // Takes in a pointer to the Knowledge Base and a string representative of the similar
 // relationship.
+/*
 vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
 	vector<Fact*>* result = Knowledge->Find(factKey);
 	for (int i = 0; i < result->size(); i++) result->at(i)->toString();
 	return result;
-}
+}*/
 
 //SIMPLE RULE-------------------------------------------------------------------
 
 //helper function to get rid of duplicates
-vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB) {
+/*vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB) {
 	vector<Fact*> result;
 	bool found = false;
 	result = preventDupes(resultA, result);
 	result = preventDupes(resultB, result);
 
 	return result;
-}
+}*/
 
 //----------------------------------Part 3: evaluate--------------------------------------//
 
@@ -45,7 +46,7 @@ vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB)
 //MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
 //Input: Component vector from Rules
 //Output: Returns truth value of the rule
-bool Query::enact(Rule * r, vector<string> components, KB * kb){
+/*bool Query::enact(Rule * r, vector<string> components, KB * kb){
   if(r->evaluate(components)){
     if(kb->Add(new Fact(r->name, r->actors))){
       //Run query.inference here
@@ -53,10 +54,13 @@ bool Query::enact(Rule * r, vector<string> components, KB * kb){
     return true;
   }
   return false;
-}
+}*/
 
 //------------------------------Inferencing-----------------------------------------------//
 
+//Check if AND or OR
+//if OR, only check the ones with the right number of actors.
+/*
 void CreateVarBoundsMaster(int iterate, vector<string> varMapping){
 	//Create map fcn will populate
 	for(int i=0; i<varMapping.size(); i++){
@@ -82,89 +86,143 @@ map<string, vector<string> > CreateVarBounds(vector<Fact*>* Facts, vector<string
 		}
 	}
 return VarBounds;
+}*/
+
+//Grandfather->vector
+//[0]: [John, John]
+//[1] : [Bob, Mary]
+
+map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
+	string relation = newFact[0];
+	//int reqSize = newFact.size() - 1;
+	vector<string> actors = newFact.erase(1);
+	map<string, vector<string>>* output;
+	//SORT OUT LOGIC OPS HERE
+	vector<string> path;
+
+	if (kb->FactMap.count(relation) >= 1 && rb->rules.count(relation) >= 1) {
+		Rule * r = rb->rules[relation];
+		if (ruleEvaluate(r, actors)) {
+			//split components of r
+			for (int j = 0; j < r->components.size(); j++) {
+				vector< vector<string> >path = traverse(actors, kb->FactMap[r->components[j][0]]);
+				for (int i = 0; i < path.size(); i++) {
+					output[relation][i].push_back(&path[i]);
+				}//get rid of copies here
+			}
+		}//somehow return an empty output?
+	}
+	output = removeDoubles(output);
+	return output;
+}
+//["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]
+bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
+	bool truthValues = false;
+	int ops = r->ops;
+	if (factEvaluate(actors, r->name)) return true;
+	else if(ops == 0){
+		//call helper function
+		bool finalValue;
+		for(int i = 0; i < r->components.size(); i++) {
+			vector<string> nextActor;
+			for (int n = 1; n < r->components.size(); n++) {
+				nextActor.push_back(actors[stoi(r->components[i][n]]));
+			}
+			truthValues = truthValues || ruleEvalHelper(r->components[i][0], nextActor);
+		}
+		return finalValue;
+	}
+	else if (ops == 1) {
+		//AND
+		return finalValue;
+	}
+	else return finalValue;
 }
 
-void Query::inference(){
-	for()
+bool Query::ruleEvalHelper(string name, vector<string> actors) {
+	if (factEvaluate(name, actors)) return true;
+	else {
+		if (rb->rules.count(name) == 1) return ruleEvaluate(rb->rules[name],actors);
+		else return false;
+	}
+}
+
+vector< vector<string> > Query::traverse(vector<string> actors, vector<string> actorList) {
+	vector< vector<string> > result;
+	int initSize = actorList[0].size();
+	bool invalid = false;
+	for (int i = 0; i < initSize; i++) {
+		vector<string> path;
+		for (int j = 0; j < actorList.size(); j++) {
+			if (actorList[j].size() < initSize) {
+				invalid = true;
+				break;
+			}else if(actorList[j][i] == actors[j]) {
+				path.push_back(actorList[j][i]);
+				break;
+			}
+			else if (actors[j] == "_") {
+				path.push_back(actorList[j][i]);
+			}
+			else {
+				invalid = true;
+				break;
+			}
+		}
+		if (invalid == true)break;
+		result.push_back(path);
+	}
+	return result;
+}
+
+bool Query::factEvaluate(vector<string> actors, string name) {
+	vector< vector<string> > result;
+	vector< vector<string> > actorList;
+	bool isValid = false;
+
+	if (kb->FactMap.count(name) >= 1) {
+		actorList = kb->FactMap[name];
+		int initSize = actorList[0].size();
+		bool broken = false;
+		for (int i = 0; i < initSize; i++) {
+			vector<string> path;
+			bool matchFound = false;
+			for (int j = 0; j < actorList.size(); j++) {
+				if (actorList[j].size() < initSize) {
+					broken = true;
+					break;
+				}
+				else if (actorList[j][i] == actor[j]) {
+					matchFound = true;
+					break;
+				}
+				else if(actor[j] == "_"){
+					matchFound = true;
+				}
+				else {
+					matchFound = false;
+					break;
+				}
+			}
+			isValid = matchFound;
+			if (broken == true)break;
+		}
+	}
+	return isValid;
 }
 
 //Prints the results of the query to terminal
 //Input: void
 //Output: void
-	void Query::printResults(){
-		for(int i=0;i<Results.size();i++) cout << Results.at(i)->toString();
-	}
-	//-------------------------------------------------------PHASE 1-------------------------------------------
-void Query::CreatePredNames(Rule* r) {
-	for (int i = 0; i < r->components.size(); i++) {
-		predNames.push_back(r->components.at(i)->name); //Builds vector of relationship names
-		for (int j = 0; j < r->components.at(i)->components.size(); j++) //Iterate through rule actors
-			ToBind.push_back(r->components.at(i)->components.at(j)); //pushes actors onto ToBind
+void Query::printResults() {
+	for (int i = 0; i < Results.size(); i++) {
+		cout << Results.at(i)->toString();
 	}
 }
 
-vector< vector<Fact*>*> Query::PermutateAndBind(KB* kb) {
-
-	vector< vector<Fact*>*> FromKB;
-	vector< vector<Fact*>*> permutation;
-
-	for (int j = 0; j<predNames.size(); j++) { //(Father, Parent)
-		vector<Fact*>* Temp;
-		Temp = kb->Find(predNames.at(j)); //passes in a relationship name
-		FromKB.push_back(Temp); //Fact pointer onto FromKB (Actor1, Actor2)
-	}
-	//I need to build permutation vector here
-	//ToBind holds needed actors
-	//iterate through toBind and assign an integer to each unique actor and store ints into a vector
-	//With permutated vector, we assign each relationship to X,Y
-	//Assign other half of permuted to Z,X while checking if they fit the integers assigned.
-
-	return FromKB; //vector of all relationships relevant
-}
-//-----------------------PHASE 2---------------------------------------------------------
-vector<string> Query::Bind(KB* KnowledgeBase) {
-	vector<int> ID;
-	ID = BuildID(); //builds ID vector
-	vector< vector<Fact*>* > toBeBinded = PermutateAndBind(KnowledgeBase);
-	vector<string> result;
-	map<int,string> varStorage;
-	for (int i = 0; i < toBeBinded[0]->size(); i++){
-		varStorage[ID[0]] = toBeBinded[0]->at(i)->components[0];
-		varStorage.[ID[1]] = toBeBinded[0]->at(i)->components[1];
-		for (int j = 0; j < toBeBinded[1]->size(); j++){
-			if (varStorage.find(ID[2]) != varStorage.end()) break;
-			if (varStorage.find(ID[3]) != varStorage.end()) break;
-			result.push_back(toBeBinded[0]->at(i)->components[0]);
-			result.push_back(toBeBinded[0]->at(i)->components[1]);
-			result.push_back(toBeBinded[1]->at(i)->components[0]);
-			result.push_back(toBeBinded[1]->at(i)->components[1]);
-			//call phase 3(result); Passes actors in an array. eg [John,Mary,Ahmed,John] of [X, Y, Z, Z]
-		}
-		varStorage.clear();
-	}
-	return result; //Change return types depending on how you use this function.
-}
-
-vector<int> Query::BuildID() {
-	vector<int> id; //holds actor id for building (X,Y,Z,X) or whatever combo it is
-	int currnum = 0;
-	for (int i = 0; i < ToBind.size(); i++) {//Iterate through needed actors
-		if (id.size() != 0) { //If IDs are not empty, do the thing
-			for (int j = 0; j < i; j++) { //Iterate through processed indexes
-				if (ToBind[i] == ToBind[j]) { //If it's occured already, put it in again
-					id.push_back(id[i]);
-					break;
-				}
-				else { //ID is empty, put 0 in index 1
-					id.push_back(currnum);
-					currnum++;
-				}
-			}
-		}
-		else {
-			id.push_back(currnum);
-			currnum++;
-		}
-	}
-	return id;
+map<string, vector<string> > * Query::removeDoubles(map<string, vector<string> > * target) {
+	map<string, vector<string> > * output;
+	//placeholder method
+	output = target;
+	return output;
 }
