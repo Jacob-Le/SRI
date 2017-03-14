@@ -1,6 +1,7 @@
 //Parse.h
 #include<string>
 #include<vector>
+using namespace std;
 
 //#include "Query.cpp" would mean not needing to inherit KB and RB anymore
 #include "KB.cpp"
@@ -15,10 +16,11 @@ class Parse{
 	int numRuns;
 
 	Parse(KB* knowledgeBase, RB* ruleBase);//, Query* QQ); 
-	std::vector<string> RuleVector;
+	vector<string> RuleVector;
+	map<string,int> convert;
 
-	std::vector<string> FactVector;
-	std::vector<vector<string> > Preds;
+	vector<string> FactVector;
+	vector<vector<string> > Preds;
 	int searchLength(int start, int end);
 	void ParsePred(string input, bool FactMode);
 	void ParseRule(string input);

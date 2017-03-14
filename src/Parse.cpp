@@ -9,6 +9,7 @@
 #include<iostream>
 #include<algorithm>
 #include<fstream>
+#include<string>
 
 #include "Parse.h"
 
@@ -38,6 +39,7 @@ void Parse::ParsePred(string input, bool factMode){
 	string currEntry;
 	int nextLen;
 	bool oneArg;
+	int newName;
 	int delimiter1 = input.find("(");
 	string relationship = input.substr(0, delimiter1);
 	Entries.push_back(relationship);
@@ -56,13 +58,28 @@ void Parse::ParsePred(string input, bool factMode){
 			nextLen = searchLength(delimiter1,delimiter3);
 			currEntry = input.substr(delimiter1,nextLen);
 			//cout << currEntry << "\n";
-			Entries.push_back(currEntry);
+			if(factMode) Entries.push_back(currEntry); //adds to vector of components
+			else{
+				if(convert.count(currEntry) == 0){
+					newName = convert.size();
+					convert[currEntry] = newName;
+				}
+				Entries.push_back(to_string(convert[currEntry]));				
+			}
 			break;
 		}
 		nextLen = searchLength(delimiter1,delimiter2) -1; //determines search length
 		currEntry = input.substr(delimiter1+1,nextLen); //parses out component
 		//cout << currEntry << "\n";
-		Entries.push_back(currEntry); //adds to vector of components
+		
+		if(factMode) Entries.push_back(currEntry); //adds to vector of components
+		else{
+			if(convert.count(currEntry) == 0){
+				newName = convert.size();
+				convert[currEntry] = newName;
+			}
+			Entries.push_back(std::to_string(convert[currEntry]));				
+		}
 		delimiter1 = delimiter2;
 		delimiter2 = input.find(",",delimiter2+1);
 	}
