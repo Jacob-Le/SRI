@@ -94,14 +94,14 @@ return VarBounds;
 map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
 	string relation = newFact[0];
 	//int reqSize = newFact.size() - 1;
-	vector<string> actors = newFact.erase(1, newFact.end());
+	vector<string> actors = newFact.erase(1);
 	map<string, vector<string>>* output;
 	//SORT OUT LOGIC OPS HERE
 	vector<string> path;
 
 	if (kb->FactMap.count(relation) >= 1 && rb.rules.count(relation) >= 1) {
 		Rules * r = rb->rules[relation];
-		if (ruleEvaluate(r)) {
+		if (ruleEvaluate(r, actors)) {
 			//split components of r
 			for (int j = 0; j < r->components.size(); j++) {
 				vector< vector<string> >path = traverse(actors, *kb.FactMaps[r->components[j][0]]);
@@ -124,7 +124,11 @@ bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
 		bool finalValue;
 		for(int i = 0; i < r->components.size(); i++) {
 			ops = r->ops;
-			truthValues.push_back(ruleEvalHelper(r->components[i][0], actors));
+			vector<string> nextActor;
+			for (int n = 1; n < r->components.size(); n++) {
+				nextActor.push_back(actors[r->components[i][n]]);
+			}
+			truthValues.push_back(ruleEvalHelper(r->components[i][0], nextActor));
 			else continue;
 		}
 		finalValue = truthValues[0];
