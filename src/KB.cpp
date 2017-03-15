@@ -69,6 +69,32 @@ string KB::toString(){
 	return output;
 }
 
+//Converts Knowledge database to string
+//Input: void
+//Output: string representation of knowledge database
+vector<string> KB::serverToString(){
+	vector<string> temp;
+	map<string, vector<vector<string> > > ::iterator it = FactMap.begin();
+	for(; it!= FactMap.end(); it++){
+		int j = 0; //Can't do nested for loop because trying to traverse left to right then down
+		while(true){
+			string output = "";
+			output = output + "FACT " + it->first + "(";
+			for(int i=0; i< it->second.size();i++){
+				//cout << "[" << j<< "][" << i << "]: " << it->second.at(i).at(j) << " ";
+				output += it->second.at(i).at(j);
+				if(i != it->second.size()-1) output += ","; 
+			}
+			//cout << endl; Comment these out if want to see how navigating KB
+			output += ")\n";
+			temp.push_back(output);
+			if(j+1 < it->second.at(j).size()) j++;
+			else break; //initially had loop above in the while loop condition but it broke when j was larger than the vector indices
+		}
+	}
+	return temp;
+}
+
 
 /*int main(){
 	KB* Keiba = new KB();

@@ -104,7 +104,7 @@ string Rule::toString(){
 		output += actors.at(i);
 		if(i != actors.size()-1) output += ",";
 	}
-	output += ")- ";
+	output += "):- ";
 
 	//Adding Logic
 	if(ops == 0) output += "OR ";

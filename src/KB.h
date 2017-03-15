@@ -31,5 +31,6 @@ public:
 	void Add(vector<string> theFact);
 	void Remove(string name);
 	string toString();
+	vector<string> serverToString();
 };
 

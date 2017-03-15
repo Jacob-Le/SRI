@@ -22,6 +22,15 @@ Parse::Parse(KB* knowledgeBase, RB* ruleBase, Query* QQ2){
 	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
 	QQ = QQ2;
+	Server = false;
+}
+
+void Parse::ServerModeON(){
+	Server = true;
+}
+
+void Parse::ServerModeOFF(){
+	Server = false;
 }
 
 //Function to calculate length of string
@@ -42,6 +51,7 @@ void Parse::ParsePred(string input, bool factMode){
 	int newName;
 	int delimiter1 = input.find("(");
 	string relationship = input.substr(0, delimiter1);
+	cout << relationship << endl;
 	Entries.push_back(relationship);
 
 	int delimiter2 = input.find(",",delimiter1); //.find() sets to -1 if not found
@@ -57,7 +67,7 @@ void Parse::ParsePred(string input, bool factMode){
 			delimiter3;
 			nextLen = searchLength(delimiter1,delimiter3);
 			currEntry = input.substr(delimiter1,nextLen);
-			//cout << currEntry << "\n";
+			cout << currEntry << "\n";
 			if(factMode) Entries.push_back(currEntry); //adds to vector of components
 			else{
 				if(convert.count(currEntry) == 0){
@@ -70,7 +80,7 @@ void Parse::ParsePred(string input, bool factMode){
 		}
 		nextLen = searchLength(delimiter1,delimiter2) -1; //determines search length
 		currEntry = input.substr(delimiter1+1,nextLen); //parses out component
-		//cout << currEntry << "\n";
+		cout << currEntry << "\n";
 		
 		if(factMode) Entries.push_back(currEntry); //adds to vector of components
 		else{
@@ -183,10 +193,18 @@ void Parse::ParseLine(string input){
 		ParseFile(input.substr(searchStart, nextLen+1));
 		return;
 	}else if(DUMP){
-		string fileDump = KnowledgeBase->toString();
-		fileDump += RuleBase->toString();
-		DumpToFile(input.substr(searchStart, nextLen+1),fileDump);
-		return;
+		if(!Server){
+			string fileDump = KnowledgeBase->toString();
+			fileDump += RuleBase->toString();
+			DumpToFile(input.substr(searchStart, nextLen+1),fileDump);
+			return;
+		}else{
+			vector<string> TheKB = KnowledgeBase->serverToString();
+			vector<string> TheRB = RuleBase->serverToString();
+			//Have to do send these
+			//for(int i=0; i<TheKB.size(); i++) cout << TheKB.at(i);
+			//for(int i=0; i<TheRB.size(); i++) cout << TheRB.at(i);
+		}
 	}else if(FACT){
 		ParsePred(input.substr(searchStart, nextLen+1), true);
 		return;
@@ -261,6 +279,16 @@ void Parse::ParseLine(string input){
 //Input: file name
 //Output: void
 void Parse::ParseFile(string fileName){
+	if(fileName.size() >= 5){
+		if(fileName.substr(fileName.size()-4,4) != ".sri"){
+			cout << "Please enter a valid .sri file\n";
+			return;
+		}
+	}else{
+		cout << "Please enter a valid .sri file\n";
+		return;
+	}
+
 	string input;
 	fstream file;
 	file.open(fileName.c_str(),std::fstream::in);
@@ -277,6 +305,12 @@ void Parse::ParseFile(string fileName){
 //Input: Filename and string input
 //Output: void
 void Parse::DumpToFile(string fileName,string input){
+	if(fileName.size() >= 5){
+		if(fileName.substr(fileName.size()-4,4) != ".sri") fileName += ".sri";
+	}else{
+		fileName += ".sri";
+	}
+	cout << fileName << endl;
 	fstream file;
 	file.open(fileName.c_str(),std::fstream::out);
 	file.write(input.c_str(),input.size());
