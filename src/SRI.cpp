@@ -1,14 +1,18 @@
 #include <stdlib.h>
 #include <iostream>
-#include "Parse.cpp"
+#include "SRI.h"
 
 using namespace std;
 
-int main(){
-  KB* knowledge = new KB();
-  RB* rules = new RB();
-  Query* query = new Query(knowledge, rules);
-  Parse* Parser = new Parse(knowledge,rules, query);
+SRI::SRI(){
+  knowledge = new KB();
+  rules = new RB();
+  query = new Query(knowledge, rules);
+  Parser = new Parse(knowledge,rules, query);
   //Parser->ServerModeON();
-  Parser->ParseTerminalInput();
+}
+
+int main(){
+  SRI* sri = new SRI();
+  sri->Parser->ParseTerminalInput();
 }
