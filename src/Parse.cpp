@@ -18,10 +18,10 @@ using namespace std;
 //Constructor
 //Input: Knowledge database and Rules database
 //Output: void, but creates a Parse object
-Parse::Parse(KB* knowledgeBase, RB* ruleBase){//, Query* QQ2){
+Parse::Parse(KB* knowledgeBase, RB* ruleBase, Query* QQ2){
 	RuleBase = ruleBase;
 	KnowledgeBase = knowledgeBase;
-	//QQ = QQ2;
+	QQ = QQ2;
 }
 
 //Function to calculate length of string
@@ -195,22 +195,23 @@ void Parse::ParseLine(string input){
 		ParseRule(input.substr(searchStart, nextLen));
 		return;
 	}else if(INFE){
-		/*nextLen = searchLength(searchStart, input.size());
-		if(RuleBase->rules.count(input.substr(searchStart, nextLen))==0){
-			vector<string> input;
-			input.push_back(RuleBase->rules[index]->name);
-			for(int i=0; i < RuleBase->rules[index]->actors.size(); i++){
-				input.push_back("");
+		nextLen = searchLength(searchStart, input.size());
+		string ruleName = input.substr(searchStart, nextLen);
+		if(RuleBase->rules.count(ruleName)==0){
+			vector<string> Qinput;
+			Qinput.push_back(ruleName);
+			for(int i=0; i < RuleBase->rules[ruleName]->actors.size(); i++){
+				Qinput.push_back("_");
 			}
-			QQ->inference(input);
+			QQ->inference(Qinput);
 		}else{
-			if(numPreds == 1){
-				ParsePred(input.substr(searchStart, nextLen),false);
+			if(numPreds(ruleName) == 1){
+				ParsePred(ruleName,false);
 				QQ->inference(Preds.at(0));
 				Preds.clear();
 			}
-			else cout<<"No results in RuleBase for: '"<< input.substr(searchStart, nextLen) << "'\n";
-		}*/
+			else cout<<"No results in RuleBase for: '"<< ruleName << "'\n";
+		}
 	}else{ //DROP
 		string searchingFor = input.substr(searchStart, nextLen);
 		bool CheckFactinKB = KnowledgeBase->FactMap.count(searchingFor);// == 0;
@@ -297,10 +298,10 @@ void Parse::AddRule(bool Logic) {
 	Preds.clear();
 }
 
-int main(){
+/*int main(){
   KB* knowledge = new KB();
   RB* rules = new RB();
   //Query* query = new Query(knowledge, rules);
   Parse* Parser = new Parse(knowledge,rules);//, query);
   Parser->ParseTerminalInput();
-}
+}*/

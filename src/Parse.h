@@ -3,19 +3,20 @@
 #include<vector>
 using namespace std;
 
-//#include "Query.cpp" would mean not needing to inherit KB and RB anymore
-#include "KB.cpp"
-#include "RB.cpp"
+
+#include "Query.cpp"
+//#include "KB.cpp"
+//#include "RB.cpp"
 
 
 class Parse{
 	public:
 	RB* RuleBase;
 	KB* KnowledgeBase;
-	//Query* QQ;
+	Query* QQ;
 	int numRuns;
 
-	Parse(KB* knowledgeBase, RB* ruleBase);//, Query* QQ); 
+	Parse(KB* knowledgeBase, RB* ruleBase, Query* QQ); 
 	vector<string> RuleVector;
 	map<string,int> convert;
 
@@ -32,3 +33,4 @@ class Parse{
 	void AddFact(vector<string> input);
 	void AddRule(bool Logic);
 };
+
