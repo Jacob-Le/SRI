@@ -115,6 +115,7 @@ map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father
 			string temp;
 			for (int j = 0; j < r->components.size(); j++) {
 				temp = r->components[j][0];
+				cout << "ITERATING" << endl;
 				vector< vector<string> >path = traverse(actors, kb->FactMap[temp]);
 			}
 			for (int i = 0; i < path.size(); i++) {
@@ -158,7 +159,11 @@ bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 }
 
 bool Query::ruleEvalHelper(string name, vector<string> actors) {
-	if (factEvaluate(actors, name)) return true;
+	cout << "EVALHELPER: " << name << endl;
+	if (factEvaluate(actors, name)) {
+		cout << "Found in KB" << endl;
+		return true;
+	}
 	else {
 		if (rb->rules.count(name) == 1) return ruleEvaluate(rb->rules[name],actors);
 		else return false;
@@ -197,8 +202,9 @@ bool Query::factEvaluate(vector<string> actors, string name) {
 	vector< vector<string> > result;
 	vector< vector<string> > actorList;
 	bool isValid = false;
-
+	cout << "FACTEVAL: " << name << endl;
 	if (kb->FactMap.count(name) >= 1) {
+		cout << "FACTEVAL: FOUND IN KB" << endl;
 		actorList = kb->FactMap[name];
 		int initSize = actorList[0].size();
 		bool broken = false;
@@ -226,6 +232,7 @@ bool Query::factEvaluate(vector<string> actors, string name) {
 			if (broken == true)break;
 		}
 	}
+	cout << "FACTEVAL: isValid " << isValid << endl;
 	return isValid;
 }
 
