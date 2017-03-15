@@ -4,5 +4,7 @@
 class Client{
 	public:
 	TCPSocket client;
+	
+	void UploadFile(string fileName);
 
 };

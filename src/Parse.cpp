@@ -51,7 +51,7 @@ void Parse::ParsePred(string input, bool factMode){
 	int newName;
 	int delimiter1 = input.find("(");
 	string relationship = input.substr(0, delimiter1);
-	cout << relationship << endl;
+	//cout << relationship << endl;
 	Entries.push_back(relationship);
 
 	int delimiter2 = input.find(",",delimiter1); //.find() sets to -1 if not found
@@ -67,7 +67,7 @@ void Parse::ParsePred(string input, bool factMode){
 			delimiter3;
 			nextLen = searchLength(delimiter1,delimiter3);
 			currEntry = input.substr(delimiter1,nextLen);
-			cout << currEntry << "\n";
+			//cout << currEntry << "\n";
 			if(factMode) Entries.push_back(currEntry); //adds to vector of components
 			else{
 				if(convert.count(currEntry) == 0){
@@ -80,7 +80,7 @@ void Parse::ParsePred(string input, bool factMode){
 		}
 		nextLen = searchLength(delimiter1,delimiter2) -1; //determines search length
 		currEntry = input.substr(delimiter1+1,nextLen); //parses out component
-		cout << currEntry << "\n";
+		//cout << currEntry << "\n";
 		
 		if(factMode) Entries.push_back(currEntry); //adds to vector of components
 		else{
