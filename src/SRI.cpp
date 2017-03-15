@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <iostream>
-#include "Query.cpp"
+#include "Parse.cpp"
 
 using namespace std;
 
