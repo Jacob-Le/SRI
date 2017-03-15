@@ -3,6 +3,7 @@
 #include<vector>
 using namespace std;
 
+
 #include "Query.cpp"
 //#include "KB.cpp"
 //#include "RB.cpp"
@@ -32,3 +33,4 @@ class Parse{
 	void AddFact(vector<string> input);
 	void AddRule(bool Logic);
 };
+

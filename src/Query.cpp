@@ -60,6 +60,7 @@ vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
 
 //Check if AND or OR
 //if OR, only check the ones with the right number of actors.
+
 /*
 void CreateVarBoundsMaster(int iterate, vector<string> varMapping){
 	//Create map fcn will populate
@@ -220,7 +221,7 @@ void Query::printResults() {
 	}
 }
 
-map<string, vector<string> > * Query::removeDoubles(map<string, vector<string> > * target) {
+(map<string, vector<string> > * target) {
 	map<string, vector<string> > * output;
 	//placeholder method
 	output = target;
