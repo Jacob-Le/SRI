@@ -97,7 +97,7 @@ map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father
 	string relation = newFact[0];
 	//int reqSize = newFact.size() - 1;
 	vector<string> actors;
-
+	cout << "Entered Inference" << endl;
 	for (int i = 1; i < newFact.size(); i++) {
 		actors.push_back(newFact[i]);
 	}
@@ -106,9 +106,11 @@ map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father
 	//SORT OUT LOGIC OPS HERE
 	vector<string> path;
 
-	if (kb->FactMap.count(relation) >= 1 && rb->rules.count(relation) >= 1) {
+	if (rb->rules.count(relation) == 1) {
+		cout << "Found in KB and RB! Evaluating assosciated Rule" << endl;
 		Rule * r = rb->rules[relation];
 		if (ruleEvaluate(r, actors)) {
+			cout << "Rule Evaluated! Iterating now!" << endl;
 			//split components of r
 			string temp;
 			for (int j = 0; j < r->components.size(); j++) {
@@ -120,16 +122,22 @@ map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father
 			}
 		}//somehow return an empty output?
 	}
+	cout << "Iteration Complete! Output:" << endl;
+	for (int i = 0; i < output.size(); i++) {
+		cout << output[relation][i] << endl;
+	}
 	output = removeDoubles(output);
 	return output;
 }
 //["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]
 bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
+	cout << "Entered RuleEvaluation!" << endl;
 	bool truthValues = false;
 	int ops = r->ops;
 	string name = r->name;
 	if (factEvaluate(actors, name)) return true;
 	else if(ops == 0){
+		cout << "Calling evalHelper!" << endl;
 		//call helper function
 		bool finalValue;
 		for(int i = 0; i < r->components.size(); i++) {
@@ -137,6 +145,7 @@ bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 			for (int n = 1; n < r->components.size(); n++) {
 				nextActor.push_back(actors[stoi(r->components[i][n])]);
 			}
+			cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
 			truthValues = truthValues || ruleEvalHelper(r->components[i][0], nextActor);
 		}
 		return finalValue;
