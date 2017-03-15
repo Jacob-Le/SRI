@@ -15,4 +15,5 @@ public:
   void Add(Rule * r);
   void Remove(string name);
   string toString();
+  vector<string> serverToString();
 };

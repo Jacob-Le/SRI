@@ -15,11 +15,14 @@ class Parse{
 	KB* KnowledgeBase;
 	Query* QQ;
 	int numRuns;
+	bool Server; //false by default
 
 	Parse(KB* knowledgeBase, RB* ruleBase, Query* QQ); 
 	vector<string> RuleVector;
 	map<string,int> convert;
 	map<string, vector<string> > QueryOutput;
+	void ServerModeOFF();
+	void ServerModeON();
 
 	vector<string> FactVector;
 	vector<vector<string> > Preds;

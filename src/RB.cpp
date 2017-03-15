@@ -55,6 +55,16 @@ string RB::toString(){
     return s;
 }
 
+//A toString() that returns a vector of strings so that strings can be sent one at a time rather than in mass
+vector<string> RB::serverToString(){
+	vector<string> temp;
+    map<string, Rule*> ::iterator it = rules.begin();
+	for(; it!= rules.end(); it++){
+		temp.push_back(it->second->toString());
+	}
+	return temp;
+}
+
 //DECONSTRUCTOR-----------------------------------------------------------------------------------
 //rules destructs itself automatically at the end.
 RB::~RB() {
