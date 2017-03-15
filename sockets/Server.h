@@ -5,7 +5,9 @@
 
 class Server{
 	public:
-	TCPServer server;
-	
+	TCPServer server;	
 	map<int,SRI> SRIMap;
+	
+	Server();
+	void Daemon();
 };
