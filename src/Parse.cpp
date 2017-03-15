@@ -261,6 +261,16 @@ void Parse::ParseLine(string input){
 //Input: file name
 //Output: void
 void Parse::ParseFile(string fileName){
+	if(fileName.size() >= 5){
+		if(fileName.substr(fileName.size()-4,4) != ".sri"){
+			cout << "Please enter a valid .sri file\n";
+			return;
+		}
+	}else{
+		cout << "Please enter a valid .sri file\n";
+		return;
+	}
+
 	string input;
 	fstream file;
 	file.open(fileName.c_str(),std::fstream::in);
@@ -277,6 +287,12 @@ void Parse::ParseFile(string fileName){
 //Input: Filename and string input
 //Output: void
 void Parse::DumpToFile(string fileName,string input){
+	if(fileName.size() >= 5){
+		if(fileName.substr(fileName.size()-4,4) != ".sri") fileName += ".sri";
+	}else{
+		fileName += ".sri";
+	}
+	cout << fileName << endl;
 	fstream file;
 	file.open(fileName.c_str(),std::fstream::out);
 	file.write(input.c_str(),input.size());
