@@ -197,7 +197,7 @@ void Parse::ParseLine(string input){
 	}else if(INFE){
 		nextLen = searchLength(searchStart, input.size());
 		string ruleName = input.substr(searchStart, nextLen);
-		if(RuleBase->rules.count(ruleName)==0){
+		if(RuleBase->rules.count(ruleName)==1){
 			vector<string> Qinput;
 			Qinput.push_back(ruleName);
 			for(int i=0; i < RuleBase->rules[ruleName]->actors.size(); i++){
