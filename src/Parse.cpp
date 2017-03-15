@@ -195,22 +195,48 @@ void Parse::ParseLine(string input){
 		ParseRule(input.substr(searchStart, nextLen));
 		return;
 	}else if(INFE){
+		//Interpretting Input
 		nextLen = searchLength(searchStart, input.size());
 		string ruleName = input.substr(searchStart, nextLen);
-		if(RuleBase->rules.count(ruleName)==0){
+		if(RuleBase->rules.count(ruleName)==1){
 			vector<string> Qinput;
 			Qinput.push_back(ruleName);
 			for(int i=0; i < RuleBase->rules[ruleName]->actors.size(); i++){
 				Qinput.push_back("_");
 			}
-			QQ->inference(Qinput);
+			QueryOutput = QQ->inference(Qinput);			
 		}else{
 			if(numPreds(ruleName) == 1){
 				ParsePred(ruleName,false);
-				QQ->inference(Preds.at(0));
+				QueryOutput = QQ->inference(Preds.at(0));
 				Preds.clear();
 			}
 			else cout<<"No results in RuleBase for: '"<< ruleName << "'\n";
+		}
+		
+		//Recieving Output
+		if(QueryOutput.size() == 0) cout << "No results returned for " << ruleName << endl;
+		else if(QueryOutput.size() == 1){
+			string output = "";
+			map<string, vector<string> > ::iterator it = QueryOutput.begin();
+			for(int i=0; i < it->second.size(); i++){
+				for(int j=0; j< it->second.at(i).size(); j++){
+					output = output + it->second.at(i).at(j) + "\n";
+				}
+			}
+		}else{
+			string output = "";
+			map<string, vector<string> > ::iterator it = QueryOutput.begin();
+			for(; it!= QueryOutput.end(); it++){
+				output = output + it->first + ":\n";
+				for(int i=0; i < it->second.size(); i++){
+					for(int j=0; j< it->second.at(i).size(); j++){
+						output = output + it->second.at(i).at(j) + "\n";
+					}
+				}
+			}
+		cout << "From Inference: \n" << output;
+		//Need to clear() QueryOutput after storing it in the KB
 		}
 	}else{ //DROP
 		string searchingFor = input.substr(searchStart, nextLen);

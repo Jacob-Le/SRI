@@ -93,7 +93,7 @@ return VarBounds;
 //[0]: [John, John]
 //[1] : [Bob, Mary]
 
-map<string, vector<string>> Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
+map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
 	string relation = newFact[0];
 	//int reqSize = newFact.size() - 1;
 	vector<string> actors;

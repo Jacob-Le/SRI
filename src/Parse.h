@@ -19,6 +19,7 @@ class Parse{
 	Parse(KB* knowledgeBase, RB* ruleBase, Query* QQ); 
 	vector<string> RuleVector;
 	map<string,int> convert;
+	map<string, vector<string> > QueryOutput;
 
 	vector<string> FactVector;
 	vector<vector<string> > Preds;
