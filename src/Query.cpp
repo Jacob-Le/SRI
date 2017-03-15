@@ -93,7 +93,7 @@ return VarBounds;
 //[0]: [John, John]
 //[1] : [Bob, Mary]
 
-map<string, vector<string*>> Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
+map<string, vector<string>> Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
 	string relation = newFact[0];
 	//int reqSize = newFact.size() - 1;
 	vector<string> actors;
@@ -102,7 +102,7 @@ map<string, vector<string*>> Query::inference(vector<string> newFact){ //(Father
 		actors.push_back(newFact[i]);
 	}
 
-	map<string, vector<string*>> output;
+	map<string, vector<string>> output;
 	//SORT OUT LOGIC OPS HERE
 	vector<string> path;
 
@@ -110,11 +110,13 @@ map<string, vector<string*>> Query::inference(vector<string> newFact){ //(Father
 		Rule * r = rb->rules[relation];
 		if (ruleEvaluate(r, actors)) {
 			//split components of r
+			string temp;
 			for (int j = 0; j < r->components.size(); j++) {
-				vector< vector<string> >path = traverse(actors, kb->FactMap[r->components[j][0]]);
+				temp = r->components[j][0];
+				vector< vector<string> >path = traverse(actors, kb->FactMap[temp]);
 			}
 			for (int i = 0; i < path.size(); i++) {
-				output[relation].push_back(&path[i]);//get rid of copies here
+				output[relation].push_back(path[i]);//get rid of copies here
 			}
 		}//somehow return an empty output?
 	}
@@ -125,7 +127,8 @@ map<string, vector<string*>> Query::inference(vector<string> newFact){ //(Father
 bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 	bool truthValues = false;
 	int ops = r->ops;
-	if (factEvaluate(actors, r->name)) return true;
+	string name = r->name;
+	if (factEvaluate(actors, name)) return true;
 	else if(ops == 0){
 		//call helper function
 		bool finalValue;
@@ -146,21 +149,21 @@ bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 }
 
 bool Query::ruleEvalHelper(string name, vector<string> actors) {
-	if (factEvaluate(name, actors)) return true;
+	if (factEvaluate(actors, name)) return true;
 	else {
 		if (rb->rules.count(name) == 1) return ruleEvaluate(rb->rules[name],actors);
 		else return false;
 	}
 }
 
-vector< vector<string>> Query::traverse(vector<string> actors, vector<string*> actorList) {
+vector< vector<string>> Query::traverse(vector<string> actors, vector< vector<string> > actorList) {
 	vector< vector<string> > result;
-	int initSize = actorList[0]->size();
+	int initSize = actorList[0].size();
 	bool invalid = false;
 	for (int i = 0; i < initSize; i++) {
 		vector<string> path;
 		for (int j = 0; j < actorList.size(); j++) {
-			if (actorList[j]->size() < initSize) {
+			if (actorList[j].size() < initSize) {
 				invalid = true;
 				break;
 			}else if(actorList[j][i] == actors[j]) {
@@ -226,8 +229,8 @@ bool Query::factEvaluate(vector<string> actors, string name) {
 //	}
 //}
 
-map<string, vector<string*>> Query::removeDoubles(map<string, vector<string*>>  target) {
-	map<string, vector<string*>> output;
+map<string, vector<string>> Query::removeDoubles(map<string, vector<string>>  target) {
+	map<string, vector<string>> output;
 	//placeholder method
 	output = target;
 	return output;

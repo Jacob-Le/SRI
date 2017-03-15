@@ -29,11 +29,11 @@ public:
 	//vector<Fact*> concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB);
 	//vector<Fact*> preventDupes(vector<Fact*>* A, vector<Fact*> B);
 
-	map<string, vector<string*>> inference(vector<string> newFact);
+	map<string, vector<string>> inference(vector<string> newFact);
 	bool ruleEvaluate(Rule * r, vector<string> actors);
 	bool ruleEvalHelper(string name, vector<string> actors);
 	bool factEvaluate(vector<string> actors, string name);
-	vector< vector<string>> traverse(vector<string> actors, vector<string*> actorList);
+	vector< vector<string>> traverse(vector<string> actors, vector< vector<string> > actorList);
 
 	//void CreatePredNames(Rule* r);
 	//vector< vector<Fact*>*> PermutateAndBind(KB* kb);
@@ -42,6 +42,6 @@ public:
 
 	//Part 3: evaluate Rules -------------------------------------------------------
 	//bool enact(Rule * r, vector<string> s, KB * kb);
-	map<string, vector<string*> >  removeDoubles(map<string, vector<string*> > target);
+	map<string, vector<string> >  removeDoubles(map<string, vector<string> > target);
 
 };
