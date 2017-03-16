@@ -46,7 +46,7 @@ map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ /
 				//cout << "ITERATING" << endl;
 				vector< vector<string> >path = traverse(actors, kb->FactMap[temp]);
 
-				cout << "INFERENCE: path.size=" << path.size() << endl;
+				//cout << "INFERENCE: path.size=" << path.size() << endl;
 				output[relation].insert(output[relation].end(),path.begin(),path.end());
 			}
 		}//somehow return an empty output?
@@ -55,7 +55,7 @@ map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ /
 	//output = removeDoubles(output);
 	for (int x = 0; x < output[relation].size(); x++){
 		for (int m = 0; m < output[relation][x].size(); m++){
-			cout << "INFERENCE: Output=" << output[relation][x][m] << endl;
+			//cout << "INFERENCE: Output=" << output[relation][x][m] << endl;
 		}
 	}
 	return output;
