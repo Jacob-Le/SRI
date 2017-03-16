@@ -100,6 +100,7 @@ map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father
 	cout << "Entered Inference" << endl;
 	for (int i = 1; i < newFact.size(); i++) {
 		actors.push_back(newFact[i]);
+		cout << "INFERENCE: Actors:" << newFact[i] << endl;
 	}
 
 	map<string, vector<string>> output;
@@ -130,7 +131,7 @@ map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father
 	output = removeDoubles(output);
 	return output;
 }
-//["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]
+
 bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 	cout << "Entered RuleEvaluation!" << endl;
 	bool truthValues = false;
@@ -144,6 +145,7 @@ bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 		for(int i = 0; i < r->components.size(); i++) {
 			vector<string> nextActor;
 			for (int n = 1; n < r->components.size(); n++) {
+				cout << "RULEEVAL: Actor: " << actors[stoi(r->components[i][n])] << endl;
 				nextActor.push_back(actors[stoi(r->components[i][n])]);
 			}
 			cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
@@ -212,11 +214,13 @@ bool Query::factEvaluate(vector<string> actors, string name) {
 			vector<string> path;
 			bool matchFound = false;
 			for (int j = 0; j < actorList.size(); j++) {
+				cout << "FACTEVAL: ActorList: " << actorList[j][i] << " :: Actors: " << actors[i] << endl;
 				if (actorList[j].size() < initSize) {
 					broken = true;
 					break;
 				}
 				else if (actorList[j][i] == actors[j]) {
+					//cout << "FACTEVAL: ActorList: "<<actorList[j][i]<<" :: Actors: "<< actors[i] << endl;
 					matchFound = true;
 					break;
 				}
@@ -227,8 +231,9 @@ bool Query::factEvaluate(vector<string> actors, string name) {
 					matchFound = false;
 					break;
 				}
+				isValid = matchFound;
 			}
-			isValid = matchFound;
+			//isValid = matchFound;
 			if (broken == true)break;
 		}
 	}
