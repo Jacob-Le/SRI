@@ -20,7 +20,7 @@ class Parse{
 	Parse(KB* knowledgeBase, RB* ruleBase, Query* QQ); 
 	vector<string> RuleVector;
 	map<string,int> convert;
-	map<string, vector<string> > QueryOutput;
+	map<string, vector<vector<string> > > QueryOutput;
 	void ServerModeOFF();
 	void ServerModeON();
 

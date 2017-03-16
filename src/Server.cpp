@@ -3,11 +3,12 @@
 #include <iostream>
 using namespace std;
 
-Server::Server(const char * _address, int _port, int _backlog){
-	server = TCPServer(address,port,backlog);
+Sever::Sever(const char * _address, int _port, int _backlog){
+	server = TCPServerSocket(_address,_port,_backlog);
 }
 
-Server::Daemon(){
+void Sever::Daemon(){
+	server = TCPServerSocket("0.0.0.0",9999,100);
 	server.initializeSocket();
 	for( ;; ){
 		TCPSocket* tcpSocket = server.getConnection();
@@ -15,12 +16,13 @@ Server::Daemon(){
 		int maxBytes = 1024;
 		char buffer[maxBytes];
 		memset(buffer,0,maxBytes);
-		int bytes_read =  server.readFromSocket(buffer, maxBytes);
+		int bytes_read =  tcpSocket->readFromSocket(buffer, maxBytes);
 		cout << buffer;
 		
 		if(buffer[0] == 'a') buffer[0] = 'b';
-		int bytes_sent = server.writeToSocket(buffer, maxBytes);
+		int bytes_sent = tcpSocket->writeToSocket(buffer, maxBytes);
 		cout << buffer;
+		tcpSocket->shutDown();
 	  //check if Socket in map
 	    //if not add new (ID,Socket) to map
 	  //access Socket from map
@@ -29,7 +31,8 @@ Server::Daemon(){
 }
 
 int main(){
-	Server* serve = new Server("0.0.0.0",9999,100);
+	Sever* serve = new Sever("0.0.0.0",9999,100);
+	//Server* serve = new Server();
 	serve->Daemon();
 }
 

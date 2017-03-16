@@ -239,7 +239,7 @@ void Parse::ParseLine(string input){
 		if(QueryOutput.size() == 0) cout << "No results returned for " << ruleName << endl;
 		else if(QueryOutput.size() == 1){
 			string output = "";
-			map<string, vector<string> > ::iterator it = QueryOutput.begin();
+			map<string, vector<vector<string> > >::iterator it = QueryOutput.begin();
 			for(int i=0; i < it->second.size(); i++){
 				for(int j=0; j< it->second.at(i).size(); j++){
 					output = output + it->second.at(i).at(j) + "\n";
@@ -247,12 +247,12 @@ void Parse::ParseLine(string input){
 			}
 		}else{
 			string output = "";
-			map<string, vector<string> > ::iterator it = QueryOutput.begin();
+			map<string, vector< vector<string> > >::iterator it = QueryOutput.begin();
 			for(; it!= QueryOutput.end(); it++){
 				output = output + it->first + ":\n";
 				for(int i=0; i < it->second.size(); i++){
 					for(int j=0; j< it->second.at(i).size(); j++){
-						output = output + it->second.at(i).at(j) + "\n";
+							output = output + it->second.at(i).at(j) + "\n";
 					}
 				}
 			}
