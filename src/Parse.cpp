@@ -239,6 +239,7 @@ void Parse::ParseLine(string input){
 		string output;
 		if(QueryOutput.size() == 0) cout << "No results returned for " << ruleName << endl;
 		else if(QueryOutput.size() == 1){
+<<<<<<< HEAD
 			output = "";
 			map<string, vector<vector<string> > >::iterator it = QueryOutput.begin();
 			for(int i=0; i < it->second.size(); i++){
@@ -247,6 +248,20 @@ void Parse::ParseLine(string input){
 				AddFact(it->second.at(i));
 			}
 		}else{
+=======
+			//cout << "PARSE: Printing Protocol 1" << endl;
+			output = "";
+			map<string, vector<vector<string> > >::iterator it = QueryOutput.begin();
+			//cout << "PARSE: PrePrint check. it->second.size() ="<< it->second.size() << endl;
+			for(int i=0; i < it->second.size(); i++){
+				//cout << "PARSE: Print WORKING" << endl;
+				for(int j=0; j< it->second.at(i).size(); j++){
+					output = output + it->second.at(i).at(j) + "\n";
+				}
+			}//cout << "PARSE: Parse Complete." << endl;
+		}else{
+			//cout << "PARSE: Printing Protocol 2" << endl;
+>>>>>>> 374f0a0988a04f15667e538726e8121079625897
 			output = "";
 			map<string, vector< vector<string> > >::iterator it = QueryOutput.begin();
 			for(; it!= QueryOutput.end(); it++){
