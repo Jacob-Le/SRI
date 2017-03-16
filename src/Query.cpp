@@ -62,6 +62,7 @@ vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
 //if OR, only check the ones with the right number of actors.
 
 /*
+
 void CreateVarBoundsMaster(int iterate, vector<string> varMapping){
 	//Create map fcn will populate
 	for(int i=0; i<varMapping.size(); i++){
