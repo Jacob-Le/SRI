@@ -94,7 +94,7 @@ return VarBounds;
 //[0]: [John, John]
 //[1] : [Bob, Mary]
 
-map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
+map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
 	string relation = newFact[0];
 	//int reqSize = newFact.size() - 1;
 	vector<string> actors;
@@ -104,7 +104,7 @@ map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father
 		cout << "INFERENCE: Actors:" << newFact[i] << endl;
 	}
 
-	map<string, vector<string>> output;
+	map<string, vector<vector<string>> > output;
 	//SORT OUT LOGIC OPS HERE
 	vector<string> path;
 
@@ -115,21 +115,18 @@ map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father
 			cout << "Rule Evaluated! Iterating now!" << endl;
 			//split components of r
 			string temp;
+			vector< vector<string> >path;
 			for (int j = 0; j < r->components.size(); j++) {
 				temp = r->components[j][0];
 				cout << "ITERATING" << endl;
-				vector< vector<string> >path = traverse(actors, kb->FactMap[temp]);
+				path = traverse(actors, kb->FactMap[temp]);
 			}
-			for (int i = 0; i < path.size(); i++) {
-				output[relation].push_back(path[i]);//get rid of copies here
-			}
+			cout << "INFERENCE: path.size=" << path.size() << endl;
+			output[relation] = path;//get rid of copies here
 		}//somehow return an empty output?
 	}
 	cout << "Iteration Complete! Output:" << endl;
-	for (int i = 0; i < output.size(); i++) {
-		cout << output[relation][i] << endl;
-	}
-	output = removeDoubles(output);
+	//output = removeDoubles(output);
 	return output;
 }
 
