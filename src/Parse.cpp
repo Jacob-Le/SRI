@@ -239,6 +239,16 @@ void Parse::ParseLine(string input){
 		string output;
 		if(QueryOutput.size() == 0) cout << "No results returned for " << ruleName << endl;
 		else if(QueryOutput.size() == 1){
+<<<<<<< HEAD
+			output = "";
+			map<string, vector<vector<string> > >::iterator it = QueryOutput.begin();
+			for(int i=0; i < it->second.size(); i++){
+				cout << "PARSE: Print WORKING" << endl;
+				it->second.at(i).insert(it->second.at(i).begin(),it->first);
+				AddFact(it->second.at(i));
+			}
+		}else{
+=======
 			//cout << "PARSE: Printing Protocol 1" << endl;
 			output = "";
 			map<string, vector<vector<string> > >::iterator it = QueryOutput.begin();
@@ -251,14 +261,14 @@ void Parse::ParseLine(string input){
 			}//cout << "PARSE: Parse Complete." << endl;
 		}else{
 			//cout << "PARSE: Printing Protocol 2" << endl;
+>>>>>>> 374f0a0988a04f15667e538726e8121079625897
 			output = "";
 			map<string, vector< vector<string> > >::iterator it = QueryOutput.begin();
 			for(; it!= QueryOutput.end(); it++){
 				output = output + it->first + ":\n";
 				for(int i=0; i < it->second.size(); i++){
-					for(int j=0; j< it->second.at(i).size(); j++){
-							output = output + it->second.at(i).at(j) + "\n";
-					}
+					it->second.at(i).insert(it->second.at(i).begin(),it->first);
+					AddFact(it->second.at(i));
 				}
 			}
 		//Need to clear() QueryOutput after storing it in the KB
