@@ -135,45 +135,40 @@ map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father
 
 bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 	cout << "Entered RuleEvaluation!" << endl;
-	//bool truthValues = false;
-	int ops = r->ops;
-	string name = r->name;
-	if (factEvaluate(actors, name)) return true;
-	else if(ops == 0){
-		cout << "Calling evalHelper!" << endl;
-		//call helper function
-		bool finalValue = false;
-		for(int i = 0; i < r->components.size(); i++) {
-			vector<string> nextActor;
-			for (int n = 1; n < r->components.size(); n++) {
-				cout << "RULEEVAL: Actor: " << actors[stoi(r->components[i][n])] << endl;
-				nextActor.push_back(actors[stoi(r->components[i][n])]);
-			}
-			cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
-			bool test = ruleEvalHelper(r->components[i][0], nextActor);
-			cout << "RULEEVAL: TruthValue Candidate: " << test << endl;
-			finalValue = finalValue || test;
-		}
-		cout << "RULEEVAL: finalValue: " << finalValue << endl;
-		return finalValue;
+	if (factEvaluate(actors, r->name)) return true;
+	if(r->ops == 0){
+		return ruleOREvaluate(Rule * r, vector<string> actors);
 	}
-	else if (ops == 1) {
+	else if (r->ops == 1) {
 		//AND
 		return true;//placeholder
 	}
 	else return false;//placeholder
 }
 
-bool Query::ruleEvalHelper(string name, vector<string> actors) {
-	cout << "EVALHELPER: " << name << endl;
-	if (factEvaluate(actors, name)) {
-		cout << "Found in KB" << endl;
-		return true;
+bool Query::ruleOREvaluate(Rule * r, vector<string> actors){
+	std::future<bool> finalValue;
+	bool truthValue = false;
+	for(int i = 0; i < r->components.size(); i++) {
+		vector<string> nextActor;
+		for (int n = 1; n < r->components.size(); n++) {
+			cout << "RULEEVAL: Actor: " << actors[stoi(r->components[i][n])] << endl;
+			nextActor.push_back(actors[stoi(r->components[i][n])]);
+		}
+		cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
+		if (factEvaluate(nextActor, r->components[i][0])) {
+			cout << "Found in KB" << endl;
+			return true;
+		} else {
+			if (rb->rules.count(name) == 1) finalValue = async(std::launch::async, ruleEvaluate, rb->rules[name], nextActor);
+			else return false;
+		}
+		cout << "RULEEVAL: TruthValue Candidate: " << test << endl;
+		truthValue = truthValue || finalValue.get();
+		if(truthValue) return true; //Save some computing time, OR only needs one of its values to be true
 	}
-	else {
-		if (rb->rules.count(name) == 1) return ruleEvaluate(rb->rules[name],actors);
-		else return false;
-	}
+	cout << "RULEEVAL: finalValue: " << truthValue << endl;
+	return truthValue;
 }
 
 vector< vector<string>> Query::traverse(vector<string> actors, vector< vector<string> > actorList) {
