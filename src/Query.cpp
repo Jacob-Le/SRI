@@ -134,14 +134,14 @@ map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father
 
 bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 	cout << "Entered RuleEvaluation!" << endl;
-	bool truthValues = false;
+	//bool truthValues = false;
 	int ops = r->ops;
 	string name = r->name;
 	if (factEvaluate(actors, name)) return true;
 	else if(ops == 0){
 		cout << "Calling evalHelper!" << endl;
 		//call helper function
-		bool finalValue;
+		bool finalValue = false;
 		for(int i = 0; i < r->components.size(); i++) {
 			vector<string> nextActor;
 			for (int n = 1; n < r->components.size(); n++) {
@@ -149,8 +149,11 @@ bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 				nextActor.push_back(actors[stoi(r->components[i][n])]);
 			}
 			cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
-			truthValues = truthValues || ruleEvalHelper(r->components[i][0], nextActor);
+			bool test = ruleEvalHelper(r->components[i][0], nextActor);
+			cout << "RULEEVAL: TruthValue Candidate: " << test << endl;
+			finalValue = finalValue || test;
 		}
+		cout << "RULEEVAL: finalValue: " << finalValue << endl;
 		return finalValue;
 	}
 	else if (ops == 1) {
@@ -174,20 +177,28 @@ bool Query::ruleEvalHelper(string name, vector<string> actors) {
 
 vector< vector<string>> Query::traverse(vector<string> actors, vector< vector<string> > actorList) {
 	vector< vector<string> > result;
+
+	cout << "TRAVERSE: Actorlist.size=" << actorList.size() << endl;
+	cout << "TRAVERSE: Actorlist[0].size=" << actorList[0].size() << endl;
+	cout << "TRAVERSE: actors.size=" << actors.size() << endl;
+
 	int initSize = actorList[0].size();
 	bool invalid = false;
 	for (int i = 0; i < initSize; i++) {
 		vector<string> path;
 		for (int j = 0; j < actorList.size(); j++) {
+			cout << "TRAVERSE: actorList[j][i]=" << actorList[j][i] << endl;
+			cout << "TRAVERSE: actors[j]=" << actors[j] << endl;
 			if (actorList[j].size() < initSize) {
 				invalid = true;
 				break;
 			}else if(actorList[j][i] == actors[j]) {
 				path.push_back(actorList[j][i]);
-				break;
+				cout << "TRAVERSE: pushback " << actorList[j][i] << endl;
 			}
 			else if (actors[j] == "_") {
 				path.push_back(actorList[j][i]);
+				cout << "TRAVERSE: pushback " << actorList[j][i] << endl;
 			}
 			else {
 				invalid = true;
@@ -209,31 +220,33 @@ bool Query::factEvaluate(vector<string> actors, string name) {
 		cout << "FACTEVAL: FOUND IN KB" << endl;
 		actorList = kb->FactMap[name];
 		int initSize = actorList[0].size();
+		cout << "FACTEVAL: InitSize = " << initSize << endl;
 		bool broken = false;
 		for (int i = 0; i < initSize; i++) {
 			vector<string> path;
 			bool matchFound = false;
 			for (int j = 0; j < actorList.size(); j++) {
-				cout << "FACTEVAL: ActorList: " << actorList[j][i] << " :: Actors: " << actors[i] << endl;
+				//cout << "FACTEVAL: ActorList: " << actorList[j][i] << " :: Actors: " << actors[i] << endl;
 				if (actorList[j].size() < initSize) {
 					broken = true;
 					break;
 				}
 				else if (actorList[j][i] == actors[j]) {
-					//cout << "FACTEVAL: ActorList: "<<actorList[j][i]<<" :: Actors: "<< actors[i] << endl;
+					cout << "FACTEVAL: ActorList: "<<actorList[j][i]<<" :: Actors: "<< actors[i] << endl;
 					matchFound = true;
 					break;
 				}
 				else if(actors[j] == "_"){
 					matchFound = true;
+					break;
 				}
 				else {
 					matchFound = false;
 					break;
 				}
-				isValid = matchFound;
+				//isValid = matchFound;
 			}
-			//isValid = matchFound;
+			isValid = matchFound;
 			if (broken == true)break;
 		}
 	}
