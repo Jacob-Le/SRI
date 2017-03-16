@@ -12,7 +12,7 @@ SRI::SRI(){
   //Parser->ServerModeON();
 }
 
-int main(){
+/*int main(){
   SRI* sri = new SRI();
   sri->Parser->ParseTerminalInput();
-}
+}*/

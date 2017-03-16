@@ -3,11 +3,11 @@
 #include "TCPServerSocket.cpp"
 #include "SRI.cpp"
 
-class Server{
+class Sever{
 	public:
 	TCPServerSocket server;	
 	map<int,SRI> SRIMap;
 	
-	Server(const char * _address, int _port, int _backlog);
+	Sever(const char * _address, int _port, int _backlog);
 	void Daemon();
 };
