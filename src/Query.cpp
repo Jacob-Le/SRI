@@ -86,8 +86,24 @@ bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 		return finalValue;
 	}
 	else if (ops == 1) {
-		//AND
-		return true;//placeholder
+		bool finalValue;
+		for (int i = 0; i < r->components.size(); i++) {
+			vector<string> nextActor;
+			for (int n = 1; n < r->components.size(); n++) {
+				//cout << "RULEEVAL: Actor: " << actors[stoi(r->components[i][n])] << endl;
+				nextActor.push_back(actors[stoi(r->components[i][n])]);
+			}
+			//cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
+			bool test = ruleEvalHelper(r->components[i][0], nextActor);
+			cout << "RULEEVAL: HELLO IS THIS AND???" << endl;
+			if (finalValue != true && finalValue != false) {
+				finalValue = test;
+				cout << "RULEEVAL: AND does this even work lol" << endl;
+			}
+			else finalValue = finalValue && test;
+		}
+		//cout << "RULEEVAL: finalValue: " << finalValue << endl;
+		return finalValue;
 	}
 	else return false;//placeholder
 }
