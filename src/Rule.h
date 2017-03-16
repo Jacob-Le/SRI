@@ -1,4 +1,5 @@
-//Predicate.h
+//Rule.h
+
 #pragma once
 #include <vector>
 #include <string>
@@ -15,11 +16,12 @@ typedef struct Rule{
   //Vector of strings representative of actors involved in the rule
   vector<string> actors;
   //Vector of predicate components (Rules or facts) that make up this rules
-  vector<vector<string>> components;
+  vector<vector<string> > components;
 
   Rule();
   //Variadic constructor that accepts any number of conditions
-  Rule(string name, int ops, const vector<string> actors, const vector<vector<string>> cmps);
+  Rule(string name, int ops, const vector<string> actors, vector<vector<string> > cmps);
+
   //copy and move constructors
   Rule(const Rule & r);
   Rule(Rule && r);
@@ -34,3 +36,4 @@ typedef struct Rule{
   bool operator == (const Rule & r);
   bool operator != (const Rule & r);
 }Rule;
+

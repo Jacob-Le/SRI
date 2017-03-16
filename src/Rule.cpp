@@ -1,4 +1,4 @@
-//Predicate.cpp
+//Rule.cpp
 /*
 	Definitions of predicates, rules, and facts are stored here, along with definitions
 	of their assosciated functions.
@@ -11,7 +11,8 @@
 using namespace std;
 
 //------------------------------------------Rule-----------------------------------------------------//
-//Rule inherits from Predicate, in turn stored in the Rule database.
+//Rule is stored in the Rule database.
+
 
 //Swaps the values between two rules
 //Input: Rule addresses one, two
@@ -37,7 +38,7 @@ Rule::Rule(){
 
 //Rule constructor that takes in a string as a name, a vector of function pointers that
 //emulate boolean operators and a variable number of components.
-Rule::Rule(string n, int o, const vector<string> a, const vector<vector<string>> cmps){
+Rule::Rule(string n, int o, vector<string> a, vector<vector<string> > cmps){
   name = n;
   ops = o;
   actors = a;
@@ -66,15 +67,31 @@ Rule::~Rule(){
 //Input: void
 //Output: String representation of Rule
 string Rule::toString(){
+	
     string output = "RULE ";
-	output + name;
-    for(int i=0; i < components.size(); i++){
-        output += components[i]->toString();
-		if( (i+1)%2 == 0 ){
-			if(ops[i/2] == 0) output += " OR ";
-			if(ops[i/2] == 1) output += " AND ";
+	output = output + name +"(";
+	
+	//Rule name and Actors -> string
+	for(int i=0; i<actors.size(); i++){
+		output += actors.at(i);
+		if(i != actors.size()-1) output += ",";
+	}
+	output += "):- ";
+
+	//Adding Logic
+	if(ops == 0) output += "OR ";
+	if(ops == 1) output += "AND ";
+	
+	//Adding the Components
+	for(int i=0; i< components.size(); i++){
+		output += components.at(i).at(0)+"("; //Getting the component's name
+		for(int j=1; j<components.at(i).size(); j++){
+			output += components.at(i).at(j);
+			if(j != components.at(i).size()-1) output += ",";
 		}
-    }
+		output+=") ";
+	}
+	output += "\n";
     return output;
 }
 
@@ -96,4 +113,6 @@ bool Rule::operator == (const Rule& r){
 
 bool Rule::operator != (const Rule& r){
   return !(*this == r);
+
 }
+

@@ -21,19 +21,19 @@ public:
 	Query(KB * kb, RB * rb);
 
 	//FACT--------------------------------------------------------------------------
-	vector<Fact*>* listFact(KB* Knowledge, string factKey); //used to return vector<string>
+	//vector<Fact*>* listFact(KB* Knowledge, string factKey); //used to return vector<string>
 
 	//SIMPLE RULE-------------------------------------------------------------------
 	//void listSimpleRule(/*something*/);
-	void printResults();
-	vector<Fact*> concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB);
+	//void printResults();
+	//vector<Fact*> concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB);
 	//vector<Fact*> preventDupes(vector<Fact*>* A, vector<Fact*> B);
 
-	void inference(vector<string> newFact);
-	bool ruleEvaluate(Rules * r, vector<string> actors);
+	map<string, vector<string>> inference(vector<string> newFact);
+	bool ruleEvaluate(Rule * r, vector<string> actors);
 	bool ruleEvalHelper(string name, vector<string> actors);
 	bool factEvaluate(vector<string> actors, string name);
-	vector< vector<string> > traverse(vector<string> actors, vector<string> actorList);
+	vector< vector<string>> traverse(vector<string> actors, vector< vector<string> > actorList);
 
 	//void CreatePredNames(Rule* r);
 	//vector< vector<Fact*>*> PermutateAndBind(KB* kb);
@@ -41,6 +41,7 @@ public:
 	//vector<int> BuildID();
 
 	//Part 3: evaluate Rules -------------------------------------------------------
-	bool enact(Rule * r, vector<string> s, KB * kb);
+	//bool enact(Rule * r, vector<string> s, KB * kb);
+	map<string, vector<string> >  removeDoubles(map<string, vector<string> > target);
 
 };

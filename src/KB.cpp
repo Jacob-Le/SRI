@@ -4,56 +4,109 @@
 using namespace std;
 
 KB::KB(){
-	//cout<< "Give int for max depth of KB"<<endl;
-	/*const int index = 4;
-	//cin >> index;
-	FactMap<string, vector<string>, index> facts;*/	
+	map<string, vector<vector<string> > >* FactMap;
 }
 
-/*void KB::Add(FactMap<string, vector<string>, int> facts, vector<string> actors, int depth){
-	
-	if(facts.count(key) == 1){ //if the Key already exists
-		
-		if(depth > 1){ //if not at last level
-			facts = facts[actors[actors.size()-depth]]; //move down a level
-			Add(facts, actors, depth-1); //call it again
-		}else{
-			facts[actors[actors.size()-depth]].push_back(actors.at(actors.size()-1));
+//Destructor
+KB::~KB(){
+	FactMap.clear();
+}
+
+void KB::Add(vector<string> theFact){
+	string name = theFact.at(0);
+	if(FactMap.count(name) == 0){ //if fact is not already in KB
+		vector<vector<string> > temp; //create vector of vector of strings
+		for(int i=0; i<theFact.size(); i++){
+			int j;
+			if(i == theFact.size()-1) break; //because [0] is the rule name, j needs to be +1 than i, also want to run 1 less time than size of the vector
+			else j = i + 1; //sets vertical level we are at
+			vector<string> evenTemper; //create vector to go into the vector of vector of strings
+			temp.push_back(evenTemper); //puts it onto that vector
+			temp.at(i).push_back(theFact.at(j)); //populate temp
 		}
-		
-	}else if(facts.count(key) == 0){ //if the key doesnt exist yet
-		if( depth>2){
-			FactMap<string, FactMap, depth-1> facty;
-			facts[actors[actors.size()-depth]] = facty;
-			Add(facts, actors, depth-1); //stepping into lower
-		}else if(depth == 2){
-			FactMap<string, vector<string>, depth-1> factie;
-			facts[actors[actors.size()-depth]] = factie;
-			Add(facts, actors, depth-1);
-		}else if(depth ==1){
-			facts[actors[actors.size()-depth]].push_back(actors.at(actors.size()-1));
+		FactMap[name] = temp; //map the fact to temp
+	}else{ //if it is in KB
+		for(int i=0; i<FactMap[name].size(); i++){
+			int j;
+			if(i == theFact.size() -1) break;
+			else j = i + 1;
+			FactMap[name].at(i).push_back(theFact.at(j)); //add the new fact actors onto their corresponding vector
 		}
 	}
-	
+		
+}
+
+void KB::Remove(string r){
+	if(FactMap.count(r) == 0){ //if its not there
+		cout<< "'" << r << "' does not exist in Knowledge Base and so cannot be removed."<< endl;
+	}else{
+		FactMap.erase(r);
+	}
+}
+
+
+//Converts Knowledge database to string
+//Input: void
+//Output: string representation of knowledge database
+string KB::toString(){
+	string output = "";
+	map<string, vector<vector<string> > > ::iterator it = FactMap.begin();
+	for(; it!= FactMap.end(); it++){
+		int j = 0; //Can't do nested for loop because trying to traverse left to right then down
+		while(true){
+			output = output + "FACT " + it->first + "(";
+			for(int i=0; i< it->second.size();i++){
+				//cout << "[" << j<< "][" << i << "]: " << it->second.at(i).at(j) << " ";
+				output += it->second.at(i).at(j);
+				if(i != it->second.size()-1) output += ","; 
+			}
+			//cout << endl; Comment these out if want to see how navigating KB
+			output += ")\n";
+			if(j+1 < it->second.at(j).size()) j++;
+			else break; //initially had loop above in the while loop condition but it broke when j was larger than the vector indices
+		}
+	}
+	return output;
+}
+
+//Converts Knowledge database to string
+//Input: void
+//Output: string representation of knowledge database
+vector<string> KB::serverToString(){
+	vector<string> temp;
+	map<string, vector<vector<string> > > ::iterator it = FactMap.begin();
+	for(; it!= FactMap.end(); it++){
+		int j = 0; //Can't do nested for loop because trying to traverse left to right then down
+		while(true){
+			string output = "";
+			output = output + "FACT " + it->first + "(";
+			for(int i=0; i< it->second.size();i++){
+				//cout << "[" << j<< "][" << i << "]: " << it->second.at(i).at(j) << " ";
+				output += it->second.at(i).at(j);
+				if(i != it->second.size()-1) output += ","; 
+			}
+			//cout << endl; Comment these out if want to see how navigating KB
+			output += ")\n";
+			temp.push_back(output);
+			if(j+1 < it->second.at(j).size()) j++;
+			else break; //initially had loop above in the while loop condition but it broke when j was larger than the vector indices
+		}
+	}
+	return temp;
+}
+
+
+/*int main(){
+	KB* Keiba = new KB();
+	vector<string> Father1 = {"Father","Tom","Blake"};
+	vector<string> Father2 = {"Father","Tom","Brake"};
+	vector<string> Mother1 = {"Mother","Jane","Bruce"};
+	Keiba->Add(Father1);
+	Keiba->Add(Father2);
+	Keiba->Add(Mother1);
+	cout << Keiba->toString();
+	Keiba->Remove("Father");
+	Keiba->Remove("Dinosaur");
+	cout << Keiba->toString();
 }*/
 
-int main(){
-	KB* kb = new KB();
-	vector<string> cheese;
-	cheese.push_back("cheese");
-	cheese.push_back("pepperoni");
-	cheese.push_back("crust");
-	map<string,vector<string> > temp;
-	map<string,map<string, vector<string> > > outer_layer;
-	temp[cheese.at(1)] = cheese;
-	outer_layer[cheese.at(2)] = temp;
-	vector<string>* Doritos = outer_layer[temp[cheese.at(1)]];//.at(0);
-	cout << Doritos->at(2);
-	//kb->facts[cheese.at(0)] = temp;
-	//cout << cheese.at(0);
-	//kb->facts[cheese.at(0)];
-	//cout << cheese.at(1);
-	//
-	//for(int i=0; i< kb->facts["pepperoni"].size(); i++) cout << kb->facts.at(temp["pepperoni"]).at(i);
-	//kb.add(kb.facts,cheese,4);
-}

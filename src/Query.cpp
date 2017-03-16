@@ -10,7 +10,7 @@
 
 using namespace std;
 
-vector<Fact*> Results;
+//vector<Fact*> Results; REPLACE?
 
 Query::Query(KB * knowledge, RB * rules) {
 	kb = knowledge;
@@ -21,23 +21,24 @@ Query::Query(KB * knowledge, RB * rules) {
 //from the Knowledge Base.
 // Takes in a pointer to the Knowledge Base and a string representative of the similar
 // relationship.
+/*
 vector<Fact*>* Query::listFact(KB* Knowledge, string factKey) {
 	vector<Fact*>* result = Knowledge->Find(factKey);
 	for (int i = 0; i < result->size(); i++) result->at(i)->toString();
 	return result;
-}
+}*/
 
 //SIMPLE RULE-------------------------------------------------------------------
 
 //helper function to get rid of duplicates
-vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB) {
+/*vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB) {
 	vector<Fact*> result;
 	bool found = false;
 	result = preventDupes(resultA, result);
 	result = preventDupes(resultB, result);
 
 	return result;
-}
+}*/
 
 //----------------------------------Part 3: evaluate--------------------------------------//
 
@@ -45,7 +46,7 @@ vector<Fact*> Query::concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB)
 //MAKE SURE THAT ACTORS FOR EACH COMPONENT ARE MUTUALLY EXCLUSIVE
 //Input: Component vector from Rules
 //Output: Returns truth value of the rule
-bool Query::enact(Rule * r, vector<string> components, KB * kb){
+/*bool Query::enact(Rule * r, vector<string> components, KB * kb){
   if(r->evaluate(components)){
     if(kb->Add(new Fact(r->name, r->actors))){
       //Run query.inference here
@@ -53,12 +54,14 @@ bool Query::enact(Rule * r, vector<string> components, KB * kb){
     return true;
   }
   return false;
-}
+}*/
 
 //------------------------------Inferencing-----------------------------------------------//
 
 //Check if AND or OR
 //if OR, only check the ones with the right number of actors.
+
+/*
 
 void CreateVarBoundsMaster(int iterate, vector<string> varMapping){
 	//Create map fcn will populate
@@ -85,83 +88,118 @@ map<string, vector<string> > CreateVarBounds(vector<Fact*>* Facts, vector<string
 		}
 	}
 return VarBounds;
-}
+}*/
 
 //Grandfather->vector
 //[0]: [John, John]
 //[1] : [Bob, Mary]
 
-map<string, vector<string>> * Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
+map<string, vector<string> > Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
 	string relation = newFact[0];
 	//int reqSize = newFact.size() - 1;
-	vector<string> actors = newFact.erase(1);
-	map<string, vector<string>>* output;
+	vector<string> actors;
+	cout << "Entered Inference" << endl;
+	for (int i = 1; i < newFact.size(); i++) {
+		actors.push_back(newFact[i]);
+		cout << "INFERENCE: Actors:" << newFact[i] << endl;
+	}
+
+	map<string, vector<string>> output;
 	//SORT OUT LOGIC OPS HERE
 	vector<string> path;
 
-	if (kb->FactMap.count(relation) >= 1 && rb.rules.count(relation) >= 1) {
-		Rules * r = rb->rules[relation];
+	if (rb->rules.count(relation) == 1) {
+		cout << "Found in KB and RB! Evaluating assosciated Rule" << endl;
+		Rule * r = rb->rules[relation];
 		if (ruleEvaluate(r, actors)) {
+			cout << "Rule Evaluated! Iterating now!" << endl;
 			//split components of r
+			string temp;
 			for (int j = 0; j < r->components.size(); j++) {
-				vector< vector<string> >path = traverse(actors, *kb.FactMaps[r->components[j][0]]);
-				for (int i = 0; i < path.size(); i++) {
-					output[relation][i].push_back(&path[i]);
-				}//get rid of copies here
+				temp = r->components[j][0];
+				cout << "ITERATING" << endl;
+				vector< vector<string> >path = traverse(actors, kb->FactMap[temp]);
+			}
+			for (int i = 0; i < path.size(); i++) {
+				output[relation].push_back(path[i]);//get rid of copies here
 			}
 		}//somehow return an empty output?
+	}
+	cout << "Iteration Complete! Output:" << endl;
+	for (int i = 0; i < output.size(); i++) {
+		cout << output[relation][i] << endl;
 	}
 	output = removeDoubles(output);
 	return output;
 }
-//["Father", "$X", "$Y", 0, "Mother", "$X", "$Y"]
-bool Query::ruleEvaluate(Rules * r, vector<string> actors) {
-	if (factEvaluate(actors, r->name)) return true;
-	truthValues = false;
+
+bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
+	cout << "Entered RuleEvaluation!" << endl;
+	//bool truthValues = false;
 	int ops = r->ops;
+	string name = r->name;
+	if (factEvaluate(actors, name)) return true;
 	else if(ops == 0){
+		cout << "Calling evalHelper!" << endl;
 		//call helper function
-		bool finalValue;
+		bool finalValue = false;
 		for(int i = 0; i < r->components.size(); i++) {
 			vector<string> nextActor;
 			for (int n = 1; n < r->components.size(); n++) {
-				nextActor.push_back(actors[stoi(r->components[i][n]]));
+				cout << "RULEEVAL: Actor: " << actors[stoi(r->components[i][n])] << endl;
+				nextActor.push_back(actors[stoi(r->components[i][n])]);
 			}
-			truthValues = truthValues || ruleEvalHelper(r->components[i][0], nextActor);
+			cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
+			bool test = ruleEvalHelper(r->components[i][0], nextActor);
+			cout << "RULEEVAL: TruthValue Candidate: " << test << endl;
+			finalValue = finalValue || test;
 		}
+		cout << "RULEEVAL: finalValue: " << finalValue << endl;
 		return finalValue;
 	}
 	else if (ops == 1) {
 		//AND
-		return finalValue;
+		return true;//placeholder
 	}
-	else return finalValue;
+	else return false;//placeholder
 }
 
 bool Query::ruleEvalHelper(string name, vector<string> actors) {
-	if (factEvaluate(name, actors)) return true;
+	cout << "EVALHELPER: " << name << endl;
+	if (factEvaluate(actors, name)) {
+		cout << "Found in KB" << endl;
+		return true;
+	}
 	else {
 		if (rb->rules.count(name) == 1) return ruleEvaluate(rb->rules[name],actors);
 		else return false;
 	}
 }
 
-vector< vector<string> > Query::traverse(vector<string> actors, vector<string> actorList) {
+vector< vector<string>> Query::traverse(vector<string> actors, vector< vector<string> > actorList) {
 	vector< vector<string> > result;
+
+	cout << "TRAVERSE: Actorlist.size=" << actorList.size() << endl;
+	cout << "TRAVERSE: Actorlist[0].size=" << actorList[0].size() << endl;
+	cout << "TRAVERSE: actors.size=" << actors.size() << endl;
+
 	int initSize = actorList[0].size();
 	bool invalid = false;
 	for (int i = 0; i < initSize; i++) {
 		vector<string> path;
 		for (int j = 0; j < actorList.size(); j++) {
+			cout << "TRAVERSE: actorList[j][i]=" << actorList[j][i] << endl;
+			cout << "TRAVERSE: actors[j]=" << actors[j] << endl;
 			if (actorList[j].size() < initSize) {
 				invalid = true;
 				break;
 			}else if(actorList[j][i] == actors[j]) {
 				path.push_back(actorList[j][i]);
-				break;
+				cout << "TRAVERSE: pushback " << actorList[j][i] << endl;
 			}
 			else if (actors[j] == "_") {
 				path.push_back(actorList[j][i]);
+				cout << "TRAVERSE: pushback " << actorList[j][i] << endl;
 			}
 			else {
 				invalid = true;
@@ -178,49 +216,56 @@ bool Query::factEvaluate(vector<string> actors, string name) {
 	vector< vector<string> > result;
 	vector< vector<string> > actorList;
 	bool isValid = false;
-
+	cout << "FACTEVAL: " << name << endl;
 	if (kb->FactMap.count(name) >= 1) {
-		actorList = *FactMap[name];
+		cout << "FACTEVAL: FOUND IN KB" << endl;
+		actorList = kb->FactMap[name];
 		int initSize = actorList[0].size();
+		cout << "FACTEVAL: InitSize = " << initSize << endl;
 		bool broken = false;
 		for (int i = 0; i < initSize; i++) {
 			vector<string> path;
 			bool matchFound = false;
 			for (int j = 0; j < actorList.size(); j++) {
+				//cout << "FACTEVAL: ActorList: " << actorList[j][i] << " :: Actors: " << actors[i] << endl;
 				if (actorList[j].size() < initSize) {
 					broken = true;
 					break;
 				}
-				else if (actorList[j][i] == actor[j]) {
+				else if (actorList[j][i] == actors[j]) {
+					cout << "FACTEVAL: ActorList: "<<actorList[j][i]<<" :: Actors: "<< actors[i] << endl;
 					matchFound = true;
 					break;
 				}
-				else if(actor[j] == "_"){
+				else if(actors[j] == "_"){
 					matchFound = true;
+					break;
 				}
 				else {
 					matchFound = false;
 					break;
 				}
+				//isValid = matchFound;
 			}
 			isValid = matchFound;
 			if (broken == true)break;
 		}
 	}
+	cout << "FACTEVAL: isValid " << isValid << endl;
 	return isValid;
 }
 
 //Prints the results of the query to terminal
 //Input: void
 //Output: void
-void Query::printResults() {
-	for (int i = 0; i < Results.size(); i++) {
-		cout << Results.at(i)->toString();
-	}
-}
+//void Query::printResults() {
+//	for (int i = 0; i < Results.size(); i++) {
+//		cout << Results.at(i)->toString();
+//	}
+//}
 
-map<string, vector<string> > * Query::removeDoubles(map<string, vector<string> > * target) {
-	map<string, vector<string> > * output;
+map<string, vector<string>> Query::removeDoubles(map<string, vector<string>>  target) {
+	map<string, vector<string>> output;
 	//placeholder method
 	output = target;
 	return output;

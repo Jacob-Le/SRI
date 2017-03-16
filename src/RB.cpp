@@ -29,36 +29,40 @@ RB::RB(const RB &otherRB) {
 //Input: Rule pointer r
 //Output: void
 void RB::Add(Rule * r){
-  for(Rule * rule : rules){
-    if(rule == r){
-			std::cout << "Error: Rule already exists." << "\n" <<std::endl;
+	if(rules.count(r->name)==1){
+			cout << "Error: Rule already exists.\n";
 			return;
-		}
-  }
-  rules.push_back(r);
+	}
+	rules[r->name] = r;
 }
 
 //Remove rules from database
 //Input: Rule point r
 //Output: the removed Rule pointer
-Rule* RB::Remove(Rule * r){
-  Rule * temp = r;
-  vector<Rule*>::iterator pos = find(rules.begin(), rules.end(), r);
-  rules.at(distance(rules.begin(), pos))->~Rule();
-  rules.erase(pos);
-  return temp;
+void RB::Remove(string name){
+  rules.erase(name);
 }
 
 //Print as string
 //Input: void
 //Output: returns string representation
-std::string RB::toString(){
-  std::string s = "";
-    for(int i=0; i<rules.size();i++){
-      s += rules.at(i)->toString();
-	  s +='\n';
+string RB::toString(){
+  string s = "";
+    map<string, Rule*> ::iterator it = rules.begin();
+	for(; it!= rules.end(); it++){
+      s += it->second->toString();
     }
     return s;
+}
+
+//A toString() that returns a vector of strings so that strings can be sent one at a time rather than in mass
+vector<string> RB::serverToString(){
+	vector<string> temp;
+    map<string, Rule*> ::iterator it = rules.begin();
+	for(; it!= rules.end(); it++){
+		temp.push_back(it->second->toString());
+	}
+	return temp;
 }
 
 //DECONSTRUCTOR-----------------------------------------------------------------------------------

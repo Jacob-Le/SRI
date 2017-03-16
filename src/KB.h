@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<vector>
 #include<map>
+#pragma once
 
 using namespace std;
 
@@ -21,17 +22,15 @@ using FactMap = typename nestedMap<Key, Value, N>::type;
 
 
 class KB{
-public:	
-	const static int index = 2;
-	FactMap<string, vector<string>, KB::index> facts;	
-	
-
+public:
+	//map, stored facts categorized by relationship
+	std::map <string, vector<vector<string> > > FactMap;
 	KB();
-	
-	void Add(vector<string> fact);
-	//void Add(FactMap<string, vector<string>, int> facts, vector<string> actors, int depth);
-	void Remove(string factName);
+	~KB();
+
+	void Add(vector<string> theFact);
+	void Remove(string name);
 	string toString();
-	
+	vector<string> serverToString();
 };
 
