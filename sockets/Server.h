@@ -1,8 +1,13 @@
 //Server.h
 
 #include "TCPServerSocket.h"
+#include "SRI.cpp"
+
 class Server{
 	public:
-	TCPServer server;
+	TCPServer server;	
+	map<int,SRI> SRIMap;
 	
+	Server();
+	void Daemon();
 };

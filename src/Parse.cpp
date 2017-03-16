@@ -43,7 +43,7 @@ int Parse::searchLength(int start, int end){
 //Parses a predicate, used by both ParseRules and ParseFact, pushes onto Pred vector
 //Input: Inputted string, boolean representing if string is Fact
 //Output: void
-void Parse::ParsePred(string input, bool factMode){
+void Parse::ParsePred(string input, int Mode){
 	vector<string> Entries;
 	string currEntry;
 	int nextLen;
@@ -68,7 +68,7 @@ void Parse::ParsePred(string input, bool factMode){
 			nextLen = searchLength(delimiter1,delimiter3);
 			currEntry = input.substr(delimiter1,nextLen);
 			//cout << currEntry << "\n";
-			if(factMode) Entries.push_back(currEntry); //adds to vector of components
+			if(Mode == 1 || Mode == 3) Entries.push_back(currEntry); //adds to vector of components
 			else{
 				if(convert.count(currEntry) == 0){
 					newName = convert.size();
@@ -82,7 +82,7 @@ void Parse::ParsePred(string input, bool factMode){
 		currEntry = input.substr(delimiter1+1,nextLen); //parses out component
 		//cout << currEntry << "\n";
 		
-		if(factMode) Entries.push_back(currEntry); //adds to vector of components
+		if(Mode == 1 || Mode == 3) Entries.push_back(currEntry); //adds to vector of components
 		else{
 			if(convert.count(currEntry) == 0){
 				newName = convert.size();
@@ -95,7 +95,7 @@ void Parse::ParsePred(string input, bool factMode){
 	}
 	//Testing print statement
 	//for(int i=0; i< Entries.size(); i++) cout << Entries.at(i) << " ";
-	if(factMode){
+	if(Mode == 1){
 		AddFact(Entries);
 	}else{
 		Preds.push_back(Entries);
@@ -138,7 +138,7 @@ void Parse::ParseRule(string input){
 			}
 		}
 		nextLen = searchLength(searchStart, searchEnd);
-		ParsePred(input.substr(searchStart, nextLen), false);
+		ParsePred(input.substr(searchStart, nextLen), 2);
 	}
 
 	AddRule(Logic);
@@ -206,7 +206,7 @@ void Parse::ParseLine(string input){
 			//for(int i=0; i<TheRB.size(); i++) cout << TheRB.at(i);
 		}
 	}else if(FACT){
-		ParsePred(input.substr(searchStart, nextLen+1), true);
+		ParsePred(input.substr(searchStart, nextLen+1), 1);
 		return;
 	}else if(RULE){
 		nextLen = searchLength(searchStart, input.size());
@@ -222,10 +222,13 @@ void Parse::ParseLine(string input){
 			for(int i=0; i < RuleBase->rules[ruleName]->actors.size(); i++){
 				Qinput.push_back("_");
 			}
+			for(int i=0; i< Qinput.size(); i++) cout << Qinput.at(i) << endl;
 			QueryOutput = QQ->inference(Qinput);			
 		}else{
 			if(numPreds(ruleName) == 1){
-				ParsePred(ruleName,false);
+				ParsePred(ruleName,3);
+				//cout << Preds.size();
+				for(int i=0; i < Preds.at(0).size(); i++) cout << Preds.at(0).at(i) << endl;
 				QueryOutput = QQ->inference(Preds.at(0));
 				Preds.clear();
 			}
