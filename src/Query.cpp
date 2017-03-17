@@ -92,11 +92,11 @@ bool Query::operateOR(string name, vector<string> actors, Rule * r){
 		}
     bool truthValue = false;
 		cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
-			cout << "EVALHELPER: " << name << endl;
-  if (rb->rules.count(name) == 1) finalValue = std::async(std::launch::async, &Query::ruleEvaluate, this, rb->rules[name], actors);
+			cout << "EVALHELPER: " << r->components[i][0] << endl;
+  if (rb->rules.count(r->components[i][0]) == 1) finalValue = std::async(std::launch::async, &Query::ruleEvaluate, this, rb->rules[r->components[i][0]], actors);
 	else{
 		cout << "Found in KB" << endl;
-		finalValue = async(std::launch::async, &Query::factEvaluate,this, actors, name);
+		finalValue = async(std::launch::async, &Query::factEvaluate, this, actors, r->components[i][0]);
 	}
     truthValue = finalValue.get();
     if(truthValue) return true;
