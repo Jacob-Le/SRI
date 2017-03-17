@@ -27,7 +27,7 @@ class Parse{
 	vector<string> FactVector;
 	vector<vector<string> > Preds;
 	int searchLength(int start, int end);
-	void ParsePred(string input, bool FactMode);
+	void ParsePred(string input, int Mode);
 	void ParseRule(string input);
 	int numPreds(string input);
 	void ParseLine(string input);
