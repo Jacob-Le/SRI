@@ -276,11 +276,11 @@ void Query::eraseDuplicates(map<int,vector<string>> * binding){
 			cout << "ERASEDUPLICATES: current index=" << i << endl;*/
 			buffer.push_back(it->second.at(i));
 		}
-		cout << "ERASEDUPLICATES: buffersize=" << buffer.size() << endl;
+		//cout << "ERASEDUPLICATES: buffersize=" << buffer.size() << endl;
 		
 		int tempSize = binding->begin()->second.size();
 		for (int j = i+1; j < tempSize; j++){
-			cout << "ERASEDUPLICATES: tempSize=" << tempSize << endl;
+			//cout << "ERASEDUPLICATES: tempSize=" << tempSize << endl;
 			bool match = false;
 			int bufferCounter = 0;
 			for (map<int, vector<string>>::iterator it2 = binding->begin(); it2 != binding->end(); it2++){
@@ -288,7 +288,7 @@ void Query::eraseDuplicates(map<int,vector<string>> * binding){
 					match = true;
 				}
 				else {
-					cout << "ERASEDUPLICATES: no match." << endl;
+					//cout << "ERASEDUPLICATES: no match." << endl;
 					match = false;
 					break;
 				}
@@ -298,14 +298,14 @@ void Query::eraseDuplicates(map<int,vector<string>> * binding){
 			if (match == true){
 				remove(j, binding);
 				tempSize = binding->begin()->second.size();
-				cout << "ERASEDUPLICATES: tempSize=" << tempSize <<"|j=" << j << endl;
+				//cout << "ERASEDUPLICATES: tempSize=" << tempSize <<"|j=" << j << endl;
 				j--;
 				initSize--;
 			}
 			else if (match == false)break;
-			cout << "ERASEDUPLICATES: removal complete!" << endl;
+			//cout << "ERASEDUPLICATES: removal complete!" << endl;
 		}
-		cout << "ERASEDUPLICATES: WHAT THE FUCK ARE YOU FUCKING KIDDING ME i=" << i << "|initSize=" << initSize << endl;
+		//cout << "ERASEDUPLICATES: WHAT THE FUCK ARE YOU FUCKING KIDDING ME i=" << i << "|initSize=" << initSize << endl;
 	}
 }
 
