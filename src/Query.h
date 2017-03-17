@@ -36,14 +36,8 @@ public:
 	bool ruleEvalHelper(string name, vector<string> actors);
 	bool factEvaluate(vector<string> actors, string name);
 	void traverse(vector<string> actor, vector<int> currActor, vector< vector<string> > actorList, map<int, vector<string>> * binding);
-
-	//void CreatePredNames(Rule* r);
-	//vector< vector<Fact*>*> PermutateAndBind(KB* kb);
-	//vector<string> Bind(KB* KnowledgeBase);
-	//vector<int> BuildID();
-
-	//Part 3: evaluate Rules -------------------------------------------------------
-	//bool enact(Rule * r, vector<string> s, KB * kb);
-	map<string, vector<string> >  removeDoubles(map<string, vector<string> > target);
-
+	bool checkBindings(map<int, vector<string>> * binding, string name, int expectedColumn, int expectedRow);
+	void releaseBindings(map<int, vector<string>> *binding, int target);
+	void eraseDuplicates(map<int, vector<string>> * binding);
+	void remove(int index, map<int, vector<string>> * binding);
 };
