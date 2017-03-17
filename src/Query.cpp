@@ -159,6 +159,7 @@ void Query::traverse(vector<string> actor, vector<int> currActor, vector< vector
 				//	break;
 				//}
 				(*bindings)[currActor[actorCounter]].push_back(actorList[j][i]);
+				actorCounter++;
 			}
 			else if (actor[currActor[actorCounter]] == actorList[j][i]) {
 				//if (checkBindings(bindings, actorList[j][i], i, currActor[actorCounter])) {
@@ -168,6 +169,7 @@ void Query::traverse(vector<string> actor, vector<int> currActor, vector< vector
 				//}
 				//else counter--;
 				(*bindings)[currActor[actorCounter]].push_back(actorList[j][i]);
+				actorCounter++;
 				break;
 			}
 			else {
