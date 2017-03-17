@@ -142,6 +142,7 @@ void Parse::ParseRule(string input){
 	}
 
 	AddRule(Logic);
+	convert.clear();
 }
 
 
@@ -239,26 +240,25 @@ void Parse::ParseLine(string input){
 		string output;
 		if(QueryOutput.size() == 0) cout << "No results returned for " << ruleName << endl;
 		else if(QueryOutput.size() == 1){
-			cout << "PARSE: Printing Protocol 1" << endl;
+			//cout << "PARSE: Printing Protocol 1" << endl;
 			output = "";
 			map<string, vector<vector<string> > >::iterator it = QueryOutput.begin();
-			cout << "PARSE: PrePrint check. it->second.size() ="<< it->second.size() << endl;
+			//cout << "PARSE: PrePrint check. it->second.size() ="<< it->second.size() << endl;
 			for(int i=0; i < it->second.size(); i++){
-				cout << "PARSE: Print WORKING" << endl;
+				//cout << "PARSE: Print WORKING" << endl;
 				for(int j=0; j< it->second.at(i).size(); j++){
 					output = output + it->second.at(i).at(j) + "\n";
 				}
-			}cout << "PARSE: Parse Complete." << endl;
+			}//cout << "PARSE: Parse Complete." << endl;
 		}else{
-			cout << "PARSE: Printing Protocol 2" << endl;
+			//cout << "PARSE: Printing Protocol 2" << endl;
 			output = "";
 			map<string, vector< vector<string> > >::iterator it = QueryOutput.begin();
 			for(; it!= QueryOutput.end(); it++){
 				output = output + it->first + ":\n";
 				for(int i=0; i < it->second.size(); i++){
-					for(int j=0; j< it->second.at(i).size(); j++){
-							output = output + it->second.at(i).at(j) + "\n";
-					}
+					it->second.at(i).insert(it->second.at(i).begin(),it->first);
+					AddFact(it->second.at(i));
 				}
 			}
 		//Need to clear() QueryOutput after storing it in the KB
