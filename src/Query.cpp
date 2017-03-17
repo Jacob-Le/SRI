@@ -44,6 +44,7 @@ map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ /
 				vector<int> currActor;
 				for (int i = 1; i < r->components[j].size(); i++){
 					temp = r->components[j][0];
+					cout << "INFERENCE" << r->components[j][i] << endl;
 					currActor.push_back(stoi(r->components[j][i]));
 				}
 				traverse(actors, currActor, kb->FactMap[temp], &binding);
@@ -52,7 +53,13 @@ map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ /
 		}//somehow return an empty output?
 	}
 	cout << "Iteration Complete! Output:" << endl;
-	//output = removeDoubles(output);
+	for (map<int, vector<string>>::iterator it = binding.begin(); it != binding.end(); it++){
+		for (int i = 0; i < it->second.size(); i++){
+			cout << "INFERENCE: Binding row " << it->first << " column " << i << ": " << it->second.at(i) << endl;
+		}
+	}
+
+	eraseDuplicates(&binding);
 	for (int x = 0; binding.count(x) == 1; x++){
 		output[relation].push_back(binding[x]);
 	}
@@ -122,22 +129,24 @@ void Query::traverse(vector<string> actor, vector<int> currActor, vector< vector
 
 	cout << "TRAVERSE: Actorlist.size=" << actorList.size() << endl;
 	cout << "TRAVERSE: Actorlist[0].size=" << actorList[0].size() << endl;
-	//cout << "TRAVERSE: actors.size=" << actor.size() << endl;
+	cout << "TRAVERSE: actor.size=" << actor.size() << endl;
+	cout << "TRAVERSE: currActor=" << currActor.size() << endl;
 
 	int initSize = actorList[0].size();
 	bool invalid = false;
-	int actorCounter = 0;
 	for (int i = 0; i < initSize; i++) {
+		int actorCounter = 0;
 		for (int j = 0; j < actorList.size(); j++) {
 			cout << "TRAVERSE: actorList[j][i]=" << actorList[j][i] << endl;
-			//cout << "TRAVERSE: actor=" << actor << endl;
+			cout << "TRAVERSE: actorCounter=" << actorCounter << endl;
+			cout << "TRAVERSE: currActor[actorCounter]=" << currActor[actorCounter] << endl;
 			if (actorList[j].size() < initSize) {
 				invalid = true;
 				break;
 			}
 			else if (actor[currActor[actorCounter]] == "_") {
-				//path.push_back(actorList[j][i]);
-				(*bindings)[currActor[actorCounter]].push_back(actorList[i][i]);
+				cout << "TRAVERSE: currActor[actorCounter]=" << currActor[actorCounter] << endl;
+				(*bindings)[currActor[actorCounter]].push_back(actorList[j][i]);
 				actorCounter++;
 				cout << "TRAVERSE: pushback " << actorList[j][i] << endl;
 			}
@@ -207,9 +216,54 @@ bool Query::factEvaluate(vector<string> actors, string name) {
 //	}
 //}
 
-map<string, vector<string>> Query::removeDoubles(map<string, vector<string>>  target) {
-	map<string, vector<string>> output;
-	//placeholder method
-	output = target;
-	return output;
+void Query::eraseDuplicates(map<int,vector<string>> * binding){
+	int initSize = binding->begin()->second.size();
+	cout << "ERASEDUPLICATES: initSize=" << initSize << endl;
+	for (int i = 0; i < initSize; i++){
+		vector<string> buffer;
+		for (map<int, vector<string>>::iterator it = binding->begin(); it != binding->end(); it++){
+			cout << "ERASEDUPLICATES: in buffer=" << it->second.at(i) << endl;
+			cout << "ERASEDUPLICATES: current row=" << it->first << endl;
+			cout << "ERASEDUPLICATES: current index=" << i << endl;
+			buffer.push_back(it->second.at(i));
+		}
+		cout << "ERASEDUPLICATES: buffersize=" << buffer.size() << endl;
+		
+		int tempSize = binding->begin()->second.size();
+		for (int j = i+1; j < tempSize; j++){
+			cout << "ERASEDUPLICATES: tempSize=" << tempSize << endl;
+			bool match = false;
+			int bufferCounter = 0;
+			for (map<int, vector<string>>::iterator it2 = binding->begin(); it2 != binding->end(); it2++){
+				if (buffer[bufferCounter] == it2->second.at(j)){
+					match = true;
+				}
+				else {
+					cout << "ERASEDUPLICATES: no match." << endl;
+					match = false;
+					break;
+				}
+				bufferCounter++;
+			}
+			//bufferCounter++;
+			if (match == true){
+				remove(j, binding);
+				tempSize = binding->begin()->second.size();
+				cout << "ERASEDUPLICATES: tempSize=" << tempSize <<"|j=" << j << endl;
+				j--;
+				initSize--;
+			}
+			else if (match == false)break;
+			cout << "ERASEDUPLICATES: removal complete!" << endl;
+		}
+		cout << "ERASEDUPLICATES: WHAT THE FUCK ARE YOU FUCKING KIDDING ME i=" << i << "|initSize=" << initSize << endl;
+	}
+}
+
+void Query::remove(int index, map<int, vector<string>> * binding){
+	cout << "REMOVE: index=" << index << endl;
+	for (map<int, vector<string>>::iterator it = binding->begin(); it != binding->end(); it++){
+		cout << "REMOVE: removing!" << endl;
+		it->second.erase(it->second.begin() + index);
+	}
 }
