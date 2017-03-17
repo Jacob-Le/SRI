@@ -34,7 +34,7 @@ map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ /
 	if (rb->rules.count(relation) == 1) {
 		//cout << "Found in KB and RB! Evaluating assosciated Rule" << endl;
 		Rule * r = rb->rules[relation];
-		cout << "INFERENCE: In rulebase=" << ruleEvaluate(r,actors) << endl;
+		//cout << "INFERENCE: In rulebase=" << ruleEvaluate(r,actors) << endl;
 		if (ruleEvaluate(r, actors)) {
 			//cout << "INFERENCE: Rule Evaluated! Iterating now!" << endl;
 			string temp;
@@ -82,15 +82,15 @@ bool Query::operateOR(string name, vector<string> actors, Rule * r){
 	for (int i = 0; i < r->components.size(); i++) {
 		vector<string> nextActor;
 		for (int n = 1; n < r->components[i].size(); n++) {
-			cout << "operateOR: Actor=" << actors[stoi(r->components[i][n])] << endl;
+			//cout << "operateOR: Actor=" << actors[stoi(r->components[i][n])] << endl;
 			nextActor.push_back(actors[stoi(r->components[i][n])]);
 		}
-		cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
+		//cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
 		bool test = ruleEvalHelper(r->components[i][0], nextActor);
-		cout << "operateOR: Name=" << r->components[i][0] << "| Test=" << test << endl;
+		//cout << "operateOR: Name=" << r->components[i][0] << "| Test=" << test << endl;
 		finalValue = finalValue || test;
 	}
-	cout << "operateOR: finalValue: " << finalValue << endl;
+	//cout << "operateOR: finalValue: " << finalValue << endl;
 	return finalValue;
 }
 
@@ -99,23 +99,23 @@ bool Query::operateAND(string name, vector<string> actors, Rule * r){
 	for (int i = 0; i < r->components.size(); i++) {
 		vector<string> nextActor;
 		for (int n = 1; n < r->components[i].size(); n++) {
-			cout << "operateAND: Actor=" << actors[stoi(r->components[i][n])] << endl;
+			//cout << "operateAND: Actor=" << actors[stoi(r->components[i][n])] << endl;
 			nextActor.push_back(actors[stoi(r->components[i][n])]);
 		}
-		cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
+		//cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
 		bool test = ruleEvalHelper(r->components[i][0], nextActor);
-		cout << "operateAND: Name=" << r->components[i][0] << "| Test=" << test << endl;
+		// cout << "operateAND: Name=" << r->components[i][0] << "| Test=" << test << endl;
 		if (test == false) return false;
 		else finalValue = finalValue && test;
 	}
-	cout << "RULEEVAL: finalValue: " << finalValue << endl;
+	//cout << "RULEEVAL: finalValue: " << finalValue << endl;
 	return finalValue;
 }
 
 bool Query::ruleEvalHelper(string name, vector<string> actors) {
-	cout << "EVALHELPER: " << name << endl;
+	//cout << "EVALHELPER: " << name << endl;
 	if (factEvaluate(actors, name)) {
-		cout << "Found in KB" << endl;
+		//cout << "Found in KB" << endl;
 		return true;
 	}
 	else {
