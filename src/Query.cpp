@@ -11,6 +11,9 @@
 //#include<async>
 
 #include "Query.h"
+#include "BoundedBuffer.h"
+#include "Producer.cpp"
+#include "Consumer.cpp"
 
 using namespace std;
 
@@ -101,7 +104,7 @@ bool Query::operateOR(string name, vector<string> actors, Rule * r){
     truthValue = finalValue.get();
     if(truthValue) return true;
 		cout << "RULEEVAL: finalValue: " << truthValue << endl;
-    
+
 		cout << "operateOR: Name=" << r->components[i][0] << "| Test=" << truthValue << endl;
 		finalTruth = finalTruth || truthValue;
 	}

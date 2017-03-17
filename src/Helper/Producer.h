@@ -1,5 +1,4 @@
 // A class that represents starting a AND evaluate thread
-#include ""
 #include "Rule.h"
 
 class Producer
