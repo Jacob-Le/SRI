@@ -1,10 +1,12 @@
 // A class that represents starting a AND evaluate thread
+#include ""
 #include "Rule.h"
 
 class Producer
 {
 private:
   Rule * rule; //Rule to evaluate
+  vector<string> actors;
   BoundedBuffer <bool> * boundedBuffer; // The bounded buffer object to be used
 public:
   // Constructor: initializing all data members using attribute list. Notice that we have passed the BoundedBuffer Object.
