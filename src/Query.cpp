@@ -36,18 +36,23 @@ map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ /
 	if (rb->rules.count(relation) == 1) {
 		//cout << "Found in KB and RB! Evaluating assosciated Rule" << endl;
 		Rule * r = rb->rules[relation];
+		cout << "INFERENCE: In rulebase=" << ruleEvaluate(r,actors) << endl;
 		if (ruleEvaluate(r, actors)) {
-			//cout << "Rule Evaluated! Iterating now!" << endl;
-			//split components of r
+			cout << "INFERENCE: Rule Evaluated! Iterating now!" << endl;
 			string temp;
-			
-			for (int j = 0; j < r->components.size(); j++) {
-				temp = r->components[j][0];
-				//cout << "ITERATING" << endl;
-				vector< vector<string> >path = traverse(actors, kb->FactMap[temp]);
+			for (int i = 0; i < actors.size(); i++){
+				vector<string> buffer;
+				if (actors[i] != "_") buffer.push_back(actors[i]);
+				else{
+					for (int j = 0; j < r->components.size(); j++) {
+						temp = r->components[j][0];
+						cout << "INFERENCE: ITERATING" << endl;
+						vector< vector<string> >path = traverse(actors[i], kb->FactMap[temp], buffer);
 
-				//cout << "INFERENCE: path.size=" << path.size() << endl;
-				output[relation].insert(output[relation].end(),path.begin(),path.end());
+						cout << "INFERENCE: path.size=" << path.size() << endl;
+						output[relation].insert(output[relation].end(), path.begin(), path.end());
+					}
+				}
 			}
 		}//somehow return an empty output?
 	}
@@ -67,35 +72,50 @@ bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 	int ops = r->ops;
 	string name = r->name;
 	if (factEvaluate(actors, name)) return true;
-	else if(ops == 0){
-		//cout << "Calling evalHelper!" << endl;
-		//call helper function
-		bool finalValue = false;
-		for(int i = 0; i < r->components.size(); i++) {
-			vector<string> nextActor;
-			for (int n = 1; n < r->components.size(); n++) {
-				//cout << "RULEEVAL: Actor: " << actors[stoi(r->components[i][n])] << endl;
-				nextActor.push_back(actors[stoi(r->components[i][n])]);
-			}
-			//cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
-			bool test = ruleEvalHelper(r->components[i][0], nextActor);
-			//cout << "RULEEVAL: TruthValue Candidate: " << test << endl;
-			finalValue = finalValue || test;
-		}
-		//cout << "RULEEVAL: finalValue: " << finalValue << endl;
-		return finalValue;
-	}
-	else if (ops == 1) {
-		//AND
-		return true;//placeholder
-	}
+	else if (ops == 0) return operateOR(name, actors, r);
+	else if (ops == 1) return operateAND(name, actors, r);
 	else return false;//placeholder
 }
 
+bool Query::operateOR(string name, vector<string> actors, Rule * r){
+	bool finalValue = false;
+	for (int i = 0; i < r->components.size(); i++) {
+		vector<string> nextActor;
+		for (int n = 1; n < r->components[i].size(); n++) {
+			cout << "operateOR: Actor=" << actors[stoi(r->components[i][n])] << endl;
+			nextActor.push_back(actors[stoi(r->components[i][n])]);
+		}
+		cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
+		bool test = ruleEvalHelper(r->components[i][0], nextActor);
+		cout << "operateOR: Name=" << r->components[i][0] << "| Test=" << test << endl;
+		finalValue = finalValue || test;
+	}
+	cout << "operateOR: finalValue: " << finalValue << endl;
+	return finalValue;
+}
+
+bool Query::operateAND(string name, vector<string> actors, Rule * r){
+	bool finalValue = true;
+	for (int i = 0; i < r->components.size(); i++) {
+		vector<string> nextActor;
+		for (int n = 1; n < r->components[i].size(); n++) {
+			cout << "operateAND: Actor=" << actors[stoi(r->components[i][n])] << endl;
+			nextActor.push_back(actors[stoi(r->components[i][n])]);
+		}
+		cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
+		bool test = ruleEvalHelper(r->components[i][0], nextActor);
+		cout << "operateAND: Name=" << r->components[i][0] << "| Test=" << test << endl;
+		if (test == false) return false;
+		else finalValue = finalValue && test;
+	}
+	cout << "RULEEVAL: finalValue: " << finalValue << endl;
+	return finalValue;
+}
+
 bool Query::ruleEvalHelper(string name, vector<string> actors) {
-	//cout << "EVALHELPER: " << name << endl;
+	cout << "EVALHELPER: " << name << endl;
 	if (factEvaluate(actors, name)) {
-		//cout << "Found in KB" << endl;
+		cout << "Found in KB" << endl;
 		return true;
 	}
 	else {
@@ -104,37 +124,36 @@ bool Query::ruleEvalHelper(string name, vector<string> actors) {
 	}
 }
 
-vector< vector<string>> Query::traverse(vector<string> actors, vector< vector<string> > actorList) {
+vector< vector<string>> Query::traverse(string actors, vector< vector<string> > actorList, vector<string> buffer) {
 	vector< vector<string> > result;
 
-	//cout << "TRAVERSE: Actorlist.size=" << actorList.size() << endl;
-	//cout << "TRAVERSE: Actorlist[0].size=" << actorList[0].size() << endl;
+	cout << "TRAVERSE: Actorlist.size=" << actorList.size() << endl;
+	cout << "TRAVERSE: Actorlist[0].size=" << actorList[0].size() << endl;
 	//cout << "TRAVERSE: actors.size=" << actors.size() << endl;
 
 	int initSize = actorList[0].size();
 	bool invalid = false;
+	vector<string> path = buffer;
 	for (int i = 0; i < initSize; i++) {
-		vector<string> path;
 		for (int j = 0; j < actorList.size(); j++) {
-			//cout << "TRAVERSE: actorList[j][i]=" << actorList[j][i] << endl;
-			//cout << "TRAVERSE: actors[j]=" << actors[j] << endl;
+			cout << "TRAVERSE: actorList[j][i]=" << actorList[j][i] << endl;
+			cout << "TRAVERSE: actor=" << actors << endl;
 			if (actorList[j].size() < initSize) {
 				invalid = true;
 				break;
-			}else if(actorList[j][i] == actors[j]) {
-				path.push_back(actorList[j][i]);
-				//cout << "TRAVERSE: pushback " << actorList[j][i] << endl;
 			}
-			else if (actors[j] == "_") {
+			else if (actors == "_") {
 				path.push_back(actorList[j][i]);
-				//cout << "TRAVERSE: pushback " << actorList[j][i] << endl;
+				cout << "TRAVERSE: pushback " << actorList[j][i] << endl;
 			}
 			else {
 				invalid = true;
+				path.clear();
 				break;
 			}
 		}
 		if (invalid == true)break;
+		cout << "TRAVERSE: path.size()=" << path.size() << "|actors.size()=" << actors.size() << endl;
 		result.push_back(path);
 	}
 	return result;
