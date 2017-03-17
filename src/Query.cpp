@@ -21,17 +21,15 @@ Query::Query(KB * knowledge, RB * rules) {
 
 map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
 	string relation = newFact[0];
-	//int reqSize = newFact.size() - 1;
+	map<int,vector<string>> binding;
 	vector<string> actors;
-	//cout << "Entered Inference" << endl;
+
 	for (int i = 1; i < newFact.size(); i++) {
 		actors.push_back(newFact[i]);
 		//cout << "INFERENCE: Actors:" << newFact[i] << endl;
 	}
 
 	map<string, vector<vector<string>> > output;
-	//SORT OUT LOGIC OPS HERE
-	vector<string> path;
 
 	if (rb->rules.count(relation) == 1) {
 		//cout << "Found in KB and RB! Evaluating assosciated Rule" << endl;
@@ -40,28 +38,23 @@ map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ /
 		if (ruleEvaluate(r, actors)) {
 			cout << "INFERENCE: Rule Evaluated! Iterating now!" << endl;
 			string temp;
-			for (int i = 0; i < actors.size(); i++){
-				vector<string> buffer;
-				if (actors[i] != "_") buffer.push_back(actors[i]);
-				else{
-					for (int j = 0; j < r->components.size(); j++) {
-						temp = r->components[j][0];
-						cout << "INFERENCE: ITERATING" << endl;
-						vector< vector<string> >path = traverse(actors[i], kb->FactMap[temp], buffer);
-
-						cout << "INFERENCE: path.size=" << path.size() << endl;
-						output[relation].insert(output[relation].end(), path.begin(), path.end());
-					}
+			vector<string> buffer;
+			vector< vector<string> >path;
+			for (int j = 0; j < r->components.size(); j++) {
+				vector<int> currActor;
+				for (int i = 1; i < r->components[j].size(); i++){
+					temp = r->components[j][0];
+					currActor.push_back(stoi(r->components[j][i]));
 				}
+				traverse(actors, currActor, kb->FactMap[temp], &binding);
 			}
+			//output[relation].insert(output[relation].end(), path.begin(), path.end());
 		}//somehow return an empty output?
 	}
 	cout << "Iteration Complete! Output:" << endl;
 	//output = removeDoubles(output);
-	for (int x = 0; x < output[relation].size(); x++){
-		for (int m = 0; m < output[relation][x].size(); m++){
-			//cout << "INFERENCE: Output=" << output[relation][x][m] << endl;
-		}
+	for (int x = 0; binding.count(x) == 1; x++){
+		output[relation].push_back(binding[x]);
 	}
 	return output;
 }
@@ -124,39 +117,42 @@ bool Query::ruleEvalHelper(string name, vector<string> actors) {
 	}
 }
 
-vector< vector<string>> Query::traverse(string actors, vector< vector<string> > actorList, vector<string> buffer) {
+void Query::traverse(vector<string> actor, vector<int> currActor, vector< vector<string> > actorList, map<int,vector<string>> * bindings) {
 	vector< vector<string> > result;
 
 	cout << "TRAVERSE: Actorlist.size=" << actorList.size() << endl;
 	cout << "TRAVERSE: Actorlist[0].size=" << actorList[0].size() << endl;
-	//cout << "TRAVERSE: actors.size=" << actors.size() << endl;
+	//cout << "TRAVERSE: actors.size=" << actor.size() << endl;
 
 	int initSize = actorList[0].size();
 	bool invalid = false;
-	vector<string> path = buffer;
+	int actorCounter = 0;
 	for (int i = 0; i < initSize; i++) {
 		for (int j = 0; j < actorList.size(); j++) {
 			cout << "TRAVERSE: actorList[j][i]=" << actorList[j][i] << endl;
-			cout << "TRAVERSE: actor=" << actors << endl;
+			//cout << "TRAVERSE: actor=" << actor << endl;
 			if (actorList[j].size() < initSize) {
 				invalid = true;
 				break;
 			}
-			else if (actors == "_") {
-				path.push_back(actorList[j][i]);
+			else if (actor[currActor[actorCounter]] == "_") {
+				//path.push_back(actorList[j][i]);
+				(*bindings)[currActor[actorCounter]].push_back(actorList[i][i]);
+				actorCounter++;
+				cout << "TRAVERSE: pushback " << actorList[j][i] << endl;
+			}
+			else if (actor[currActor[actorCounter]] == actorList[j][i]) {
+				(*bindings)[currActor[actorCounter]].push_back(actorList[j][i]);
+				actorCounter++;
 				cout << "TRAVERSE: pushback " << actorList[j][i] << endl;
 			}
 			else {
 				invalid = true;
-				path.clear();
 				break;
 			}
 		}
 		if (invalid == true)break;
-		cout << "TRAVERSE: path.size()=" << path.size() << "|actors.size()=" << actors.size() << endl;
-		result.push_back(path);
 	}
-	return result;
 }
 
 bool Query::factEvaluate(vector<string> actors, string name) {
