@@ -29,13 +29,13 @@ public:
 	//vector<Fact*> concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB);
 	//vector<Fact*> preventDupes(vector<Fact*>* A, vector<Fact*> B);
 
-	map<string, vector<vector<string>>> inference(vector<string> newFact);
+	map<string, vector<vector<string>> > inference(vector<string> newFact);
 	bool ruleEvaluate(Rule * r, vector<string> actors);
 	bool operateOR(string name, vector<string> actors, Rule * r);
 	bool operateAND(string name, vector<string> actors, Rule * r);
 	bool ruleEvalHelper(string name, vector<string> actors);
 	bool factEvaluate(vector<string> actors, string name);
-	vector< vector<string>> traverse(string actors, vector< vector<string> > actorList, vector<string> buffer);
+	void traverse(vector<string> actor, vector<int> currActor, vector< vector<string> > actorList, map<int, vector<string>> * binding);
 
 	//void CreatePredNames(Rule* r);
 	//vector< vector<Fact*>*> PermutateAndBind(KB* kb);
