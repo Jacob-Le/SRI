@@ -63,7 +63,7 @@ map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ /
 		}
 	}
 
-	eraseDuplicates(&binding);
+	//eraseDuplicates(&binding);
 	for (int x = 0; binding.count(x) == 1; x++){
 		output[relation].push_back(binding[x]);
 	}
@@ -114,6 +114,7 @@ bool Query::operateAND(string name, vector<string> actors, Rule * r){
 	bool finalValue = true;
 	for (int i = 0; i < r->components.size(); i++) {
 		vector<string> nextActor;
+		bool test = false;
 		for (int n = 1; n < r->components[i].size(); n++) {
 			//cout << "operateAND: Actor=" << actors[stoi(r->components[i][n])] << endl;
 			nextActor.push_back(actors[stoi(r->components[i][n])]);
@@ -127,7 +128,7 @@ bool Query::operateAND(string name, vector<string> actors, Rule * r){
 			if (rb->rules.count(name) == 1) return ruleEvaluate(rb->rules[name],actors);
 			else return false;
 		}
-		cout << "RULEEVAL: finalValue: " << truthValue << endl;
+		cout << "RULEEVAL: finalValue: " << test << endl;
 		cout << "operateAND: Name=" << r->components[i][0] << "| Test=" << test << endl;
 		if (test == false) return false;
 		else finalValue = finalValue && test;
@@ -279,9 +280,9 @@ bool Query::factEvaluate(vector<string> actors, string name) {
 //}
 
 
-map<string, vector<string>> Query::removeDoubles(map<string, vector<string>>  target) {
-	map<string, vector<string>> output;
-	//placeholder method
-	output = target;
-	return output;
-}
+// map<string, vector<string>> Query::removeDoubles(map<string, vector<string>>  target) {
+// 	map<string, vector<string>> output;
+// 	//placeholder method
+// 	output = target;
+// 	return output;
+// }
