@@ -20,9 +20,9 @@ Query::Query(KB * knowledge, RB * rules) {
 //[1] : [Bob, Mary]
 
 map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
-	string relation = newFact[0];
+	string relation = newFact[0]; //Stores target name
 	map<int,vector<string>> binding;
-	vector<string> actors;
+	vector<string> actors; //Actors
 
 	for (int i = 1; i < newFact.size(); i++) {
 		actors.push_back(newFact[i]);
