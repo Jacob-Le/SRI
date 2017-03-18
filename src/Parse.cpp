@@ -68,8 +68,14 @@ void Parse::ParsePred(string input, int Mode){
 			nextLen = searchLength(delimiter1,delimiter3);
 			currEntry = input.substr(delimiter1,nextLen);
 			//cout << currEntry << "\n";
-			if(Mode == 1 || Mode == 3) Entries.push_back(currEntry); //adds to vector of components
-			else{
+			if(Mode == 1) Entries.push_back(currEntry); //adds to vector of components
+			else if(Mode == 3){
+				if(currEntry.at(0) == '$'){
+					Entries.push_back("_");
+				}else{
+					Entries.push_back(currEntry);
+				}
+			}else{
 				if(convert.count(currEntry) == 0){
 					newName = convert.size();
 					convert[currEntry] = newName;
@@ -82,13 +88,19 @@ void Parse::ParsePred(string input, int Mode){
 		currEntry = input.substr(delimiter1+1,nextLen); //parses out component
 		//cout << currEntry << "\n";
 		
-		if(Mode == 1 || Mode == 3) Entries.push_back(currEntry); //adds to vector of components
-		else{
+		if(Mode == 1) Entries.push_back(currEntry); //adds to vector of components
+		else if(Mode == 3){
+			if(currEntry.at(0) == '$'){
+				Entries.push_back("_");
+			}else{
+				Entries.push_back(currEntry);
+			}
+		}else{
 			if(convert.count(currEntry) == 0){
 				newName = convert.size();
 				convert[currEntry] = newName;
 			}
-			Entries.push_back(std::to_string(convert[currEntry]));				
+			Entries.push_back(to_string(convert[currEntry]));				
 		}
 		delimiter1 = delimiter2;
 		delimiter2 = input.find(",",delimiter2+1);

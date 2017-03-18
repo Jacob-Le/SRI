@@ -46,31 +46,31 @@ void KB::Remove(string r){
 
 void KB::Remove(vector<string> r){
 	if(FactMap.count(r.at(0)) == 0){
-		//cout<< "'" << r.at(0) << "' does not exist in Knowledge Base and so cannot be removed."<< endl;
+		cout<< "'" << r.at(0) << "' does not exist in Knowledge Base and so cannot be removed."<< endl;
 	}else{
 		vector<vector<string> >* temp = &FactMap[r.at(0)];
 		if(temp->size() != r.size()-1){
-			//cout << "Specific fact not in KB to delete" << endl;
+			cout << "Specific fact not in KB to delete" << endl;
 			return;
 		}
 		vector<int> locations;
 		for(int j=0; j< temp->at(0).size(); j++){
-			if(temp->at(0).at(j) == r.at(1)){
+			if(temp->at(0).at(j) == r.at(1) || r.at(1) == "_"){
 				locations.push_back(j); //Record positions in first columns where first var is
 			}
 		}
 			
 		//cout << "locations before: ";
-		for(int k=0; k<locations.size(); k++){
+		//for(int k=0; k<locations.size(); k++){
 			//cout << locations.at(k) << " ";
-		}
-		cout << endl;
+		//}
+		//cout << endl;
 		//checks those positions in 2nd column for 2nd var, then based off that 3rd ... and so on
 		for(int i=1; i<temp->size(); i++){
 			vector<int> next_locations;
 			for(int k=0; k<locations.size(); k++){
 				//cout << temp->at(i).at(locations.at(k)) << " vs " << r.at(i+1) << endl;
-				if(temp->at(i).at(locations.at(k)) == r.at(i+1)){
+				if(temp->at(i).at(locations.at(k)) == r.at(i+1) || r.at(i+1) == "_"){
 					next_locations.push_back(locations.at(k));
 				}
 			}
@@ -79,13 +79,21 @@ void KB::Remove(vector<string> r){
 			locations = next_locations;
 			//cout << "locations inside loop: ";
 			for(int k=0; k<locations.size(); k++){
-				cout << locations.at(k) << " ";
+				//cout << locations.at(k) << " ";
 			}
 			//cout << endl;
 				
 			if(locations.size() == 0){
-				//cout << "Specific fact not in KB to delete" << endl;
+				cout << "Specific fact not in KB to delete" << endl;
 				return;
+			}
+		}
+		//cout << "AGH: " << locations.size() << endl;
+		for(int k=1; k<locations.size(); k++){
+			if(k <= locations.size()){	
+				//cout << locations.at(k) << " ";
+				locations.at(k) -= (1*k);
+				//cout << locations.at(k) << " ";
 			}
 		}
 		for(int i=0; i<temp->size(); i++){
