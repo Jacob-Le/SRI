@@ -276,9 +276,15 @@ void Parse::ParseLine(string input){
 			RuleBase->Remove(searchingFor);
 		}
 		if(!CheckFactinKB && !CheckRuleinRB){
-			cout << searchingFor << " not in KB or RB to delete\n";
+			
+			if(numPreds(searchingFor) == 1){
+				ParsePred(searchingFor,3);
+				//cout << Preds.size();
+				for(int i=0; i < Preds.at(0).size(); i++) cout << Preds.at(0).at(i) << endl;
+				if(KnowledgeBase->FactMap.count(Preds.at(0).at(0))) KnowledgeBase->Remove(Preds.at(0));
+				Preds.clear();
+			}else cout << searchingFor << " not in KB or RB to delete\n";
 		}
-		//Run query.inference here
 	}
 
 }
