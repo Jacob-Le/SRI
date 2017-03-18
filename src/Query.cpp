@@ -25,9 +25,12 @@ Query::Query(KB * knowledge, RB * rules) {
 //[1] : [Bob, Mary]
 
 map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ //(Father,bob, " ", jerry,etc)
-	string relation = newFact[0];
+	string relation = newFact[0]; //Stores target name
 	map<int,vector<string>> binding;
-	vector<string> actors;
+	vector<string> tracker;
+	vector<string> actors; //Actors
+
+	//cout << "INFERENCE: Inference begin." << endl;
 
 	for (int i = 1; i < newFact.size(); i++) {
 		actors.push_back(newFact[i]);
@@ -42,17 +45,24 @@ map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ /
 		//cout << "INFERENCE: In rulebase=" << ruleEvaluate(r,actors) << endl;
 		if (ruleEvaluate(r, actors)) {
 			//cout << "INFERENCE: Rule Evaluated! Iterating now!" << endl;
-			string temp;
-			vector<string> buffer;
-			vector< vector<string> >path;
-			for (int j = 0; j < r->components.size(); j++) {
-				vector<int> currActor;
-				for (int i = 1; i < r->components[j].size(); i++){
-					temp = r->components[j][0];
-					//cout << "INFERENCE" << r->components[j][i] << endl;
-					currActor.push_back(stoi(r->components[j][i]));
+			int counter = 0;
+			int maxCount;
+			while (true){
+				counter = 0;
+				for (int j = 0; j < r->components.size(); j++){
+					if (counter >= kb->FactMap[r->components[j][0]].size()) counter = 0;
+					counter = 0;
+					traverse(actors, &(r->components[j]), counter, &binding, &tracker);
+					maxCount = kb->FactMap[r->components[j][0]].size();
+					//cout << "FactMap" << kb->FactMap[r->components[j][0]].size();
+					//cout << "maxCount=" << maxCount;
 				}
-				traverse(actors, currActor, kb->FactMap[temp], &binding);
+				counter++;
+				//cout << "Counter=" << counter;
+				for (int x = 0; binding.count(x) == 1; x++){
+					output[relation].push_back(binding[x]);
+				}
+				if (counter >= maxCount) break;
 			}
 			//output[relation].insert(output[relation].end(), path.begin(), path.end());
 		}//somehow return an empty output?
@@ -65,9 +75,6 @@ map<string, vector<vector<string>> > Query::inference(vector<string> newFact){ /
 	}
 
 	//eraseDuplicates(&binding);
-	for (int x = 0; binding.count(x) == 1; x++){
-		output[relation].push_back(binding[x]);
-	}
 	return output;
 }
 
@@ -142,92 +149,81 @@ bool Query::operateAND(string name, vector<string> actors, Rule * r){
 }
 
 
-void Query::traverse(vector<string> actor, vector<int> currActor, vector< vector<string> > actorList, map<int,vector<string>> * bindings) {
+void Query::traverse(vector<string> actor, vector<string> * currComponent, int currSet, map<int, vector<string>> * bindings, vector<string> * tracker) {
+	//cout << "KNOWLEDGE BASE=" << kb->toString() << endl;
 	vector< vector<string> > result;
-	int counter = 0;
+	string relation;
+	vector<int> currActor;
+	int currentSet = currSet;
+	//cout << "ENTER TRAVERSE" << endl;
 
-	//cout << "TRAVERSE: Actorlist.size=" << actorList.size() << endl;
-	//cout << "TRAVERSE: Actorlist[0].size=" << actorList[0].size() << endl;
-	//cout << "TRAVERSE: actor.size=" << actor.size() << endl;
-	//cout << "TRAVERSE: currActor=" << currActor.size() << endl;
 
-	int initSize = actorList[0].size();
-	bool invalid = false;
-	for (int i = 0; i < initSize; i++) {
-		//cout << "TRAVERSE: initSize=" << initSize << endl;
-		int actorCounter = 0;
-		//cout << "WHY WON'T COUNTER FUCKING DO SOMETHING counter="<< counter << endl;
-		for (int j = 0; j < actorList.size(); j++) {
-			//cout << "TRAVERSE: actorList[j][i]=" << actorList[j][i] << endl;
-			//cout << "TRAVERSE: actorCounter=" << actorCounter << endl;
-			//cout << "TRAVERSE: currActor[actorCounter]=" << currActor[actorCounter] << endl;
-			if (actorList[j].size() < initSize) {
-				invalid = true;
-				break;
-			}
-			else if (actor[currActor[actorCounter]] == "_") {
-				//cout << "TRAVERSE: currActor[actorCounter]=" << currActor[actorCounter] << endl;
-				//if (checkBindings(bindings, actorList[j][i], i, currActor[actorCounter])){
-				//	(*bindings)[currActor[actorCounter]].push_back(actorList[j][i]);
-				//	actorCounter++;
-				//	cout << "TRAVERSE: pushback " << actorList[j][i] << "  on col " << i << "  row  " << j <<  endl;
-				//}
-				//else {
-				//	counter--;
-				//	break;
-				//}
-				(*bindings)[currActor[actorCounter]].push_back(actorList[j][i]);
-				actorCounter++;
-			}
-			else if (actor[currActor[actorCounter]] == actorList[j][i]) {
-				//if (checkBindings(bindings, actorList[j][i], i, currActor[actorCounter])) {
-				//	(*bindings)[currActor[actorCounter]].push_back(actorList[j][i]);
-				//	actorCounter++;
-				//	cout << "TRAVERSE: pushback " << actorList[j][i] << "  on col " << i << "  row  " << j << endl;
-				//}
-				//else counter--;
-				(*bindings)[currActor[actorCounter]].push_back(actorList[j][i]);
-				actorCounter++;
-				break;
-			}
-			else {
-				invalid = true;
-				break;
+	for (int i = 1; i < currComponent->size(); i++){
+		currActor.push_back(stoi(currComponent->at(i)));
+	}
+	relation = currComponent->at(0);
+	//cout << "Relation" << relation << endl;
+	vector< vector<string> > actorList = kb->FactMap[relation];
+
+	for (int actorCounter = 0; actorCounter < currActor.size();){
+		//cout << "TRAVERSE: Traversing!" << endl;
+		//cout << "TRAVERSE: actorList.size()" << actorList.size() << endl;
+
+		for (map<int, vector<string>>::iterator it = bindings->begin(); it != bindings->end(); it++){
+			for (int i = 0; i < it->second.size(); i++){
+				//cout << "INFERENCE: Binding row " << it->first << " column " << i << ": " << it->second.at(i) << endl;
 			}
 		}
-		if (invalid == true)break;
-		counter++;
-		//cout << "WTF WHYYYYYYYY" << endl;
-	}
-}
 
-bool Query::checkBindings(map<int, vector<string>> * binding, string name, int expectedColumn, int expectedRow){
-	//cout << "CHECKBINDINGS: Counter:"<< expectedColumn << endl;
-	if (binding->size() == 0) return true;
-	else if (binding->count(expectedRow) == 0){
-		for (map<int, vector<string>>::iterator it = binding->begin(); it != binding->end(); it++){
-			//cout << "CHECK: it->first=" << it->first << "|expectedRow=" << expectedRow << "|expectedColumn" << expectedColumn << "|it->second[*expectedColumn]=" << it->second[expectedColumn] << "|name=" << name << endl;
-			if (it->second[expectedColumn] == name){
-				releaseBindings(binding, expectedColumn);
-				return false;
-			}
-		}return true;
-	}
-	else {
-		for (map<int, vector<string>>::iterator it = binding->begin(); it != binding->end();  it++){
-			//cout << "CHECK: it->first=" << it->first << "|expectedRow=" << expectedRow << "|expectedColumn" << expectedColumn << "|it->second[*expectedColumn]=" << it->second[expectedColumn] << "|name=" << name << endl;
-			if (it->first != expectedRow && it->second[expectedColumn] == name){
-				releaseBindings(binding, expectedColumn);
-				return false;
-			}
-		}return true;
-	}
-}
 
-void Query::releaseBindings(map<int, vector<string>> *binding, int target){
-	//cout << "RELEASE: GAAAAAH target=" << target << endl;
-	for (map<int, vector<string>>::iterator it = binding->begin(); it != binding->end(); it++){
-		if(it->second.size() >= target) it->second.erase(it->second.begin()+target);
+
+		if (actorList.size() == 0)break;
+		for (int j = 0; j < actorList.size(); j++) {
+			//cout << "currActor=" << actor[currActor[actorCounter]] << "|currActor[actorCounter]=" << currActor[actorCounter] << endl;
+			if (actor[currActor[actorCounter]] == "_") {
+				if (bindings->count(currActor[actorCounter]) == 0){
+					//cout << "actorList[j][currentSet]=" << actorList[j][currentSet] << endl;
+					//cout << "currentSet=" << currentSet << "|j=" << j << endl;
+					//cout << "New Binding" << endl;
+					(*bindings)[currActor[actorCounter]].push_back(actorList[j][currentSet]);
+					tracker->push_back(actorList[j][currentSet]);
+					actorCounter++;
+				}
+				else{
+					//cout << "Found binding" << endl;
+					vector<string> temp;
+					temp.push_back(actorList[j][currentSet]);
+					if (factEvaluate(temp, relation)){
+						if (tracker->at(currActor[actorCounter]) != actor[currActor[actorCounter]]){
+							bindings->clear();
+							tracker->clear();
+							break;
+						}
+					}
+				}
+			}
+			else if (actor[currActor[actorCounter]] == actorList[j][currentSet]) {
+				if (bindings->count(currActor[actorCounter]) == 0){
+					//cout << "actorList[j][currentSet]=" << actorList[j][currentSet] << endl;
+					//cout << "New Binding" << endl;
+					(*bindings)[currActor[actorCounter]].push_back(actorList[j][currentSet]);
+					tracker->push_back(actorList[j][currentSet]);
+					actorCounter++;
+				}
+				else{
+					vector<string> temp;
+					temp.push_back(actorList[j][currentSet]);
+					if (factEvaluate(temp, relation)){
+						if (tracker->at(currActor[actorCounter]) != actor[currActor[actorCounter]]){
+							bindings->clear();
+							tracker->clear();
+							break;
+						}
+					}
+				}
+			}
+			else break;
+		}
 	}
 }
 
