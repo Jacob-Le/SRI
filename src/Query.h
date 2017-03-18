@@ -29,19 +29,15 @@ public:
 	//vector<Fact*> concatenate(vector<Fact*>* resultA, vector<Fact*>* resultB);
 	//vector<Fact*> preventDupes(vector<Fact*>* A, vector<Fact*> B);
 
-	map<string, vector<vector<string>>> inference(vector<string> newFact);
+	map<string, vector<vector<string>> > inference(vector<string> newFact);
 	bool ruleEvaluate(Rule * r, vector<string> actors);
+	bool operateOR(string name, vector<string> actors, Rule * r);
+	bool operateAND(string name, vector<string> actors, Rule * r);
 	bool ruleEvalHelper(string name, vector<string> actors);
 	bool factEvaluate(vector<string> actors, string name);
-	vector< vector<string>> traverse(vector<string> actors, vector< vector<string> > actorList);
-
-	//void CreatePredNames(Rule* r);
-	//vector< vector<Fact*>*> PermutateAndBind(KB* kb);
-	//vector<string> Bind(KB* KnowledgeBase);
-	//vector<int> BuildID();
-
-	//Part 3: evaluate Rules -------------------------------------------------------
-	//bool enact(Rule * r, vector<string> s, KB * kb);
-	map<string, vector<string> >  removeDoubles(map<string, vector<string> > target);
-
+	void traverse(vector<string> actor, vector<int> currActor, vector< vector<string> > actorList, map<int, vector<string>> * binding);
+	bool checkBindings(map<int, vector<string>> * binding, string name, int expectedColumn, int expectedRow);
+	void releaseBindings(map<int, vector<string>> *binding, int target);
+	void eraseDuplicates(map<int, vector<string>> * binding);
+	void remove(int index, map<int, vector<string>> * binding);
 };
