@@ -33,7 +33,7 @@ public:
 	bool ruleEvaluate(Rule * r, vector<string> actors);
 	bool operateOR(string name, vector<string> actors, Rule * r);
 	bool operateAND(string name, vector<string> actors, Rule * r);
-	bool ruleEvalHelper(string name, vector<string> actors);
+	//bool ruleEvalHelper(string name, vector<string> actors);
 	bool factEvaluate(vector<string> actors, string name);
 	void traverse(vector<string> actor, vector<int> currActor, vector< vector<string> > actorList, map<int, vector<string>> * binding);
 	bool checkBindings(map<int, vector<string>> * binding, string name, int expectedColumn, int expectedRow);

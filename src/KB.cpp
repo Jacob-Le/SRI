@@ -52,18 +52,20 @@ string KB::toString(){
 	string output = "";
 	map<string, vector<vector<string> > > ::iterator it = FactMap.begin();
 	for(; it!= FactMap.end(); it++){
+		cout << "j.size() =" << it->second.at(0).size() << endl;
+		cout << "i.size() =" << it->second.size() << endl;
 		int j = 0; //Can't do nested for loop because trying to traverse left to right then down
-		while(true){
+		while(j < it->second.at(0).size()){
 			output = output + "FACT " + it->first + "(";
 			for(int i=0; i< it->second.size();i++){
-				//cout << "[" << j<< "][" << i << "]: " << it->second.at(i).at(j) << " ";
+				cout << "[" << i<< "][" << j << "]: " << it->second.at(i).at(j) << " ";
 				output += it->second.at(i).at(j);
 				if(i != it->second.size()-1) output += ","; 
 			}
-			//cout << endl; Comment these out if want to see how navigating KB
+			cout << endl; //Comment these out if want to see how navigating KB
 			output += ")\n";
-			if(j+1 < it->second.at(j).size()) j++;
-			else break; //initially had loop above in the while loop condition but it broke when j was larger than the vector indices
+			j++;
+			//else break; //initially had loop above in the while loop condition but it broke when j was larger than the vector indices
 		}
 	}
 	return output;
@@ -77,19 +79,20 @@ vector<string> KB::serverToString(){
 	map<string, vector<vector<string> > > ::iterator it = FactMap.begin();
 	for(; it!= FactMap.end(); it++){
 		int j = 0; //Can't do nested for loop because trying to traverse left to right then down
-		while(true){
+		while(j < it->second.size()){
 			string output = "";
 			output = output + "FACT " + it->first + "(";
-			for(int i=0; i< it->second.size();i++){
-				//cout << "[" << j<< "][" << i << "]: " << it->second.at(i).at(j) << " ";
-				output += it->second.at(i).at(j);
+			for(int i=0; i< it->second.at(j).size();i++){
+				cout << "[" << j<< "][" << i << "]: " << it->second.at(j).at(i) << " " << endl;
+				output += it->second.at(j).at(i);
 				if(i != it->second.size()-1) output += ","; 
 			}
 			//cout << endl; Comment these out if want to see how navigating KB
 			output += ")\n";
 			temp.push_back(output);
-			if(j+1 < it->second.at(j).size()) j++;
-			else break; //initially had loop above in the while loop condition but it broke when j was larger than the vector indices
+			//if(j < it->second.size()) j++;
+			//else break; //initially had loop above in the while loop condition but it broke when j was larger than the vector indices
+			j++;
 		}
 	}
 	return temp;

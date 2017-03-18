@@ -5,6 +5,10 @@
 */
 #include<iostream>
 #include<cstdio>
+#include<future>
+#include<thread>
+#include<mutex>
+//#include<async>
 
 #include "Query.h"
 
@@ -73,28 +77,40 @@ bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 	string name = r->name;
 	if (factEvaluate(actors, name)) return true;
 	else if (ops == 0) return operateOR(name, actors, r);
-	else if (ops == 1) return operateAND(name, actors, r);
+	//else if (ops == 1) return operateAND(name, actors, r);
 	else return false;//placeholder
 }
 
 bool Query::operateOR(string name, vector<string> actors, Rule * r){
-	bool finalValue = false;
+	std::future<bool> finalValue;
+  bool finalTruth;
 	for (int i = 0; i < r->components.size(); i++) {
 		vector<string> nextActor;
 		for (int n = 1; n < r->components[i].size(); n++) {
 			//cout << "operateOR: Actor=" << actors[stoi(r->components[i][n])] << endl;
 			nextActor.push_back(actors[stoi(r->components[i][n])]);
 		}
-		//cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
-		bool test = ruleEvalHelper(r->components[i][0], nextActor);
-		//cout << "operateOR: Name=" << r->components[i][0] << "| Test=" << test << endl;
-		finalValue = finalValue || test;
+    bool truthValue = false;
+		cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
+			cout << "EVALHELPER: " << r->components[i][0] << endl;
+  if (rb->rules.count(r->components[i][0]) == 1) finalValue = std::async(std::launch::async, &Query::ruleEvaluate, this, rb->rules[r->components[i][0]], actors);
+	else{
+		cout << "Found in KB" << endl;
+		finalValue = async(std::launch::async, &Query::factEvaluate, this, actors, r->components[i][0]);
 	}
-	//cout << "operateOR: finalValue: " << finalValue << endl;
-	return finalValue;
+    truthValue = finalValue.get();
+    if(truthValue) return true;
+		cout << "RULEEVAL: finalValue: " << truthValue << endl;
+    
+		cout << "operateOR: Name=" << r->components[i][0] << "| Test=" << truthValue << endl;
+		finalTruth = finalTruth || truthValue;
+	}
+	//cout << "operateOR: finalValue: " << truthValue << endl;
+	return finalTruth;
+
 }
 
-bool Query::operateAND(string name, vector<string> actors, Rule * r){
+/*bool Query::operateAND(string name, vector<string> actors, Rule * r){
 	bool finalValue = true;
 	for (int i = 0; i < r->components.size(); i++) {
 		vector<string> nextActor;
@@ -102,27 +118,24 @@ bool Query::operateAND(string name, vector<string> actors, Rule * r){
 			//cout << "operateAND: Actor=" << actors[stoi(r->components[i][n])] << endl;
 			nextActor.push_back(actors[stoi(r->components[i][n])]);
 		}
-		//cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
-		bool test = ruleEvalHelper(r->components[i][0], nextActor);
-		// cout << "operateAND: Name=" << r->components[i][0] << "| Test=" << test << endl;
+		cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
+    cout << "EVALHELPER: " << name << endl;
+		if (factEvaluate(actors, name)) {
+			cout << "Found in KB" << endl;
+			return true;
+		}else {
+			if (rb->rules.count(name) == 1) return ruleEvaluate(rb->rules[name],actors);
+			else return false;
+		}
+		cout << "RULEEVAL: finalValue: " << truthValue << endl;
+		cout << "operateAND: Name=" << r->components[i][0] << "| Test=" << test << endl;
 		if (test == false) return false;
 		else finalValue = finalValue && test;
 	}
 	//cout << "RULEEVAL: finalValue: " << finalValue << endl;
 	return finalValue;
-}
+}*/
 
-bool Query::ruleEvalHelper(string name, vector<string> actors) {
-	//cout << "EVALHELPER: " << name << endl;
-	if (factEvaluate(actors, name)) {
-		//cout << "Found in KB" << endl;
-		return true;
-	}
-	else {
-		if (rb->rules.count(name) == 1) return ruleEvaluate(rb->rules[name],actors);
-		else return false;
-	}
-}
 
 void Query::traverse(vector<string> actor, vector<int> currActor, vector< vector<string> > actorList, map<int,vector<string>> * bindings) {
 	vector< vector<string> > result;
@@ -265,54 +278,11 @@ bool Query::factEvaluate(vector<string> actors, string name) {
 //	}
 //}
 
-void Query::eraseDuplicates(map<int,vector<string>> * binding){
-	int initSize = binding->begin()->second.size();
-	//cout << "ERASEDUPLICATES: initSize=" << initSize << endl;
-	for (int i = 0; i < initSize; i++){
-		vector<string> buffer;
-		for (map<int, vector<string>>::iterator it = binding->begin(); it != binding->end(); it++){
-			/*cout << "ERASEDUPLICATES: in buffer=" << it->second.at(i) << endl;
-			cout << "ERASEDUPLICATES: current row=" << it->first << endl;
-			cout << "ERASEDUPLICATES: current index=" << i << endl;*/
-			buffer.push_back(it->second.at(i));
-		}
-		//cout << "ERASEDUPLICATES: buffersize=" << buffer.size() << endl;
-		
-		int tempSize = binding->begin()->second.size();
-		for (int j = i+1; j < tempSize; j++){
-			//cout << "ERASEDUPLICATES: tempSize=" << tempSize << endl;
-			bool match = false;
-			int bufferCounter = 0;
-			for (map<int, vector<string>>::iterator it2 = binding->begin(); it2 != binding->end(); it2++){
-				if (buffer[bufferCounter] == it2->second.at(j)){
-					match = true;
-				}
-				else {
-					//cout << "ERASEDUPLICATES: no match." << endl;
-					match = false;
-					break;
-				}
-				bufferCounter++;
-			}
-			//bufferCounter++;
-			if (match == true){
-				remove(j, binding);
-				tempSize = binding->begin()->second.size();
-				//cout << "ERASEDUPLICATES: tempSize=" << tempSize <<"|j=" << j << endl;
-				j--;
-				initSize--;
-			}
-			else if (match == false)break;
-			//cout << "ERASEDUPLICATES: removal complete!" << endl;
-		}
-		//cout << "ERASEDUPLICATES: WHAT THE FUCK ARE YOU FUCKING KIDDING ME i=" << i << "|initSize=" << initSize << endl;
-	}
+
+map<string, vector<string>> Query::removeDoubles(map<string, vector<string>>  target) {
+	map<string, vector<string>> output;
+	//placeholder method
+	output = target;
+	return output;
 }
 
-void Query::remove(int index, map<int, vector<string>> * binding){
-	//cout << "REMOVE: index=" << index << endl;
-	for (map<int, vector<string>>::iterator it = binding->begin(); it != binding->end(); it++){
-		//cout << "REMOVE: removing!" << endl;
-		it->second.erase(it->second.begin() + index);
-	}
-}
