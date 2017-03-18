@@ -101,7 +101,7 @@ bool Query::operateOR(string name, vector<string> actors, Rule * r){
     truthValue = finalValue.get();
     if(truthValue) return true;
 		cout << "RULEEVAL: finalValue: " << truthValue << endl;
-    
+
 		cout << "operateOR: Name=" << r->components[i][0] << "| Test=" << truthValue << endl;
 		finalTruth = finalTruth || truthValue;
 	}
@@ -110,7 +110,7 @@ bool Query::operateOR(string name, vector<string> actors, Rule * r){
 
 }
 
-/*bool Query::operateAND(string name, vector<string> actors, Rule * r){
+bool Query::operateAND(string name, vector<string> actors, Rule * r){
 	bool finalValue = true;
 	for (int i = 0; i < r->components.size(); i++) {
 		vector<string> nextActor;
@@ -134,7 +134,7 @@ bool Query::operateOR(string name, vector<string> actors, Rule * r){
 	}
 	//cout << "RULEEVAL: finalValue: " << finalValue << endl;
 	return finalValue;
-}*/
+}
 
 
 void Query::traverse(vector<string> actor, vector<int> currActor, vector< vector<string> > actorList, map<int,vector<string>> * bindings) {
@@ -162,8 +162,8 @@ void Query::traverse(vector<string> actor, vector<int> currActor, vector< vector
 			}
 			else if (actor[currActor[actorCounter]] == "_") {
 				//cout << "TRAVERSE: currActor[actorCounter]=" << currActor[actorCounter] << endl;
-				//if (checkBindings(bindings, actorList[j][i], i, currActor[actorCounter])){ 
-				//	(*bindings)[currActor[actorCounter]].push_back(actorList[j][i]); 
+				//if (checkBindings(bindings, actorList[j][i], i, currActor[actorCounter])){
+				//	(*bindings)[currActor[actorCounter]].push_back(actorList[j][i]);
 				//	actorCounter++;
 				//	cout << "TRAVERSE: pushback " << actorList[j][i] << "  on col " << i << "  row  " << j <<  endl;
 				//}
@@ -285,4 +285,3 @@ map<string, vector<string>> Query::removeDoubles(map<string, vector<string>>  ta
 	output = target;
 	return output;
 }
-
