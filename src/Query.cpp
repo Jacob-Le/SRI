@@ -119,13 +119,13 @@ bool Query::operateAND(string name, vector<string> actors, Rule * r){
 			//cout << "operateAND: Actor=" << actors[stoi(r->components[i][n])] << endl;
 			nextActor.push_back(actors[stoi(r->components[i][n])]);
 		}
-		cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
-    cout << "EVALHELPER: " << name << endl;
-		if (factEvaluate(actors, name)) {
+		string cmpname = r->components[i][0];
+		cout << "Entering EvalHelper with: " << cmpname << endl;
+		if (factEvaluate(nextActor, cmpname)) {
 			cout << "Found in KB" << endl;
 			return true;
 		}else {
-			if (rb->rules.count(name) == 1) return ruleEvaluate(rb->rules[name],actors);
+			if (rb->rules.count(cmpname) == 1) return ruleEvaluate(rb->rules[cmpname],nextActor);
 			else return false;
 		}
 		cout << "RULEEVAL: finalValue: " << test << endl;
