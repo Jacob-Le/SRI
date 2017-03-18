@@ -14,6 +14,7 @@ private:
 	KB * kb;
 	RB * rb;
 public:
+	static int threadID;
 	//something var currentQuery <--THE THING THAT QUERY PASSES AROUND IDK WHAT IT IS THO
 	vector<string> predNames; //Relevant relationship names
 	vector<string> ToBind; //Variables that need actors

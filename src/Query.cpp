@@ -17,6 +17,7 @@ using namespace std;
 Query::Query(KB * knowledge, RB * rules) {
 	kb = knowledge;
 	rb = rules;
+  threadID = 0;
 }
 
 //Grandfather->vector
@@ -84,21 +85,26 @@ bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 bool Query::operateOR(string name, vector<string> actors, Rule * r){
 	std::future<bool> finalValue;
   bool finalTruth;
+  int thisID = ++threadID;
 	for (int i = 0; i < r->components.size(); i++) {
 		vector<string> nextActor;
 		for (int n = 1; n < r->components[i].size(); n++) {
-			//cout << "operateOR: Actor=" << actors[stoi(r->components[i][n])] << endl;
 			nextActor.push_back(actors[stoi(r->components[i][n])]);
 		}
     bool truthValue = false;
 		cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
 			cout << "EVALHELPER: " << r->components[i][0] << endl;
-  if (rb->rules.count(r->components[i][0]) == 1) finalValue = std::async(std::launch::async, &Query::ruleEvaluate, this, rb->rules[r->components[i][0]], actors);
-	else{
-		cout << "Found in KB" << endl;
-		finalValue = async(std::launch::async, &Query::factEvaluate, this, actors, r->components[i][0]);
-	}
+    if (rb->rules.count(r->components[i][0]) == 1){
+      cout << "Thread #" << thisID << " start" << endl;
+      finalValue = std::async(std::launch::async, &Query::ruleEvaluate, this, rb->rules[r->components[i][0]], actors);
+    } 
+		else{
+			cout << "Found in KB" << endl;
+    	cout << "Thread #" << thisID << " start" << endl;
+			finalValue = async(std::launch::async, &Query::factEvaluate, this, actors, r->components[i][0]);
+		}
     truthValue = finalValue.get();
+    cout << "Thread #" << thisID << " end" << endl;
     if(truthValue) return true;
 		cout << "RULEEVAL: finalValue: " << truthValue << endl;
 
