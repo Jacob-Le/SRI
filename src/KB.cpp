@@ -38,9 +38,62 @@ void KB::Add(vector<string> theFact){
 
 void KB::Remove(string r){
 	if(FactMap.count(r) == 0){ //if its not there
-		cout<< "'" << r << "' does not exist in Knowledge Base and so cannot be removed."<< endl;
+		//cout<< "'" << r << "' does not exist in Knowledge Base and so cannot be removed."<< endl;
 	}else{
 		FactMap.erase(r);
+	}
+}
+
+void KB::Remove(vector<string> r){
+	if(FactMap.count(r.at(0)) == 0){
+		//cout<< "'" << r.at(0) << "' does not exist in Knowledge Base and so cannot be removed."<< endl;
+	}else{
+		vector<vector<string> >* temp = &FactMap[r.at(0)];
+		if(temp->size() != r.size()-1){
+			//cout << "Specific fact not in KB to delete" << endl;
+			return;
+		}
+		vector<int> locations;
+		for(int j=0; j< temp->at(0).size(); j++){
+			if(temp->at(0).at(j) == r.at(1)){
+				locations.push_back(j); //Record positions in first columns where first var is
+			}
+		}
+			
+		//cout << "locations before: ";
+		for(int k=0; k<locations.size(); k++){
+			//cout << locations.at(k) << " ";
+		}
+		cout << endl;
+		//checks those positions in 2nd column for 2nd var, then based off that 3rd ... and so on
+		for(int i=1; i<temp->size(); i++){
+			vector<int> next_locations;
+			for(int k=0; k<locations.size(); k++){
+				//cout << temp->at(i).at(locations.at(k)) << " vs " << r.at(i+1) << endl;
+				if(temp->at(i).at(locations.at(k)) == r.at(i+1)){
+					next_locations.push_back(locations.at(k));
+				}
+			}
+				
+			locations.clear();
+			locations = next_locations;
+			//cout << "locations inside loop: ";
+			for(int k=0; k<locations.size(); k++){
+				cout << locations.at(k) << " ";
+			}
+			//cout << endl;
+				
+			if(locations.size() == 0){
+				//cout << "Specific fact not in KB to delete" << endl;
+				return;
+			}
+		}
+		for(int i=0; i<temp->size(); i++){
+			for(int k=0; k< locations.size(); k++){
+				temp->at(i).erase(temp->at(i).begin()+locations.at(k));
+			}
+		}
+		if(temp->at(0).size() == 0) FactMap.erase(r.at(0));
 	}
 }
 
@@ -52,17 +105,17 @@ string KB::toString(){
 	string output = "";
 	map<string, vector<vector<string> > > ::iterator it = FactMap.begin();
 	for(; it!= FactMap.end(); it++){
-		cout << "j.size() =" << it->second.at(0).size() << endl;
-		cout << "i.size() =" << it->second.size() << endl;
+		//cout << "j.size() =" << it->second.at(0).size() << endl;
+		//cout << "i.size() =" << it->second.size() << endl;
 		int j = 0; //Can't do nested for loop because trying to traverse left to right then down
 		while(j < it->second.at(0).size()){
 			output = output + "FACT " + it->first + "(";
 			for(int i=0; i< it->second.size();i++){
-				cout << "[" << i<< "][" << j << "]: " << it->second.at(i).at(j) << " ";
+				//cout << "[" << i<< "][" << j << "]: " << it->second.at(i).at(j) << " ";
 				output += it->second.at(i).at(j);
 				if(i != it->second.size()-1) output += ","; 
 			}
-			cout << endl; //Comment these out if want to see how navigating KB
+			//cout << endl; //Comment these out if want to see how navigating KB
 			output += ")\n";
 			j++;
 			//else break; //initially had loop above in the while loop condition but it broke when j was larger than the vector indices

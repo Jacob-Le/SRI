@@ -30,6 +30,7 @@ public:
 
 	void Add(vector<string> theFact);
 	void Remove(string name);
+	void Remove(vector<string> r);
 	string toString();
 	vector<string> serverToString();
 };
