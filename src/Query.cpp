@@ -17,6 +17,7 @@ using namespace std;
 Query::Query(KB * knowledge, RB * rules) {
 	kb = knowledge;
 	rb = rules;
+  threadID = 0;
 }
 
 //Grandfather->vector
@@ -83,30 +84,33 @@ bool Query::ruleEvaluate(Rule * r, vector<string> actors) {
 
 bool Query::operateOR(string name, vector<string> actors, Rule * r){
 	std::future<bool> finalValue;
-  bool finalTruth;
+  bool truthValue = false;
+  int thisID = threadID++;
 	for (int i = 0; i < r->components.size(); i++) {
 		vector<string> nextActor;
 		for (int n = 1; n < r->components[i].size(); n++) {
-			//cout << "operateOR: Actor=" << actors[stoi(r->components[i][n])] << endl;
 			nextActor.push_back(actors[stoi(r->components[i][n])]);
 		}
-    bool truthValue = false;
-		cout << "Entering EvalHelper with: " << r->components[i][0] << endl;
-			cout << "EVALHELPER: " << r->components[i][0] << endl;
-  if (rb->rules.count(r->components[i][0]) == 1) finalValue = std::async(std::launch::async, &Query::ruleEvaluate, this, rb->rules[r->components[i][0]], actors);
-	else{
-		cout << "Found in KB" << endl;
-		finalValue = async(std::launch::async, &Query::factEvaluate, this, actors, r->components[i][0]);
-	}
-    truthValue = finalValue.get();
-    if(truthValue) return true;
-		cout << "RULEEVAL: finalValue: " << truthValue << endl;
+    bool test = false;
+    string cmpname = r->components[i][0];
+		cout << "Component name: " << cmpname << endl;
+    if (rb->rules.count(cmpname) == 1){
+      cout << "Rule: " << cmpname << " | Thread #" << thisID << " start" << endl;
+      finalValue = std::async(std::launch::async, &Query::ruleEvaluate, this, rb->rules[cmpname], actors);
+    }
+		else{
+    	cout << cmpname << " | Thread #" << thisID << " start" << endl;
+			finalValue = async(std::launch::async, &Query::factEvaluate, this, actors, cmpname);
+		}
+    test = finalValue.get();
+    cout << "Thread #" << thisID << " end | result: " << test << endl;
+    if(test) return true;
 
-		cout << "operateOR: Name=" << r->components[i][0] << "| Test=" << truthValue << endl;
-		finalTruth = finalTruth || truthValue;
+		cout << "operateOR: Name=" << cmpname << "| Test=" << test << endl;
+		truthValue = truthValue || test;
 	}
-	//cout << "operateOR: finalValue: " << truthValue << endl;
-	return finalTruth;
+	cout << "operateOR: finalValue: " << truthValue << endl;
+	return truthValue;
 
 }
 
@@ -120,7 +124,7 @@ bool Query::operateAND(string name, vector<string> actors, Rule * r){
 			nextActor.push_back(actors[stoi(r->components[i][n])]);
 		}
 		string cmpname = r->components[i][0];
-		cout << "Entering EvalHelper with: " << cmpname << endl;
+		cout << "Component name: " << cmpname << endl;
 		if (factEvaluate(nextActor, cmpname)) {
 			cout << "Found in KB" << endl;
 			return true;

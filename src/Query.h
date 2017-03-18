@@ -13,6 +13,7 @@ class Query {
 private:
 	KB * kb;
 	RB * rb;
+	int threadID;
 public:
 	//something var currentQuery <--THE THING THAT QUERY PASSES AROUND IDK WHAT IT IS THO
 	vector<string> predNames; //Relevant relationship names
